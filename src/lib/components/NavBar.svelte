@@ -1,4 +1,6 @@
 <script>
+    import Logo from "./logo.svelte";
+
     let menuOpen = false;
 
     function toggleMenu() {
@@ -17,10 +19,8 @@
 </script>
 
 <nav>
-    <div class="logo-container">
-        <img src="/escudo.png" alt="logo" class="logo">
-        <h1><a href="/">Velzia</a></h1>
-    </div>
+
+    <Logo />
 
     <div 
         class="menu-container" 
@@ -43,8 +43,7 @@
 <style>
     nav {
         width: 100%;
-        height: 5vh;
-        background-color: rgb(63, 130, 255);
+        height: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -53,34 +52,13 @@
         color: white;
     }
 
-    .logo-container {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    h1 {
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    .logo-container h1 a {
-        text-decoration: none;
-        color: black;
-    }
-
-    .logo {
-        width: 30px;
-        height: auto;
-    }
-
     /* Móviles (menú oculto por defecto) */
     @media (max-width: 499px) {
         .nav-links {
             display: none;
             flex-direction: column;
-            background-color: rgb(118, 166, 255);
-            color: black;
+            background-color: #1D3557;
+            color: white;
             border-radius: 1rem;
             list-style: none;
             margin: 0;
@@ -100,7 +78,7 @@
     @media (min-width: 500px) {
         .nav-links {
             display: flex !important;
-            color: black;
+            color: white;
             list-style: none;
             margin: 0;
             padding: 0;
@@ -122,7 +100,7 @@
     }
 
     a {
-        color: black;
+        color: white;
         text-decoration: none;
         font-weight: 500;
         transition: opacity 0.2s;
