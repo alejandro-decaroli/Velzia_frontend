@@ -6,6 +6,8 @@
 
 <style>
     footer {
+        height: 10vh;
+        width: 100%;
         background-color: rgb(63, 130, 255);
         color: white;
         text-align: center;
