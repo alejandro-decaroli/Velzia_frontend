@@ -1,7 +1,20 @@
+<script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-<p><a href="/singup">Sing Up</a></p>
-<p><a href="/login">Login</a></p>
-<p><a href="/dashboard">Dashboard</a></p>
-<p><a href="/user">User</a></p>
+</script>
+
+<main>
+    <div class="container">
+        <h1>Velzia el ERP que no sabias que necesitabas</h1>
+        <p>Velzia es un ERP que se adapta a tus necesidades. No tienes que esperar a que te den un presupuesto para poder empezar a usarlo. </p>
+        <p>Siempre estamos mejorando para brindarte la mejor experiencia posible.</p>
+    </div>
+</main>
+
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+</style>

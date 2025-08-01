@@ -6,10 +6,20 @@
 	let email = "";
 	let contrasenia = "";
 	let error = "";
+    let data = null;
 	let validationErrors = [];
 
+    function redirect(data) {
+        setTimeout(() => {
+            window.location.href = "/";
+            localStorage.setItem("user", JSON.stringify(data));
+        }, 2000);
+    }
+
 	async function handleLogin(event) {
+
 		event.preventDefault(); // evitar el envío automático
+        
 
 		// Si pasa la validación del cliente, hacemos fetch
 		try {
@@ -21,7 +31,7 @@
 				body: JSON.stringify({ email, contrasenia })
 			});
 
-			const data = await response.json();
+			data = await response.json();
 
 			if (!response.ok) {
 				if (data.errors && Array.isArray(data.errors)) {
@@ -51,7 +61,7 @@
             type="email"
             id="email"
             bind:value={email}
-            on:input={() => (validationErrors = [])}
+            on:input={() => (validationErrors = [], error = "", success = "")}
         />
 
         <label for="contrasenia">Contraseña:</label>
@@ -61,7 +71,7 @@
             type="password"
             id="contrasenia"
             bind:value={contrasenia}
-            on:input={() => (validationErrors = [])}
+            on:input={() => (validationErrors = [], error = "", success = "")}
         />
 
         <button type="submit">Login</button>
@@ -70,6 +80,10 @@
     <ErrorBox validationErrors={validationErrors} error={error} />
 
     <Success success={success} />
+
+    {#if success}
+        {redirect(data)}
+    {/if}
 
 </div>
 
@@ -115,7 +129,5 @@
         color: #1D3557;
         font-weight: bold;
     }
-
-    
 
 </style>

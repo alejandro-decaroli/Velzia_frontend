@@ -1,108 +1,116 @@
 <script>
-    let nombre = "";
-    let apellido = "";
-    let email = "";
-    let contrasenia = "";
-    let error = "";
-    let validationErrors = [];
+    import Success from "./success.svelte";
+    import ErrorBox from "./errorbox.svelte";
+
     let success = "";
+	let email = "";
+	let contrasenia = "";
+	let apellido = "";
+	let nombre = "";
+	let error = "";
+	let validationErrors = [];
+    let data = null;
 
-    async function handleSignUp(event) {
-        event.preventDefault();
-        error = "";
-        success = "";
-        validationErrors = [];
-
-        try {
-            const response = await fetch("http://localhost:3000/usuarios/sing-up", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ nombre, apellido, email, contrasenia })  // ¡nombre del campo correcto!
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                // Si viene un array de errores de validación
-                if (data.errors && Array.isArray(data.errors)) {
-                    validationErrors = data.errors.map(e => e.msg);
-                } else {
-                    error = data.message || "Error al crear el usuario";
-                }
-                return;
-            }
-
-            // Si todo salió bien
-            validationErrors = [];
-            error = "";
-            success = "Sign Up exitoso";
-            console.log("Sign Up exitoso:", data);
-        } catch (e) {
-            error = "No se pudo conectar al servidor";
-            console.error(e);
-        }
+    function redirect(data) {
+        setTimeout(() => {
+            window.location.href = "/";
+            localStorage.setItem("user", JSON.stringify(data));
+        }, 2000);
     }
 
-    function clearMessages() {
-        error = "";
-        validationErrors = [];
-        success = "";
-    }
+	async function handleLogin(event) {
+
+		event.preventDefault(); // evitar el envío automático
+
+		// Si pasa la validación del cliente, hacemos fetch
+		try {
+			const response = await fetch("http://localhost:3000/usuarios/sign-up", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ nombre, apellido, email, contrasenia })
+			});
+
+			data = await response.json();
+
+			if (!response.ok) {
+				if (data.errors && Array.isArray(data.errors)) {
+					validationErrors = data.errors.map((e) => e.msg);
+				} else {
+					error = data.message || "Error al iniciar sesión";
+				}
+				return;
+			} else {
+				validationErrors = [];
+				error = "";
+				success = "Sign Up exitoso";
+			}
+		} catch (e) {
+			error = "No se pudo conectar al servidor";
+		}
+	}
 </script>
 
+<div class="signup_container">
 
-<div class="sign_in_container">
-<form onsubmit={handleSignUp} onreset={clearMessages}>
+    <form on:submit={handleLogin}>
+        <label for="nombre">Nombre:</label>
+        <input
+            required
+            placeholder="Nombre"
+            type="text"
+            id="nombre"
+            bind:value={nombre}
+            on:input={() => (validationErrors = [], error = "", success = "")}
+        />
+        <label for="apellido">Apellido:</label>
+        <input
+            required
+            placeholder="Apellido"
+            type="text"
+            id="apellido"
+            bind:value={apellido}
+            on:input={() => (validationErrors = [], error = "", success = "")}
+        />
+        <label for="email">Email:</label>
+        <input
+            required
+            placeholder="gonzalo@example.com"
+            type="email"
+            id="email"
+            bind:value={email}
+            on:input={() => (validationErrors = [], error = "", success = "")}
+        />
+        <label for="contrasenia">Contraseña:</label>
+        <input
+            required
+            placeholder="********"
+            type="password"
+            id="contrasenia"
+            bind:value={contrasenia}
+            on:input={() => (validationErrors = [], error = "", success = "")}
+        />
 
-    <label for="name">Name:</label>
-    <input type="text" id="name" bind:value={nombre} required />
+        <button type="submit">Sign Up</button>
+    </form>
 
-    <label for="last_name">Last Name:</label>
-    <input type="text" id="last_name" bind:value={apellido} required />
+    <ErrorBox validationErrors={validationErrors} error={error} />
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" bind:value={email} required />
+    <Success success={success} />
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" bind:value={contrasenia} required />
+    {#if success}
+        {redirect(data)}
+    {/if}
 
-    <button type="submit">Sign Up</button>
-</form>
-
-{#if error}
-    <div class="error_box">
-        <strong>Algo salio mal:</strong>
-        <p>{error}</p>
-    </div>
-{/if}
-
-{#if validationErrors.length > 0}
-    <div class="error_box">
-        <strong>Algo salio mal:</strong>
-        <ul style="list-style: none;">
-            {#each validationErrors as error}
-                <li style="text-decoration: none;">{error}</li>
-            {/each}
-        </ul>
-    </div>
-{/if}
-
-{#if success}
-    <div class="success_box">
-        <p>{success}</p>
-    </div>
-{/if}
 </div>
 
 <style>
-    .sign_in_container {
+    .signup_container {
         display: flex;
         justify-content: center;
         flex-direction: column;
         align-items: center;
-        height: 100vh;
         gap: 1rem;
     }
     
@@ -110,12 +118,14 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        background-color: rgb(63, 130, 255);
+        background-color: #1D3557;
         color: white;
         padding: 1rem;
         border-radius: 1rem;
         width: 300px;
+        height: 420px;
         margin: 0 auto;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
 
     label {
@@ -129,29 +139,13 @@
     }
 
     button {
+        margin-top: 1rem;
         padding: 0.5rem;
         border-radius: 0.5rem;
         border: none;
-        background-color: white;
-        color: rgb(63, 130, 255);
+        background-color: #ffffff;
+        color: #1D3557;
         font-weight: bold;
     }
 
-    .error_box {
-        background-color: red;
-        color: white;
-        padding: 1rem;
-        border-radius: 1rem;
-        width: 300px;
-        margin: 0 auto;
-    }
-
-    .success_box {
-        background-color: green;
-        color: white;
-        padding: 1rem;
-        border-radius: 1rem;
-        width: 300px;
-        margin: 0 auto;
-    }
 </style>

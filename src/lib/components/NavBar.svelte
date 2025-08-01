@@ -17,11 +17,8 @@
         });
     }
 </script>
-
 <nav>
-
     <Logo />
-
     <div 
         class="menu-container" 
         on:click={toggleMenu} 
@@ -31,9 +28,7 @@
         on:keydown={(e) => e.key === 'Enter' && toggleMenu()}>
         <img src="/avatar.png" alt="Avatar" class="menu" />
     </div>
-
     <ul class="nav-links" class:open={menuOpen}>
-        <li><a href="/">Home</a></li>
         <li><a href="/signup">Sign Up</a></li>
         <li><a href="/login">Login</a></li>
     </ul>

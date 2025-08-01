@@ -6,9 +6,9 @@
 {#if validationErrors.length > 0}
     <div class="error_box">
         <strong>Revisá los siguientes errores:</strong>
-        <ul>
+        <ul style="list-style: none;">
             {#each validationErrors as err}
-                <li>{err}</li>
+                <li style="margin: 0.5rem 0;">{err}</li>
             {/each}
         </ul>
     </div>
@@ -17,7 +17,7 @@
 {#if error}
     <div class="error_box">
         <strong>Algo salio mal:</strong>
-        <p>{error}</p>
+        <p style="margin: 0.5rem 0;">{error}</p>
     </div>
 {/if}
 
