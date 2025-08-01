@@ -1,6 +1,8 @@
 <script>
     import Success from "./success.svelte";
     import ErrorBox from "./errorbox.svelte";
+    import { user } from "../stores/auth.js";
+    import { goto } from '$app/navigation';
 
     let success = "";
 	let email = "";
@@ -11,10 +13,11 @@
 	let validationErrors = [];
     let data = null;
 
-    function redirect(data) {
-        setTimeout(() => {
-            window.location.href = "/";
-            localStorage.setItem("user", JSON.stringify(data));
+    async function redirect(data) {
+        setTimeout(async () => {
+            user.set({ id: data.id, email: data.email, nombre: data.nombre, apellido: data.apellido, token: "Soy un token!" });
+            await goto("/user");
+            // después del login exitoso
         }, 2000);
     }
 
@@ -45,6 +48,7 @@
 				validationErrors = [];
 				error = "";
 				success = "Sign Up exitoso";
+                redirect(data);
 			}
 		} catch (e) {
 			error = "No se pudo conectar al servidor";
@@ -98,10 +102,6 @@
     <ErrorBox validationErrors={validationErrors} error={error} />
 
     <Success success={success} />
-
-    {#if success}
-        {redirect(data)}
-    {/if}
 
 </div>
 
