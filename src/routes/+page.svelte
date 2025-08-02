@@ -4,7 +4,7 @@
 
 <main>
     <div class="container">
-        <h1>Velzia el ERP que no sabias que necesitabas</h1>
+        <h1>Velzia el ERP que comprende tus necesidades</h1>
         <p>Velzia es un ERP que se adapta a tus necesidades. No tienes que esperar a que te den un presupuesto para poder empezar a usarlo. </p>
         <p>Siempre estamos mejorando para brindarte la mejor experiencia posible.</p>
     </div>
