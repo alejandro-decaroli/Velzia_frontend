@@ -59,10 +59,12 @@
     }
 
     .user-container {
+        height: 100%;
         display: flex;
         width: 100%;
-        height: 85vh;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .user-info {
@@ -76,11 +78,38 @@
         width: 100%;
         height: 100px;
     }
-    .container-inferior {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        align-items: center;
-        width: 100%;
-        height: 100%;
+    @media (max-width: 700px) {
+        .container-inferior {
+            display: grid;
+            height: 80%;
+            gap: 1rem;
+            grid-template-columns: repeat(2, 1fr);
+            align-items: center;
+            width: 100%;
+            overflow-y: scroll;
+        }
+    }
+    @media (min-width: 701px) {
+        .container-inferior {
+            display: grid;
+            height: 100%;
+            gap: 1rem;
+            grid-template-columns: repeat(4, 1fr);
+            align-items: center;
+            width: 100%;
+            overflow-y: scroll;
+        }
+    }
+
+    @media (max-width: 350px) {
+        .container-inferior {
+            display: grid;
+            height: 80%;
+            gap: 1rem;
+            grid-template-columns: repeat(1, 1fr);
+            align-items: center;
+            width: 100%;
+            overflow-y: scroll; 
+        }
     }
 </style>

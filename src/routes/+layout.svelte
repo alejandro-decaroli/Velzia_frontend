@@ -3,7 +3,7 @@
     import Footer from "$lib/components/Footer.svelte"
     import "../app.css";
 </script>
-    
+
 <header>
     <NavBar />
 </header>
@@ -17,19 +17,17 @@
 </footer>
 
 
-
 <style>
     header {
-        height: 5vh;
+        height: 7vh;
         width: 100%;
         background-color: #1D3557;
         color: #FFFFFF;
         text-align: center;
-        padding: 1rem;
     }
     
     main {
-        min-height: calc(85vh);
+        height: 78vh;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -37,11 +35,15 @@
 
     }
     footer {
-        height: 10vh;
+        display: flex;
+        flex-direction: column;
+        height: 15vh;
         width: 100%;
         background-color: #1D3557;
         color: #FFFFFF;
         text-align: center;
+        justify-content: center;
+        align-items: center;
         padding: 1rem;
     }
 

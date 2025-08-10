@@ -13,7 +13,7 @@
 
     async function redirect(data) {
         setTimeout(async () => {
-            user.set({ id: data.id, email: data.email, nombre: data.nombre, apellido: data.apellido, token: "Soy un token!" });
+            user.set({ id: data.user.id, email: data.user.email, nombre: data.user.nombre, apellido: data.user.apellido, token: data.token });
             await goto("/user");
             // después del login exitoso
         }, 2000);

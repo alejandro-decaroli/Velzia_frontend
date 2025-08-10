@@ -1,6 +1,9 @@
-<div class="logo-container">
-    <img src="/escudo.png" alt="logo" class="logo">
-    <h1><a href="/">Velzia</a></h1>
+<script>
+    import { goto } from "$app/navigation";
+</script>
+
+<div class="logo-container" onclick={() => goto("/")} onkeydown={(e) => e.key === 'Enter' && goto("/")} role="button" tabindex="0" aria-label="Logo">
+    <img src="velzia_name.png" alt="icon">
 </div>
 
 <style>
@@ -10,18 +13,12 @@
         gap: 0.5rem;
     }
 
-    .logo-container h1 a {
-        text-decoration: none;
-        color: white;
+    .logo-container:hover {
+        cursor: pointer;
     }
 
-    .logo {
-        width: 30px;
+    img {
+        width: 200px;
         height: auto;
-    }
-    
-    h1 {
-        font-weight: bold;
-        text-decoration: none;
     }
 </style>
