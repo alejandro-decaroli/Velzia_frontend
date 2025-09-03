@@ -16,7 +16,7 @@
     async function redirect(data) {
         setTimeout(async () => {
             user.set({ id: data.user.id, email: data.user.email, nombre: data.user.nombre, apellido: data.user.apellido, token: data.token });
-            await goto("/user");
+            await goto("/dashboard");
             // después del login exitoso
         }, 2000);
     }

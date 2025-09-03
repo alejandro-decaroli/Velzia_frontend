@@ -2,7 +2,7 @@
     import { goto } from "$app/navigation";
 </script>
 
-<div class="logo-container" onclick={() => goto("/")} onkeydown={(e) => e.key === 'Enter' && goto("/")} role="button" tabindex="0" aria-label="Logo">
+<div class="logo-container" onclick={goto("/")} onkeydown={(e) => e.key === 'Enter' && goto("/")} role="button" tabindex="0" aria-label="Logo">
     <img src="velzia_name.png" alt="icon">
 </div>
 
