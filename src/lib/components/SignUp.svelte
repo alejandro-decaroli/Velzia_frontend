@@ -118,7 +118,7 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        background-color: #1D3557;
+        background-color: #405B81;
         color: white;
         padding: 1rem;
         border-radius: 1rem;
