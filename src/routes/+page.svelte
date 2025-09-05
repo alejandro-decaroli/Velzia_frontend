@@ -1,4 +1,8 @@
 <script>
+
+
+// Tengo que hacer que los boton de crear, editar, obtener y eliminar sean universales
+
 /*
 1. Colores base / fondo
 

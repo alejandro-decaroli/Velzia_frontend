@@ -3,14 +3,13 @@
     
     export let entity = "";
     export let route = "";
-    export let id = null;
     
     let showConfirm = false;
     
-    async function deleteEntity() {
+    async function createEntity() {
         try {
-            const response = await fetch(`http://localhost:3000/${route}/delete/${id}`, {
-                method: "DELETE",
+            const response = await fetch(`http://localhost:3000/${route}/create`, {
+                method: "POST",
                 headers: {
                     "Authorization": `Bearer ${$user?.token}`,
                     "Content-Type": "application/json"
@@ -18,47 +17,48 @@
             });
             
             if (response.ok) {
-                // Recargar la página después de eliminar
+                // Recargar la página después de crear
                 window.location.reload();
             } else {
-                console.error(`Error al eliminar ${entity}`);
+                console.error(`Error al crear ${entity}`);
             }
         } catch (error) {
             console.error("Error:", error);
         }
     }
     
-    function handleDelete() {
+    function handleCreate() {
         showConfirm = true;
     }
     
-    function cancelDelete() {
+    function cancelCreate() {
         showConfirm = false;
     }
+    
 </script>
 
 <button 
-    class="delete" 
-    aria-label="Eliminar {entity}" 
-    on:click|preventDefault={handleDelete}
+    class="create" 
+    aria-label="Crear {entity}" 
+    on:click|preventDefault={handleCreate}
 >
-    Eliminar {entity}
+    Crear {entity}
 </button>
 
 {#if showConfirm}
     <div class="confirm-overlay">
         <div class="confirm-dialog">
-            <p>¿Estás seguro de que deseas eliminar este {entity}?</p>
+            <p>¿Estás seguro de que deseas crear {entity}?</p>
             <div class="button-group">
                 <button 
                     class="confirm-button" 
-                    on:click|preventDefault={deleteEntity}
+                    on:click|preventDefault={createEntity}
                 >
-                    Sí, eliminar
+                    Sí, crear
                 </button>
                 <button 
                     class="cancel-button" 
-                    on:click|preventDefault={cancelDelete}
+                    on:click|preventDefault={cancelCreate}
                 >
                     Cancelar
                 </button>
@@ -77,13 +77,13 @@
         transition: all 0.2s ease;
     }
 
-    .delete {
-        background-color: #E63946;
+    .create {
+        background-color: #405B81;
         color: white;
     }
     
-    .delete:hover {
-        background-color: #c1121f;
+    .create:hover {
+        background-color: #1D3557;
     }
     
     .confirm-overlay {

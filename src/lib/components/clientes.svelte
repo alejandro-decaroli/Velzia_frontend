@@ -101,11 +101,13 @@
                         {/each}
                         <td class="actions">
                             <ButtonDelete 
+                                entity="cliente" 
                                 route={entity} 
                                 id={item.id} 
                                 on:deleted={handleUpdate} 
                             />
                             <ButtonEdit 
+                                entity="cliente" 
                                 route={entity} 
                                 id={item.id} 
                                 on:updated={handleUpdate} 
@@ -122,6 +124,7 @@
     .table-container {
         width: 100%;
         overflow-x: auto;
+        padding: 2rem;
     }
 
     .table {
@@ -136,9 +139,9 @@
 
     .table th {
         padding: 1rem;
-        background-color: #457B9D;
+        background-color: #405B81;
         color: white;
-        text-align: left;
+        text-align: center;
         font-weight: 600;
     }
 
@@ -148,6 +151,7 @@
     }
 
     .table tr:last-child td {
+        
         border-bottom: none;
     }
 
@@ -158,13 +162,13 @@
     .actions {
         display: flex;
         gap: 0.5rem;
-        justify-content: flex-end;
+        justify-content: center;
     }
 
     .loading {
         text-align: center;
         padding: 2rem;
-        color: #457B9D;
+        color: #405B81;
     }
 
     .error-message {
@@ -177,7 +181,7 @@
     }
 
     .retry-btn {
-        background-color: #457B9D;
+        background-color: #405B81;
         color: white;
         border: none;
         border-radius: 0.375rem;
@@ -190,4 +194,17 @@
     .retry-btn:hover {
         background-color: #1D3557;
     }
+
+    tbody {
+        color: black;
+        background-color: #CDE2FF;
+    }
+
+    tbody tr td {
+        color: black;
+        text-align: center;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+    }
+
 </style>

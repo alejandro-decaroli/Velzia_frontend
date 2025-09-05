@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { user } from "$lib/stores/auth.js";
     
+    export let entity = "";
     export let route = "";
     export let id = null;
     
@@ -9,7 +10,6 @@
     let loading = false;
     let error = null;
     let showForm = false;
-    let entity = null;
     const standardFields = [
         "Estado",
         "Id",
@@ -72,7 +72,7 @@
             dispatch('updated');
         } catch (err) {
             console.error("Error:", err);
-            error = 'Error al actualizar los datos del cliente';
+            error = `Error al actualizar los datos de ${entity}`;
         } finally {
             loading = false;
         }
@@ -91,19 +91,19 @@
     class="edit-btn" 
     on:click={handleEditClick}
     disabled={loading}
-    aria-label="Editar"
+    aria-label="Editar {entity}"
 >
     {#if loading}
         Cargando...
     {:else}
-        Editar
+        Editar {entity}
     {/if}
 </button>
 
 {#if showForm && entity}
 <div class="edit-form-overlay">
     <div class="edit-form">
-        <h3>Editar Cliente</h3>
+        <h3>Editar {entity}</h3>
         
         {#if error}
             <div class="error-message">{error}</div>
