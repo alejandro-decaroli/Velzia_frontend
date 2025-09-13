@@ -12,12 +12,12 @@
     let error = null;
     let showForm = false;
     const standardFields = [
-        "Estado",
-        "Id",
-        "Usuario",
-        "CreatedAt",
-        "UpdatedAt",
-        "DeletedAt"
+        "estado", "Estado",
+        "id", "Id", "ID",
+        "usuario", "Usuario",
+        "updatedAt", "updatedat", "updatedAt", 
+        "deletedAt", "deletedat", "deletedAt", 
+        "createdAt", "createdat", "createdAt" 
     ];
 
     async function loadEntity() {
@@ -121,10 +121,11 @@
         {/if}
         
         {#if entity}
-            {#each Object.keys(entity).map(key => key.charAt(0).toUpperCase() + key.slice(1)).filter(key => !standardFields.includes(key)) as key}
+            {#each Object.keys(entity).filter(key => !standardFields.includes(key)) as key}
+                {@const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1)}
                 <div>
-                    <label for={key}>{key}:</label>
-                    <input type="text" id={key} placeholder={key} bind:value={entity[key.toLowerCase()]} />
+                    <label for={capitalizedKey}>{capitalizedKey}:</label>
+                    <input type="text" id={capitalizedKey} placeholder={capitalizedKey} bind:value={entity[key]} />
                 </div>
             {/each}  
             <div class="form-actions">

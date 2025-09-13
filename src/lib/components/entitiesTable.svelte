@@ -4,19 +4,19 @@
     import ButtonDelete from "./buttonDelete.svelte";
     import ButtonEdit from "./buttonEdit.svelte";
     
+    export let entity = "";
     let loading = true;
     let error = null;
     let data = null;
-    export let entity = "clientes";
     let entities = [];
     // Modificamos el array para incluir todas las variantes de los campos
     const standardFields = [
         "estado", "Estado",
         "id", "Id", "ID",
         "usuario", "Usuario",
-        "createdAt", "createdat", "created_at",
-        "updatedAt", "updatedat", "updated_at",
-        "deletedAt", "deletedat", "deleted_at"
+        "createdAt", "createdat", "createdAt",
+        "updatedAt", "updatedat", "updatedAt",
+        "deletedAt", "deletedat", "deletedAt" 
     ];
 
     // Función auxiliar para normalizar las claves
@@ -46,9 +46,13 @@
                 }
                 throw new Error(error);
             }
+
+            if (response.ok) {
+                data = await response.json();
+                entities = Array.isArray(data) ? data : (data[entity] || []);
+            }
             
-            data = await response.json();
-            entities = Array.isArray(data) ? data : (data[entity] || []);
+            
         } catch (err) {
             error = `${err}`;
             entities = [];

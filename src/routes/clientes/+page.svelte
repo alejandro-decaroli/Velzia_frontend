@@ -1,10 +1,10 @@
 <script>
-    import Clientes from "$lib/components/tableClientes.svelte"
+    import EntitiesTable from "$lib/components/entitiesTable.svelte"
     import ButtonCreate from "$lib/components/button.Create.svelte"
 </script>
 
 <div class="cliente_container">
-    <Clientes entity="clientes"/>
+    <EntitiesTable entity="clientes"/>
     <ButtonCreate 
     route="clientes"
     name_entity="cliente"
