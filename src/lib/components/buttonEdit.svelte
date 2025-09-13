@@ -2,10 +2,11 @@
     import { onMount } from 'svelte';
     import { user } from "$lib/stores/auth.js";
     
-    export let entity = "";
+    export let name_entity = "";
     export let route = "";
     export let id = null;
     
+    let entity = null;
     let data = null;
     let loading = false;
     let error = null;
@@ -33,16 +34,20 @@
             });
             
             if (!response.ok) {
-                throw new Error('Error al cargar los datos');
+                data = await response.json();
+                if (data.errors && Array.isArray(data.errors)) {
+                    error = data.errors.map(e => e.msg).join(', ');
+                } else {
+                    error = data.message || `Error al cargar el ${name_entity}`;
+                }
+                throw new Error(error);
             }
             
             data = await response.json();
             entity = data.cliente;
-            console.log(data);
             showForm = true;
         } catch (err) {
-            console.error("Error:", err);
-            error = 'Error al cargar los datos del cliente';
+            error = `${err}`;
         } finally {
             loading = false;
         }
@@ -62,17 +67,23 @@
                 body: JSON.stringify(entity)
             });
             
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error('Error al actualizar los datos');
+                if (data.errors && Array.isArray(data.errors)) {
+                    error = data.errors.map(e => e.msg).join(', ');
+                } else {
+                    error = data.message || `Error al crear el ${name_entity}`;
+                }
+                throw new Error(error);
             }
             
             // Cerrar el formulario después de actualizar
             showForm = false;
             // Emitir evento para notificar al componente padre
-            dispatch('updated');
+            window.location.reload();
         } catch (err) {
-            console.error("Error:", err);
-            error = `Error al actualizar los datos de ${entity}`;
+            error = `${err}`;
         } finally {
             loading = false;
         }
@@ -91,19 +102,19 @@
     class="edit-btn" 
     on:click={handleEditClick}
     disabled={loading}
-    aria-label="Editar {entity}"
+    aria-label="Editar {name_entity}"
 >
     {#if loading}
         Cargando...
     {:else}
-        Editar {entity}
+        Editar {name_entity}
     {/if}
 </button>
 
 {#if showForm && entity}
 <div class="edit-form-overlay">
     <div class="edit-form">
-        <h3>Editar {entity}</h3>
+        <h3>Editar {name_entity}</h3>
         
         {#if error}
             <div class="error-message">{error}</div>
@@ -113,18 +124,10 @@
             {#each Object.keys(entity).map(key => key.charAt(0).toUpperCase() + key.slice(1)).filter(key => !standardFields.includes(key)) as key}
                 <div>
                     <label for={key}>{key}:</label>
-                    <input type="text" id={key} placeholder={key} bind:value={entity[key]} />
+                    <input type="text" id={key} placeholder={key} bind:value={entity[key.toLowerCase()]} />
                 </div>
             {/each}  
             <div class="form-actions">
-                <button 
-                    class="cancel-btn"
-                    type="button" 
-                    on:click={handleClose}
-                    disabled={loading}
-                >
-                    Cancelar
-                </button>
                 <button 
                     class="save-btn"
                     type="button" 
@@ -132,6 +135,14 @@
                     disabled={loading}
                 >
                     {loading ? 'Guardando...' : 'Guardar Cambios'}
+                </button>
+                <button 
+                    class="cancel-btn"
+                    type="button" 
+                    on:click={handleClose}
+                    disabled={loading}
+                >
+                    Cancelar
                 </button>
             </div>
         {/if}
@@ -141,7 +152,7 @@
 
 <style>
     .edit-btn {
-        background-color: #F59E0B;
+        background-color: #405B81;
         color: white;
         border: none;
         border-radius: 0.375rem;
@@ -152,7 +163,7 @@
     }
     
     .edit-btn:hover:not(:disabled) {
-        background-color: #D97706;
+        background-color: #1D3557;
     }
     
     .edit-btn:disabled {
@@ -183,8 +194,9 @@
     
     .edit-form label {
         display: block;
+        text-align: left;
         margin-bottom: 0.5rem;
-        margin-top: 0.5rem;
+        margin-top: 1rem;
         color: #1D3557;
         font-weight: bold;
     }
@@ -198,7 +210,7 @@
     
     .form-actions {
         display: flex;
-        justify-content: flex-end;
+        justify-content: center;
         gap: 1rem;
         margin-top: 1.5rem;
     }
@@ -233,7 +245,7 @@
     }
 
     .save-btn {
-        background-color: #F59E0B;
+        background-color: #405B81;
         color: white;
         border: none;
         border-radius: 0.375rem;
@@ -244,7 +256,7 @@
     }
 
     .save-btn:hover:not(:disabled) {
-        background-color: #D97706;
+        background-color: #1D3557;
     }
 
     .save-btn:disabled {

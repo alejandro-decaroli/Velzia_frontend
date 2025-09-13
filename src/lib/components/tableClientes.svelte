@@ -6,6 +6,7 @@
     
     let loading = true;
     let error = null;
+    let data = null;
     export let entity = "clientes";
     let entities = [];
     // Modificamos el array para incluir todas las variantes de los campos
@@ -30,20 +31,26 @@
             error = null;
             
             const response = await fetch(`http://localhost:3000/${entity}`, {
+                method: "GET",
                 headers: {
-                    "Authorization": `Bearer ${$user?.token}`
+                    "Authorization": `Bearer ${$user?.token}`,
                 }
             });
             
             if (!response.ok) {
-                throw new Error('Error al cargar los datos');
+                data = await response.json();
+                if (data.errors && Array.isArray(data.errors)) {
+                    error = data.errors.map(e => e.msg).join(', ');
+                } else {
+                    error = data.message || `Error al cargar el ${entity}`;
+                }
+                throw new Error(error);
             }
             
-            const data = await response.json();
+            data = await response.json();
             entities = Array.isArray(data) ? data : (data[entity] || []);
         } catch (err) {
-            console.error("Error al cargar los datos:", err);
-            error = "Error al cargar los datos. Por favor, inténtalo de nuevo.";
+            error = `${err}`;
             entities = [];
         } finally {
             loading = false;
@@ -107,7 +114,7 @@
                                 on:deleted={handleUpdate} 
                             />
                             <ButtonEdit 
-                                entity="cliente" 
+                                name_entity="cliente" 
                                 route={entity} 
                                 id={item.id} 
                                 on:updated={handleUpdate} 

@@ -5,6 +5,8 @@
     export let route = "";
     export let id = null;
     
+    let data = null;
+    let error = null;
     let showConfirm = false;
     
     async function deleteEntity() {
@@ -20,11 +22,18 @@
             if (response.ok) {
                 // Recargar la página después de eliminar
                 window.location.reload();
-            } else {
-                console.error(`Error al eliminar ${entity}`);
+            } 
+            if (!response.ok) {
+                const data = await response.json();
+                if (data.errors && Array.isArray(data.errors)) {
+                    error = data.errors.map(e => e.msg).join(', ');
+                } else {
+                    error = data.message || `Error al eliminar el ${entity}`;
+                }
+                throw new Error(error);
             }
         } catch (error) {
-            console.error("Error:", error);
+            error = `${error}`;
         }
     }
     
@@ -46,6 +55,9 @@
 </button>
 
 {#if showConfirm}
+    {#if error}
+        <div class="error-message">{error}</div>
+    {/if}
     <div class="confirm-overlay">
         <div class="confirm-dialog">
             <p>¿Estás seguro de que deseas eliminar este {entity}?</p>
@@ -75,6 +87,15 @@
         cursor: pointer;
         font-weight: 500;
         transition: all 0.2s ease;
+    }
+
+    .error-message {
+        color: #e53e3e;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background-color: #fff5f5;
+        border: 1px solid #fed7d7;
+        border-radius: 0.25rem;
     }
 
     .delete {

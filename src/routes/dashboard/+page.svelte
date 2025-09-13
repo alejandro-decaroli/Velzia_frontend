@@ -76,7 +76,7 @@
         color: #1D3557;
         padding: 1rem;
         width: 100%;
-        height: 100px;
+        overflow: visible;
     }
     @media (max-width: 700px) {
         .container-inferior {
@@ -110,6 +110,7 @@
             align-items: center;
             width: 100%;
             overflow-y: scroll; 
+            margin-bottom: 1rem;
         }
     }
 </style>

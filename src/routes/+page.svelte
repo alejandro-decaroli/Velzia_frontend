@@ -51,6 +51,8 @@ Mantén buen contraste: texto oscuro sobre fondos claros y viceversa.
     </div>
 </main>
 
+
+
 <style>
     .container {
         display: flex;

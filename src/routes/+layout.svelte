@@ -1,6 +1,5 @@
 <script>
     import NavBar from "$lib/components/NavBar.svelte"
-    import Footer from "$lib/components/Footer.svelte"
     import "../app.css";
 </script>
 
@@ -13,7 +12,9 @@
 </main>
 
 <footer>
-    <Footer />
+    <p>2025 Alejandro Decaroli, Gonzalo Zinni. Todos los derechos reservados</p>
+    <p>Desarrollado por Alejandro Decaroli y Gonzalo Zinni</p>
+    <p>Version 1.0.0</p>
 </footer>
 
 

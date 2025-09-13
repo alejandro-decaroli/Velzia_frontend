@@ -1,11 +1,20 @@
 <script>
-    import Clientes from "$lib/components/clientes.svelte"
+    import Clientes from "$lib/components/tableClientes.svelte"
     import ButtonCreate from "$lib/components/button.Create.svelte"
 </script>
 
 <div class="cliente_container">
     <Clientes entity="clientes"/>
-    <ButtonCreate route="clientes" entity="cliente"/>
+    <ButtonCreate 
+    route="clientes"
+    name_entity="cliente"
+    fields= {{
+        nombre: "text", 
+        apellido: "text", 
+        telefono: "text", 
+        direccion: "text", 
+        email: "email"
+    }}/>
 </div>
 
 <style>
