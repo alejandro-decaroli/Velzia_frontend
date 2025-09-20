@@ -1,22 +1,26 @@
 <script>
-    import { onMount } from 'svelte';
-    import { user } from "$lib/stores/auth.js";
-    import ButtonDelete from "./buttonDelete.svelte";
-    import ButtonEdit from "./buttonEdit.svelte";
+    import { fetchEntity } from "$lib/utils/api.js";
     
+    export let token = "";
     export let entity = "";
-    let loading = true;
-    let error = null;
-    let data = null;
-    let entities = [];
+    export let loading = true;
+    export let error = null;
+    export let data = null;
+    export let entities = [];
     // Modificamos el array para incluir todas las variantes de los campos
     const standardFields = [
-        "estado", "Estado",
+        "cliente", "Cliente",
+        "Moneda", "moneda",
         "id", "Id", "ID",
+        "caja", "Caja",
+        "Visible", "visible",
         "usuario", "Usuario",
-        "createdAt", "createdat", "createdAt",
-        "updatedAt", "updatedat", "updatedAt",
-        "deletedAt", "deletedat", "deletedAt" 
+        "caja_origen", "Caja Origen",
+        "caja_destino", "Caja Destino",
+        "ActualizadoEn", "actualizadoEn",
+        "moneda_origen", "Moneda Origen",
+        "moneda_destino", "Moneda Destino",
+        "eliminadoEn", "EliminadoEn"
     ];
 
     // Función auxiliar para normalizar las claves
@@ -25,49 +29,13 @@
         return key.toLowerCase().replace(/_/g, '');
     }
 
-    async function fetchEntity() {
-        try {
-            loading = true;
-            error = null;
-            
-            const response = await fetch(`http://localhost:3000/${entity}`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${$user?.token}`,
-                }
-            });
-            
-            if (!response.ok) {
-                data = await response.json();
-                if (data.errors && Array.isArray(data.errors)) {
-                    error = data.errors.map(e => e.msg).join(', ');
-                } else {
-                    error = data.message || `Error al cargar el ${entity}`;
-                }
-                throw new Error(error);
-            }
-
-            if (response.ok) {
-                data = await response.json();
-                entities = Array.isArray(data) ? data : (data[entity] || []);
-            }
-            
-            
-        } catch (err) {
-            error = `${err}`;
-            entities = [];
-        } finally {
-            loading = false;
-        }
-    }
-
-    onMount(() => {
-        fetchEntity();
-    });
-
     // Función para manejar la actualización después de editar/eliminar
     function handleUpdate() {
-        fetchEntity();
+        loading, error, entities = fetchEntity(entity, entities, token, data, loading, error);
+    }
+
+    function handleDate(date) {
+        return new Date(date).toLocaleDateString();
     }
 
 </script>
@@ -77,7 +45,7 @@
         <div class="loading">Cargando datos...</div>
     {:else if error}
         <div class="error-message">{error}</div>
-        <button on:click={fetchEntity} class="retry-btn">Reintentar</button>
+        <button on:click={handleUpdate} class="retry-btn">Reintentar</button>
     {:else}
         <table class="table">
             <thead>
@@ -92,7 +60,7 @@
                                 display: key.split(/(?=[A-Z])/).join(' ')
                             }))
                             as {original, display}}
-                            <th>{display}</th>
+                            <th>{display.charAt(0).toUpperCase() + display.slice(1)}</th>
                         {/each}
                         <th>Acciones</th>
                     {:else}
@@ -108,21 +76,14 @@
                                 normalizeKey(field) === normalizeKey(key)
                             ))
                             as [key, value]}
-                            <td>{value}</td>
+                            {#if key === "creadoEn" || key === "actualizadoEn" || key === "eliminadoEn"}
+                                <td>{handleDate(value)}</td>
+                            {:else}
+                                <td>{value}</td>
+                            {/if}
                         {/each}
                         <td class="actions">
-                            <ButtonDelete 
-                                entity="cliente" 
-                                route={entity} 
-                                id={item.id} 
-                                on:deleted={handleUpdate} 
-                            />
-                            <ButtonEdit 
-                                name_entity="cliente" 
-                                route={entity} 
-                                id={item.id} 
-                                on:updated={handleUpdate} 
-                            />
+                            <slot name="actions" {item}/>
                         </td>
                     </tr>
                 {/each}

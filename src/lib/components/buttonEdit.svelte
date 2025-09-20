@@ -1,101 +1,58 @@
 <script>
-    import { onMount } from 'svelte';
-    import { user } from "$lib/stores/auth.js";
+    import { loadEntity, updateEntity } from "$lib/utils/api.js";
     
     export let name_entity = "";
     export let route = "";
     export let id = null;
-    
+    export let token = "";
+    export let fields = {};
+    export let options = {};
+    export let monedas = {};
+    export let cajas = {};
+    export let clientes = {};
+
     let entity = null;
     let data = null;
     let loading = false;
     let error = null;
     let showForm = false;
+    let entities = [];
     const standardFields = [
         "estado", "Estado",
         "id", "Id", "ID",
         "usuario", "Usuario",
-        "updatedAt", "updatedat", "updatedAt", 
-        "deletedAt", "deletedat", "deletedAt", 
-        "createdAt", "createdat", "createdAt" 
+        "visible", "Visible",
+        "nombre_caja_origen", "Nombre_Caja_Origen",
+        "nombre_caja_destino", "Nombre_Caja_Destino",
+        "tipo_moneda", "Tipo Moneda",
+        "nombre_moneda_origen", "Nombre Moneda Origen",
+        "nombre_moneda_destino", "Nombre Moneda Destino",
+        "Nombre_moneda", "nombre_Moneda", "nombre_moneda",
+        "actualizadoEn", "ActualizadoEn",
+        "eliminadoEn", "EliminadoEn",
+        "creadoEn", "CreadoEn" 
     ];
 
-    async function loadEntity() {
-        try {
-            loading = true;
-            error = null;
-            
-            const response = await fetch(`http://localhost:3000/${route}/${id}`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${$user?.token}`,
-                    "Content-Type": "application/json"
-                }
-            });
-            
-            if (!response.ok) {
-                data = await response.json();
-                if (data.errors && Array.isArray(data.errors)) {
-                    error = data.errors.map(e => e.msg).join(', ');
-                } else {
-                    error = data.message || `Error al cargar el ${name_entity}`;
-                }
-                throw new Error(error);
-            }
-            
-            data = await response.json();
-            entity = data.cliente;
-            showForm = true;
-        } catch (err) {
-            error = `${err}`;
-        } finally {
-            loading = false;
-        }
+    async function handleUpdate() {
+        let result = await updateEntity(route, id, token, name_entity, showForm, entity, data, loading, error);
+        loading = result.loading;
+        error = result.error;
+        showForm = result.showForm;
     }
 
-    async function updateEntity() {
-        try {
-            loading = true;
-            error = null;
-            
-            const response = await fetch(`http://localhost:3000/${route}/update/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${$user?.token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(entity)
-            });
-            
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (data.errors && Array.isArray(data.errors)) {
-                    error = data.errors.map(e => e.msg).join(', ');
-                } else {
-                    error = data.message || `Error al crear el ${name_entity}`;
-                }
-                throw new Error(error);
-            }
-            
-            // Cerrar el formulario después de actualizar
-            showForm = false;
-            // Emitir evento para notificar al componente padre
-            window.location.reload();
-        } catch (err) {
-            error = `${err}`;
-        } finally {
-            loading = false;
-        }
-    }
-
-    function handleEditClick() {
-        loadEntity();
+    async function handleEditClick() {
+        
+        let result = await loadEntity(route, id, token, name_entity, showForm, entity, data, loading, error);
+        loading = result.loading;
+        error = result.error;
+        entity = result.entity;
+        showForm = result.showForm;
     }
 
     function handleClose() {
         showForm = false;
     }
+
 </script>
 
 <button 
@@ -123,16 +80,38 @@
         {#if entity}
             {#each Object.keys(entity).filter(key => !standardFields.includes(key)) as key}
                 {@const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1)}
-                <div>
+                <div class="form-group">
                     <label for={capitalizedKey}>{capitalizedKey}:</label>
-                    <input type="text" id={capitalizedKey} placeholder={capitalizedKey} bind:value={entity[key]} />
+                    {#if fields[key] === "select"}
+                        <select id={capitalizedKey} bind:value={entity[key]}>
+                            {#if key === "moneda" && monedas.length > 0}
+                                {#each monedas as option}
+                                    <option value={option.id}>{option.nombre}</option>
+                                {/each}
+                            {:else if key === "caja" && cajas.length > 0}
+                                {#each cajas as option}
+                                    <option value={option.id}>{option.nombre}</option>
+                                {/each}
+                            {:else if key === "cliente" && clientes.length > 0}
+                                {#each clientes as option}
+                                    <option value={option.id}>{option.nombre + " " + option.apellido}</option>
+                                {/each}
+                            {:else}
+                                {#each options as option}
+                                    <option value={option.id}>{option.nombre}</option>
+                                {/each}
+                            {/if}
+                        </select>
+                    {:else}
+                        <input type={fields[key]} id={capitalizedKey} placeholder={capitalizedKey} bind:value={entity[key]} />
+                    {/if}
                 </div>
             {/each}  
             <div class="form-actions">
                 <button 
                     class="save-btn"
                     type="button" 
-                    on:click={updateEntity}
+                    on:click={handleUpdate}
                     disabled={loading}
                 >
                     {loading ? 'Guardando...' : 'Guardar Cambios'}
@@ -209,6 +188,21 @@
         border-radius: 0.25rem;
     }
     
+    .form-group {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+    }
+
+    .form-group select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+    }
+
     .form-actions {
         display: flex;
         justify-content: center;

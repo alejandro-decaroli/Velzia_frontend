@@ -1,6 +1,13 @@
 <script>
     import { user } from "$lib/stores/auth.js";
     import { goto } from '$app/navigation';
+
+    let token = $user?.token;
+
+    if (!token) {
+        goto("/login");
+    }
+
 </script>
 <div class="user-container">
     <div class="user-info">
@@ -42,6 +49,12 @@
         </button>
         <button aria-label="Aportes socio" on:click={() => {goto("/aportes")}}>
             Aportes socio
+        </button>
+        <button aria-label="Productos" on:click={() => {goto("/productos")}}>
+            Productos
+        </button>
+        <button aria-label="Reportes" on:click={() => {goto("/reportes")}}>
+            Reportes
         </button>
     </div>
 </div>

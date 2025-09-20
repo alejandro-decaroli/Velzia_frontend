@@ -8,7 +8,7 @@
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import GoBack from "$lib/components/goback.svelte"
 
-    const entity = "monedas";
+    const entity = "productos";
     let token = $user?.token;
     let data = null;
     let entities = [];
@@ -29,9 +29,10 @@
     const handleUpdate = async () => {
         await loadData();
     };
+
 </script>
 <GoBack/>
-<div class="moneda_container">
+<div class="caja_container">
     <EntitiesTable 
         {entity} 
         {token} 
@@ -59,15 +60,18 @@
     </EntitiesTable>
     <ButtonCreate 
         route={entity}
-        name_entity="moneda"
+        name_entity="producto"
         fields= {{
         nombre: "text", 
-        codigo_iso: "text"
-    }}/>
+        descripcion: "text",
+        stock: "number"
+    }}
+    
+    />
 </div>
 
 <style>
-    .moneda_container {
+    .caja_container {
         width: 100%;
         height: 100%;
         display: flex;

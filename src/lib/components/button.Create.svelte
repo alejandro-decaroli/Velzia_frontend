@@ -4,7 +4,11 @@
     export let name_entity = "";
     export let route = "";
     export let fields = {};
-    
+    export let options = {};
+    export let monedas = {};
+    export let cajas = {};
+    export let clientes = {};
+
     let data = null;
     let loading = null;
     let showModal = false;
@@ -75,7 +79,29 @@
                 {/if}
                 {#each Object.entries(fields) as [fieldName, fieldType]}
                     <label for={fieldName}>{fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}</label>
-                    <input type={fieldType} id={fieldName} name={fieldName} bind:value={formData[fieldName]} placeholder="Ingrese {fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}" />
+                    {#if fieldType === "select"}
+                        <select id={fieldName} name={fieldName} bind:value={formData[fieldName]}>
+                            {#if fieldName === "moneda" && monedas.length > 0}
+                                {#each monedas as option}
+                                    <option value={option.id}>{option.nombre}</option>
+                                {/each}
+                            {:else if fieldName === "caja" && cajas.length > 0}
+                                {#each cajas as option}
+                                    <option value={option.id}>{option.nombre}</option>
+                                {/each}
+                            {:else if fieldName === "cliente" && clientes.length > 0}
+                                {#each clientes as option}
+                                    <option value={option.id}>{option.nombre + " " + option.apellido}</option>
+                                {/each}
+                            {:else}
+                                {#each options as option}
+                                    <option value={option.id}>{option.nombre}</option>
+                                {/each}
+                            {/if}
+                        </select>
+                        {:else}
+                            <input type={fieldType} id={fieldName} name={fieldName} bind:value={formData[fieldName]} placeholder="Ingrese {fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}">
+                        {/if}
                 {/each}
                 <div class="form-actions">
                     <button class="create-btn" type="submit">Crear</button>
@@ -87,6 +113,14 @@
 {/if}
 
 <style>
+
+    select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+    }
 
     h3 {
         align-self: center;

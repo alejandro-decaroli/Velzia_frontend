@@ -1,14 +1,66 @@
 <script>
-    import EntitiesTable from "$lib/components/entitiesTable.svelte"
-    import ButtonCreate from "$lib/components/button.Create.svelte"
-</script>
+    import { onMount } from 'svelte';
+    import { user } from "$lib/stores/auth.js";
+    import { fetchEntity } from "$lib/utils/api.js";
+    import EntitiesTable from "$lib/components/entitiesTable.svelte";
+    import ButtonCreate from "$lib/components/button.Create.svelte";
+    import ButtonDelete from "$lib/components/buttonDelete.svelte";
+    import ButtonEdit from "$lib/components/buttonEdit.svelte";
+    import GoBack from "$lib/components/goback.svelte"
 
+    const entity = "clientes";
+    let token = $user?.token;
+    let data = null;
+    let entities = [];
+    let loading = true;
+    let error = null;
+
+    const loadData = async () => {
+        const result = await fetchEntity(entity, entities, token, data, loading, error);
+        loading = result.loading;
+        error = result.error;
+        entities = result.entities;
+    };
+
+    onMount(() => {
+        loadData();
+    });
+
+    const handleUpdate = async () => {
+        await loadData();
+    };
+</script>
+<GoBack/>
 <div class="cliente_container">
-    <EntitiesTable entity="clientes"/>
+    <EntitiesTable 
+        {entity} 
+        {token} 
+        {data} 
+        {entities} 
+        {loading} 
+        {error}
+    >
+        <svelte:fragment slot="actions" let:item>
+            <ButtonDelete 
+                name_entity={entity.slice(0, -1)}
+                route={entity} 
+                id={item.id} 
+                token={token}
+                on:deleted={handleUpdate}
+            />
+            <ButtonEdit 
+                name_entity={entity.slice(0, -1)} 
+                route={entity} 
+                token={token}
+                id={item.id} 
+                on:updated={handleUpdate}
+            />
+        </svelte:fragment>
+    </EntitiesTable>
     <ButtonCreate 
-    route="clientes"
-    name_entity="cliente"
-    fields= {{
+        route={entity}
+        name_entity="cliente"
+        fields= {{
         nombre: "text", 
         apellido: "text", 
         telefono: "text", 

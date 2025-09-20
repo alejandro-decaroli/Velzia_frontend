@@ -1,41 +1,16 @@
 <script>
-    import { user } from "$lib/stores/auth.js";
-    
-    export let entity = "";
+    import { deleteEntity } from "$lib/utils/api.js"; 
+    export let name_entity = "";
     export let route = "";
     export let id = null;
-    
+    export let token = "";
+
     let data = null;
     let error = null;
     let showConfirm = false;
-    
-    async function deleteEntity() {
-        try {
-            const response = await fetch(`http://localhost:3000/${route}/delete/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${$user?.token}`,
-                    "Content-Type": "application/json"
-                }
-            });
-            
-            if (response.ok) {
-                // Recargar la página después de eliminar
-                window.location.reload();
-            } 
-            if (!response.ok) {
-                const data = await response.json();
-                if (data.errors && Array.isArray(data.errors)) {
-                    error = data.errors.map(e => e.msg).join(', ');
-                } else {
-                    error = data.message || `Error al eliminar el ${entity}`;
-                }
-                throw new Error(error);
-            }
-        } catch (error) {
-            error = `${error}`;
-        }
-    }
+    let showForm = false;
+    let entity = null;
+    let loading = false;
     
     function handleDelete() {
         showConfirm = true;
@@ -44,27 +19,35 @@
     function cancelDelete() {
         showConfirm = false;
     }
+
+    async function delete_entity() {
+        let result = await deleteEntity(route, id, token, name_entity, showForm, entity, data, loading, error);
+        loading = result.loading;
+        error = result.error;
+        showForm = result.showForm;
+    }
+
 </script>
 
 <button 
     class="delete" 
-    aria-label="Eliminar {entity}" 
+    aria-label="Eliminar {name_entity}" 
     on:click|preventDefault={handleDelete}
 >
-    Eliminar {entity}
+    Eliminar {name_entity}
 </button>
 
 {#if showConfirm}
-    {#if error}
-        <div class="error-message">{error}</div>
-    {/if}
     <div class="confirm-overlay">
         <div class="confirm-dialog">
-            <p>¿Estás seguro de que deseas eliminar este {entity}?</p>
+            {#if error}
+                <div class="error-message">{error}</div>
+            {/if}
+            <p>¿Estás seguro de que deseas eliminar este {name_entity}?</p>
             <div class="button-group">
                 <button 
                     class="confirm-button" 
-                    on:click|preventDefault={deleteEntity}
+                    on:click|preventDefault={delete_entity}
                 >
                     Sí, eliminar
                 </button>

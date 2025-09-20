@@ -1,18 +1,89 @@
 <script>
-    import EntitiesTable from "$lib/components/entitiesTable.svelte"
-    import ButtonCreate from "$lib/components/button.Create.svelte"
-</script>
+    import { onMount } from 'svelte';
+    import { user } from "$lib/stores/auth.js";
+    import { fetchEntity } from "$lib/utils/api.js";
+    import EntitiesTable from "$lib/components/entitiesTable.svelte";
+    import ButtonCreate from "$lib/components/button.Create.svelte";
+    import ButtonDelete from "$lib/components/buttonDelete.svelte";
+    import ButtonEdit from "$lib/components/buttonEdit.svelte";
+    import GoBack from "$lib/components/goback.svelte"
 
+    const entity = "ajustes";
+    let token = $user?.token;
+    let data = null;
+    let entities = [];
+    let loading = true;
+    let error = null;
+    let cajas = [];
+
+    const loadData = async () => {
+        const result = await fetchEntity(entity, entities, token, data, loading, error);
+        loading = result.loading;
+        error = result.error;
+        entities = result.entities;
+    };
+
+    const load_cajas= async () => {
+        const result = await fetchEntity("cajas", cajas, token, data, loading, error);
+        loading = result.loading;
+        error = result.error;
+        cajas = result.entities;
+    };
+
+    onMount(() => {
+        loadData();
+        load_cajas();
+    });
+
+    const handleUpdate = async () => {
+        await loadData();
+    };
+
+</script>
+<GoBack/>
 <div class="ajuste_container">
-    <EntitiesTable entity="ajustes"/>
+    <EntitiesTable 
+        {entity} 
+        {token} 
+        {data} 
+        {entities} 
+        {loading} 
+        {error}
+    >
+        <svelte:fragment slot="actions" let:item>
+            <ButtonDelete 
+                name_entity={entity.slice(0, -1)}
+                route={entity} 
+                id={item.id} 
+                token={token}
+                on:deleted={handleUpdate}
+            />
+            <ButtonEdit 
+                name_entity={entity.slice(0, -1)} 
+                route={entity} 
+                token={token}
+                id={item.id} 
+                options={ cajas }
+                fields= {{
+                    movimiento: "text", 
+                    monto: "number",
+                    caja: "select"
+                }}
+                on:updated={handleUpdate}
+            />
+        </svelte:fragment>
+    </EntitiesTable>
     <ButtonCreate 
-    route="ajustes"
-    name_entity="ajuste"
-    fields= {{
-        caja: "text", 
-        movimiento: "text", 
-        monto: "number",
-    }}/>
+        route={entity}
+        name_entity="ajuste"
+        options={ cajas }
+        fields= {{
+            movimiento: "text", 
+            monto: "number",
+            caja: "select"
+        }}
+    
+    />
 </div>
 
 <style>
