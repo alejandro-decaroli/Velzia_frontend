@@ -32,7 +32,8 @@
 				headers: {
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify({ nombre, apellido, email, contrasenia })
+				body: JSON.stringify({ nombre, apellido, email, contrasenia }),
+                credentials: "include"
 			});
 
 			data = await response.json();

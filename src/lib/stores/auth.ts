@@ -51,10 +51,10 @@ export async function checkUser(error: string){
             setTimeout(() => {
                 document.body.removeChild(cartel_error);
                 document.body.removeChild(fondo);
-            }, 5000);
+            }, 2000);
             setTimeout(() => {
                 goto("/login");
-            }, 5000);
+            }, 2000);
             
         } else {
             error = "";
