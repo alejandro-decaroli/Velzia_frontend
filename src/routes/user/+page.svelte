@@ -1,10 +1,13 @@
 <script>
     import { user } from "$lib/stores/auth.js";
-    import { goto } from '$app/navigation';
+    import { checkUser } from "$lib/stores/auth.js";
+    import { onMount } from 'svelte';
 
-    function editar() {
-        console.log("Editar");
-    }
+    onMount(() => {
+        checkUser(error);
+    });
+
+
 
 </script>
 <div class="user-profile-container">
@@ -15,7 +18,6 @@
         <p>Apellido: {$user?.apellido}</p>
         <p>Email: {$user?.email}</p>
     </div>
-    <button on:click={editar}>Editar</button>
 </div>
 
 <style>

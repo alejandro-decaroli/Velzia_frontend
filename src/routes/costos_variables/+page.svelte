@@ -3,10 +3,12 @@
     import { user } from "$lib/stores/auth.js";
     import { fetchEntity } from "$lib/utils/api.js";
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
-    import ButtonCreate from "$lib/components/button.Create.svelte";
+    import ButtonCreate from "$lib/components/buttonCreate.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
+    import ButtonPagar from "$lib/components/buttonPagar.svelte";
     import GoBack from "$lib/components/goback.svelte"
+    import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "costos_variables";
     let token = $user?.token;
@@ -39,6 +41,7 @@
     };
 
     onMount(() => {
+        checkUser(error);
         loadData();
         load_monedas();
         load_cajas();
@@ -60,32 +63,40 @@
         {error}
     >
         <svelte:fragment slot="actions" let:item>
+            <ButtonPagar 
+                name_entity="costo_variable"
+                route={entity} 
+                id={item.id} 
+                cajas={cajas}
+                token={token}
+                on:updated={handleUpdate}
+            />
+            <ButtonEdit 
+            name_entity="costo_variable"
+            route={entity} 
+            token={token}
+            options={monedas}
+            monedas={monedas}
+            id={item.id} 
+            fields= {{
+                adjudicacion: "text",
+                monto: "number",
+                moneda: "select",
+            }}
+            on:updated={handleUpdate}
+            />
             <ButtonDelete 
-                name_entity={entity}
+                name_entity="costo_variable"
                 route={entity} 
                 id={item.id} 
                 token={token}
                 on:deleted={handleUpdate}
             />
-            <ButtonEdit 
-                name_entity={entity}
-                route={entity} 
-                token={token}
-                options={monedas}
-                monedas={monedas}
-                id={item.id} 
-                fields= {{
-                    adjudicacion: "text",
-                    monto: "number",
-                    moneda: "select",
-                }}
-                on:updated={handleUpdate}
-            />
         </svelte:fragment>
     </EntitiesTable>
     <ButtonCreate 
         route={entity}
-        name_entity={entity}
+        name_entity="costo_variable"
         monedas={monedas}
         fields= {{ 
             adjudicacion: "text",

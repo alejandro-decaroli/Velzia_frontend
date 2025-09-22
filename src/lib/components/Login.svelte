@@ -1,8 +1,9 @@
 <script>
     import Success from "./success.svelte";
     import ErrorBox from "./errorbox.svelte";
-    import { user } from "../stores/auth.js";
     import { goto } from '$app/navigation';
+    import { user } from "../stores/auth";
+    
 
     let success = "";
 	let email = "";
@@ -13,7 +14,7 @@
 
     async function redirect(data) {
         setTimeout(async () => {
-            user.set({ id: data.user.id, email: data.user.email, nombre: data.user.nombre, apellido: data.user.apellido, token: data.token });
+            user.set({ email: data.user_json.email, nombre: data.user_json.nombre, apellido: data.user_json.apellido});
             await goto("/dashboard");
             // después del login exitoso
         }, 2000);
@@ -35,7 +36,6 @@
 			});
 
 			data = await response.json();
-
 			if (!response.ok) {
 				if (data.errors && Array.isArray(data.errors)) {
 					validationErrors = data.errors.map((e) => e.msg);

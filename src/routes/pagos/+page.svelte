@@ -5,6 +5,7 @@
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import GoBack from "$lib/components/goback.svelte"
+    import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "pagos";
     let token = $user?.token;
@@ -21,6 +22,7 @@
     };
 
     onMount(() => {
+        checkUser(error);
         loadData();
     });
 

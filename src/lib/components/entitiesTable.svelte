@@ -9,11 +9,14 @@
     export let entities = [];
     // Modificamos el array para incluir todas las variantes de los campos
     const standardFields = [
+        "Venta", "venta",
+        "Costo_variable", "costo_variable",
+        "Costo_fijo", "costo_fijo",
         "cliente", "Cliente",
         "Moneda", "moneda",
-        "id", "Id", "ID",
         "caja", "Caja",
         "Visible", "visible",
+        "Detalles", "detalles",
         "usuario", "Usuario",
         "caja_origen", "Caja Origen",
         "caja_destino", "Caja Destino",

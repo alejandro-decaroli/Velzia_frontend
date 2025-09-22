@@ -1,12 +1,15 @@
 <script>
     import { user } from "$lib/stores/auth.js";
     import { goto } from '$app/navigation';
+    import { checkUser } from "$lib/stores/auth.js";
+    import { onMount } from "svelte";
 
-    let token = $user?.token;
+    let error = "";
 
-    if (!token) {
-        goto("/login");
-    }
+    onMount(async () => {
+        await checkUser(error);
+    });
+
 
 </script>
 <div class="user-container">

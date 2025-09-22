@@ -7,6 +7,7 @@
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import GoBack from "$lib/components/goback.svelte"
+    import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "productos";
     let token = $user?.token;
@@ -23,6 +24,7 @@
     };
 
     onMount(() => {
+        checkUser(error);
         loadData();
     });
 

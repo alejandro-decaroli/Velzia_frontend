@@ -3,10 +3,11 @@
     import { user } from "$lib/stores/auth.js";
     import { fetchEntity } from "$lib/utils/api.js";
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
-    import ButtonCreate from "$lib/components/button.Create.svelte";
+    import ButtonCreate from "$lib/components/buttonCreate.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import GoBack from "$lib/components/goback.svelte"
+    import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "transferencias";
     let token = $user?.token;
@@ -31,6 +32,7 @@
     };
 
     onMount(() => {
+        checkUser(error);
         loadData();
         load_cajas();
     });
@@ -51,27 +53,27 @@
         {error}
     >
         <svelte:fragment slot="actions" let:item>
+            <ButtonEdit 
+            name_entity={entity.slice(0, -1)} 
+            route={entity} 
+            token={token}
+            id={item.id} 
+            options={ cajas }
+            fields= {{
+                monto: "number", 
+                caja_origen: "select",
+                caja_destino: "select",
+                motivo: "text"
+            }}
+                on:updated={handleUpdate}
+                />
             <ButtonDelete 
                 name_entity={entity.slice(0, -1)}
                 route={entity} 
                 id={item.id} 
                 token={token}
                 on:deleted={handleUpdate}
-            />
-            <ButtonEdit 
-                name_entity={entity.slice(0, -1)} 
-                route={entity} 
-                token={token}
-                id={item.id} 
-                options={ cajas }
-                fields= {{
-                    monto: "number", 
-                    caja_origen: "select",
-                    caja_destino: "select",
-                    motivo: "text"
-                }}
-                on:updated={handleUpdate}
-            />
+                />
         </svelte:fragment>
     </EntitiesTable>
     <ButtonCreate 

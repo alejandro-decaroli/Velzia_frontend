@@ -138,3 +138,108 @@ export async function fetchEntity(
         };
     }
 }
+
+export async function pagarEntity(route: string, id: string, token: string, name_entity: string, showForm: boolean, entity: any, loading: boolean, error: string) {
+    try {
+        loading = true;
+        error = "";
+        
+        const response = await fetch(`http://localhost:3000/${route}/pagar/${id}`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(entity)
+        });
+        
+        if (!response.ok) {
+            const data = await response.json();
+            if (data.errors && Array.isArray(data.errors)) {
+                error = data.errors.map((e: any) => e.msg).join(', ');
+            } else {
+                error = data.message || `Error al pagar el ${name_entity}`;
+            }
+            throw new Error(error);
+        }
+        
+        // Cerrar el formulario después de pagar
+        showForm = false;
+        window.location.reload();
+        return { loading: false, error, showForm };
+    } catch (err) {
+        error = `${err}`;
+        return { loading: false, error, showForm };
+    }
+}
+
+export async function registrarDetalle(id_venta: string, token: string, showForm: boolean, entity: any, loading: boolean, error: string) {
+    try {
+        loading = true;
+        error = "";
+        
+        const response = await fetch(`http://localhost:3000/ventas/registrarDetalle/${id_venta}`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(entity)
+        });
+        
+        if (!response.ok) {
+            const data = await response.json();
+            if (data.errors && Array.isArray(data.errors)) {
+                error = data.errors.map((e: any) => e.msg).join(', ');
+            } else {
+                error = data.message || `Error al registrar el detalle de la venta`;
+            }
+            throw new Error(error);
+        }
+        
+        // Cerrar el formulario después de pagar
+        showForm = false;
+        window.location.reload();
+        return { loading: false, error, showForm };
+    } catch (err) {
+        error = `${err}`;
+        return { loading: false, error, showForm };
+    }
+}
+
+export async function getDetalles(
+    entities: any[], 
+    token: string, 
+    id_venta: any, 
+    loading: boolean, 
+    error: string | null
+): Promise<{ loading: boolean; error: string | null; entities: any[] }> {
+    try {
+        loading = true;
+        error = null;
+        
+        const response = await fetch(`http://localhost:3000/ventas/detalle/${id_venta}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Error al cargar detalles`);
+        }
+
+        const responseData = await response.json();
+        entities = Array.isArray(responseData) ? responseData : (responseData["detalles"] || []);
+        
+        return { loading: false, error: null, entities };
+    } catch (err) {
+        return { 
+            loading: false, 
+            error: err instanceof Error ? err.message : 'Error desconocido', 
+            entities: [] 
+        };
+    }
+}
