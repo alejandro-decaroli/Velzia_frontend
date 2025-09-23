@@ -1,12 +1,12 @@
 
-export async function deleteEntity(route: string, id: string, token: string, name_entity: string, showForm: boolean, entity: any, data: any, loading: boolean, error: string) {
+export async function deleteEntity(route: string, id: string, name_entity: string, loading: boolean, error: string) {
     try {
         const response = await fetch(`http://localhost:3000/${route}/delete/${id}`, {
             method: "DELETE",
             headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
-            }
+            },
+            credentials: "include"
         });
         
         if (response.ok) {
@@ -31,7 +31,7 @@ export async function deleteEntity(route: string, id: string, token: string, nam
     
 }
 
-export async function loadEntity(route: string, id: string, token: string, name_entity: string, showForm: boolean, entity: any, data: any, loading: boolean, error: string) {
+export async function loadEntity(route: string, id: string, name_entity: string, showForm: boolean, entity: any, data: any, loading: boolean, error: string) {
     try {
         loading = true;
         error = "";
@@ -39,9 +39,9 @@ export async function loadEntity(route: string, id: string, token: string, name_
         const response = await fetch(`http://localhost:3000/${route}/${id}`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
-            }
+            },
+            credentials: "include"
         });
         
         if (!response.ok) {
@@ -66,7 +66,7 @@ export async function loadEntity(route: string, id: string, token: string, name_
     }
 }
 
-export async function updateEntity(route: string, id: string, token: string, name_entity: string, showForm: boolean, entity: any, data: any, loading: boolean, error: string) {
+export async function updateEntity(route: string, id: string, name_entity: string, showForm: boolean, entity: any, data: any, loading: boolean, error: string) {
     try {
         loading = true;
         error = "";
@@ -74,10 +74,10 @@ export async function updateEntity(route: string, id: string, token: string, nam
         const response = await fetch(`http://localhost:3000/${route}/update/${id}`, {
             method: "PUT",
             headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(entity)
+            body: JSON.stringify(entity),
+            credentials: "include"
         });
         
         if (!response.ok) {
@@ -104,8 +104,6 @@ export async function updateEntity(route: string, id: string, token: string, nam
 export async function fetchEntity(
     entity: string, 
     entities: any[], 
-    token: string, 
-    data: any, 
     loading: boolean, 
     error: string | null
 ): Promise<{ loading: boolean; error: string | null; entities: any[] }> {
@@ -115,10 +113,7 @@ export async function fetchEntity(
         
         const response = await fetch(`http://localhost:3000/${entity}`, {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
+            credentials: "include"
         });
         
         if (!response.ok) {
@@ -139,7 +134,7 @@ export async function fetchEntity(
     }
 }
 
-export async function pagarEntity(route: string, id: string, token: string, name_entity: string, showForm: boolean, entity: any, loading: boolean, error: string) {
+export async function pagarEntity(route: string, id: string, name_entity: string, showForm: boolean, entity: any, loading: boolean, error: string) {
     try {
         loading = true;
         error = "";
@@ -147,10 +142,10 @@ export async function pagarEntity(route: string, id: string, token: string, name
         const response = await fetch(`http://localhost:3000/${route}/pagar/${id}`, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(entity)
+            body: JSON.stringify(entity),
+            credentials: "include"
         });
         
         if (!response.ok) {
@@ -173,7 +168,7 @@ export async function pagarEntity(route: string, id: string, token: string, name
     }
 }
 
-export async function registrarDetalle(id_venta: string, token: string, showForm: boolean, entity: any, loading: boolean, error: string) {
+export async function registrarDetalle(id_venta: string, showForm: boolean, entity: any, loading: boolean, error: string) {
     try {
         loading = true;
         error = "";
@@ -181,10 +176,10 @@ export async function registrarDetalle(id_venta: string, token: string, showForm
         const response = await fetch(`http://localhost:3000/ventas/registrarDetalle/${id_venta}`, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(entity)
+            body: JSON.stringify(entity),
+            credentials: "include"
         });
         
         if (!response.ok) {
@@ -209,7 +204,6 @@ export async function registrarDetalle(id_venta: string, token: string, showForm
 
 export async function getDetalles(
     entities: any[], 
-    token: string, 
     id_venta: any, 
     loading: boolean, 
     error: string | null
@@ -221,9 +215,9 @@ export async function getDetalles(
         const response = await fetch(`http://localhost:3000/ventas/detalle/${id_venta}`, {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
-            }
+            },
+            credentials: "include"
         });
         
         if (!response.ok) {
@@ -241,5 +235,38 @@ export async function getDetalles(
             error: err instanceof Error ? err.message : 'Error desconocido', 
             entities: [] 
         };
+    }
+}
+
+export async function createEntity(route: string, formData: any, closeModal: () => void, error: string, loading: boolean, name_entity: string) {
+    try {
+        const response = await fetch(`http://localhost:3000/${route}/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData),
+            credentials: "include"
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            closeModal();
+            // Recargar la página después de crear para ver los cambios
+            window.location.reload();
+        } 
+        if (!response.ok) {
+            if (data.errors && Array.isArray(data.errors)) {
+                error = data.errors.map((e: any) => e.msg).join(', ');
+            } else {
+                error = data.message || `Error al crear el ${name_entity}`;
+            }
+            throw new Error(error);
+        }
+        return data;
+    } catch (err) {
+        error = `${err}`;
+        return error;
     }
 }

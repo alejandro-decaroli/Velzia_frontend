@@ -1,5 +1,5 @@
 <script>
-    import { user } from "$lib/stores/auth.js";
+    import { createEntity } from "$lib/utils/api.js";
     
     export let name_entity = "";
     export let route = "";
@@ -8,16 +8,17 @@
     export let monedas = {};
     export let cajas = {};
     export let clientes = {};
+    export let rol = [];
 
     let data = null;
-    let loading = null;
+    let loading = false;
     let showModal = false;
     let formData = {};
-    let error = null;
+    let error = "";
 
     function openModal() {
         formData = {}; // Reset form data when opening
-        error = null;
+        error = "";
         showModal = true;
     }
 
@@ -25,40 +26,11 @@
         showModal = false;
     }
 
-    async function createEntity() {
-        try {
-            loading = true;
-            error = null;
-            const response = await fetch(`http://localhost:3000/${route}/create`, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${$user?.token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            });
-
-            data = await response.json();
-
-            if (response.ok) {
-                closeModal();
-                // Recargar la página después de crear para ver los cambios
-                window.location.reload();
-            } 
-            if (!response.ok) {
-                if (data.errors && Array.isArray(data.errors)) {
-                    error = data.errors.map(e => e.msg).join(', ');
-                } else {
-                    error = data.message || `Error al crear el ${name_entity}`;
-                }
-                throw new Error(error);
-            }
-        } catch (err) {
-            error = `${err}`;
-        } finally {
-            loading = false;
-        }
+    async function handleCreateEntity() {
+        let result = await createEntity(route, formData, closeModal, error, loading, name_entity);
+        error = result.error;
     }
+
 </script>
 
 <button 
@@ -72,7 +44,7 @@
 {#if showModal}
     <div class="modal-overlay" role="button" tabindex="0" on:click={closeModal} on:keydown={(e) => e.key === 'Enter' && closeModal()}>
         <div class="modal-content" on:click|stopPropagation>
-            <form class="create_form" on:submit|preventDefault={createEntity}>
+            <form class="create_form" on:submit|preventDefault={handleCreateEntity}>
                 <h3>Crear {name_entity}</h3>
                 {#if error}
                     <div class="error-message">{error}</div>
@@ -92,6 +64,10 @@
                             {:else if fieldName === "cliente" && clientes.length > 0}
                                 {#each clientes as option}
                                     <option value={option.id}>{option.nombre + " " + option.apellido}</option>
+                                {/each}
+                            {:else if fieldName === "rol" && rol.length > 0}
+                                {#each rol as option}
+                                    <option value={option}>{option}</option>
                                 {/each}
                             {:else}
                                 {#each options as option}

@@ -1,6 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
-    import { user } from "$lib/stores/auth.js";
+    import { onMount } from 'svelte';   
     import { fetchEntity } from "$lib/utils/api.js";
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
     import ButtonCreate from "$lib/components/buttonCreate.svelte";
@@ -11,7 +10,6 @@
     import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "costos_fijos";
-    let token = $user?.token;
     let data = null;
     let entities = [];
     let loading = true;
@@ -20,21 +18,21 @@
     let error = null;
 
     const loadData = async () => {
-        const result = await fetchEntity(entity, entities, token, data, loading, error);
+        const result = await fetchEntity(entity, entities, data, loading, error);
         loading = result.loading;
         error = result.error;
         entities = result.entities;
     };
 
     const load_monedas= async () => {
-        const result = await fetchEntity("monedas", monedas, token, data, loading, error);
+        const result = await fetchEntity("monedas", monedas, data, loading, error);
         loading = result.loading;
         error = result.error;
         monedas = result.entities;
     };
 
     const load_cajas= async () => {
-        const result = await fetchEntity("cajas", cajas, token, data, loading, error);
+        const result = await fetchEntity("cajas", cajas, data, loading, error);
         loading = result.loading;
         error = result.error;
         cajas = result.entities;
@@ -56,7 +54,6 @@
 <div class="caja_container">
     <EntitiesTable 
         {entity} 
-        {token} 
         {data} 
         {entities} 
         {loading} 
@@ -68,13 +65,11 @@
                 route={entity} 
                 id={item.id} 
                 cajas={cajas}
-                token={token}
                 on:updated={handleUpdate}
             />
             <ButtonEdit 
             name_entity="costo_fijo"
             route={entity} 
-            token={token}
             options={monedas}
             monedas={monedas}
             id={item.id} 
@@ -89,7 +84,6 @@
                 name_entity="costo_fijo"
                 route={entity} 
                 id={item.id} 
-                token={token}
                 on:deleted={handleUpdate}
             />
         </svelte:fragment>

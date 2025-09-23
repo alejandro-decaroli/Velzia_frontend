@@ -1,19 +1,18 @@
 <script>
+    import { checkAdmin } from "$lib/stores/auth.js";
     import { onMount } from 'svelte';
-    import { fetchEntity } from "$lib/utils/api.js";
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
-    import ButtonCreate from "$lib/components/buttonCreate.svelte";
-    import ButtonDelete from "$lib/components/buttonDelete.svelte";
-    import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import GoBack from "$lib/components/goback.svelte"
-    import { checkUser } from "$lib/stores/auth.js";
+    import ButtonCreate from "$lib/components/buttonCreate.svelte";
+    import ButtonEdit from "$lib/components/buttonEdit.svelte";
+    import ButtonDelete from "$lib/components/buttonDelete.svelte";
+    import { fetchEntity } from "$lib/utils/api.js";
 
-    const entity = "cajas";
-    let data = null;
+    let error = "";
     let entities = [];
     let loading = true;
-    let monedas = [];
-    let error = null;
+    let data = null;
+    let entity = "usuarios";
 
     const loadData = async () => {
         const result = await fetchEntity(entity, entities, data, loading, error);
@@ -22,17 +21,9 @@
         entities = result.entities;
     };
 
-    const load_monedas= async () => {
-        const result = await fetchEntity("monedas", monedas, data, loading, error);
-        loading = result.loading;
-        error = result.error;
-        monedas = result.entities;
-    };
-
     onMount(() => {
-        checkUser(error);
+        checkAdmin(error);
         loadData();
-        load_monedas();
     });
 
     const handleUpdate = async () => {
@@ -40,25 +31,30 @@
     };
 
 </script>
+
 <GoBack/>
-<div class="caja_container">
+<div class="admin_container">
+    <h1>Hola Admin</h1>
     <EntitiesTable 
-        {entity} 
-        {data} 
-        {entities} 
-        {loading} 
-        {error}
+    entity={entity}
+    data={data}
+    entities={entities}
+    loading={loading}
+    error={error}
     >
-        <svelte:fragment slot="actions" let:item>
+
+    <svelte:fragment slot="actions" let:item>
             <ButtonEdit 
             name_entity={entity.slice(0, -1)} 
             route={entity} 
             id={item.id} 
-            options={ monedas }
+            rol={ ["admin", "user"] }
             fields= {{
                 nombre: "text", 
-                monto: "number",
-                moneda: "select"
+                apellido: "text",
+                email: "text",
+                contraseña: "text",
+                rol: "select"
             }}
                 on:updated={handleUpdate}
                 />
@@ -72,19 +68,20 @@
     </EntitiesTable>
     <ButtonCreate 
         route={entity}
-        name_entity="caja"
-        options={ monedas }
+        name_entity="usuario"
+        rol={ ["admin", "user"] }
         fields= {{
-        nombre: "text", 
-        monto: "number",
-        moneda: "select"
-    }}
+            nombre: "text", 
+            apellido: "text",
+            email: "text",
+            contraseña: "text",
+            rol: "select"
+        }}
     
     />
 </div>
-
 <style>
-    .caja_container {
+   .admin_container {
         width: 100%;
         height: 100%;
         display: flex;

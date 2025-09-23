@@ -7,7 +7,10 @@
     let error = "";
 
     onMount(async () => {
-        await checkUser(error);
+        const userData = await checkUser(error);
+        if (userData) {
+            user.set(userData);
+        }
     });
 
 

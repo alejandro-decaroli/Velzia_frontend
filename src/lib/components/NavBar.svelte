@@ -3,6 +3,8 @@
     import { user } from "../stores/auth.js";
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
+    import { logout } from "$lib/stores/auth";
+    
     let menuUser = false;    
     onMount(() => {
         addEventListener('click', (e) => {
@@ -16,10 +18,7 @@
         menuUser = !menuUser;
     }
 
-    async function logout() {
-        user.set(null);
-        await goto("/");
-    }
+    
 
 </script>
 <nav>

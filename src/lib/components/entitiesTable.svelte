@@ -1,7 +1,6 @@
 <script>
     import { fetchEntity } from "$lib/utils/api.js";
     
-    export let token = "";
     export let entity = "";
     export let loading = true;
     export let error = null;
@@ -9,6 +8,14 @@
     export let entities = [];
     // Modificamos el array para incluir todas las variantes de los campos
     const standardFields = [
+        "Clientes", "clientes",
+        "Pago", "pago",
+        "Dividendo", "dividendo",
+        "Aporte", "aporte",
+        "Ajuste", "ajuste",
+        "Tasa", "tasa",
+        "Transferencia", "transferencia",
+        "Clientes", "clientes",
         "Venta", "venta",
         "Costo_variable", "costo_variable",
         "Costo_fijo", "costo_fijo",
@@ -34,7 +41,7 @@
 
     // Función para manejar la actualización después de editar/eliminar
     function handleUpdate() {
-        loading, error, entities = fetchEntity(entity, entities, token, data, loading, error);
+        loading, error, entities = fetchEntity(entity, entities, data, loading, error);
     }
 
     function handleDate(date) {

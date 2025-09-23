@@ -4,12 +4,12 @@
     export let name_entity = "";
     export let route = "";
     export let id = null;
-    export let token = "";
     export let fields = {};
     export let options = {};
     export let monedas = {};
     export let cajas = {};
     export let clientes = {};
+    export let rol = [];
 
     let entity = null;
     let data = null;
@@ -18,6 +18,18 @@
     let showForm = false;
     let entities = [];
     const standardFields = [
+        "Venta", "venta",
+        "CostoVariable", "costoVariable",
+        "CostoFijo", "costoFijo",
+        "Moneda", "moneda",
+        "Clientes", "clientes",
+        "Pago", "pago",
+        "Dividendo", "dividendo",
+        "Aporte", "aporte",
+        "Ajuste", "ajuste",
+        "Tasa", "tasa",
+        "Transferencia", "transferencia",
+        "Clientes", "clientes",
         "estado", "Estado",
         "id", "Id", "ID",
         "usuario", "Usuario",
@@ -34,7 +46,7 @@
     ];
 
     async function handleUpdate() {
-        let result = await updateEntity(route, id, token, name_entity, showForm, entity, data, loading, error);
+        let result = await updateEntity(route, id, name_entity, showForm, entity, data, loading, error);
         loading = result.loading;
         error = result.error;
         showForm = result.showForm;
@@ -42,7 +54,7 @@
 
     async function handleEditClick() {
         
-        let result = await loadEntity(route, id, token, name_entity, showForm, entity, data, loading, error);
+        let result = await loadEntity(route, id, name_entity, showForm, entity, data, loading, error);
         loading = result.loading;
         error = result.error;
         entity = result.entity;
@@ -95,6 +107,10 @@
                             {:else if key === "cliente" && clientes.length > 0}
                                 {#each clientes as option}
                                     <option value={option.id}>{option.nombre + " " + option.apellido}</option>
+                                {/each}
+                            {:else if key === "rol" && rol.length > 0}
+                                {#each rol as option}
+                                    <option value={option}>{option}</option>
                                 {/each}
                             {:else}
                                 {#each options as option}
