@@ -41,6 +41,7 @@
 </script>
 <GoBack/>
 <div class="ajuste_container">
+    <h1>Ajustes</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

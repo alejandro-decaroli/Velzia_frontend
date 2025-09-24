@@ -41,6 +41,7 @@
 </script>
 <GoBack/>
 <div class="caja_container">
+    <h1>Cajas</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

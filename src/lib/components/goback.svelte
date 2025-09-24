@@ -8,10 +8,10 @@
 
 <style>
     button {
+        position: absolute;
+        top: 5rem;
+        left: 2rem;
         display: flex;
-        margin-top: 1rem;
-        margin-left: 1rem;
-        align-self: flex-start;
         background-color: transparent;
         border: none;
         cursor: pointer;

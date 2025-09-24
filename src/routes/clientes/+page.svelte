@@ -31,6 +31,7 @@
 </script>
 <GoBack/>
 <div class="cliente_container">
+    <h1>Clientes</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

@@ -32,6 +32,7 @@
 </script>
 <GoBack/>
 <div class="caja_container">
+    <h1>Productos</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

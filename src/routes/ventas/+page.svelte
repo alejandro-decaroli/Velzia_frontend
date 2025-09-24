@@ -61,6 +61,7 @@
 </script>
 <GoBack/>
 <div class="ventas_container">
+    <h1>Ventas</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

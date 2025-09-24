@@ -41,6 +41,7 @@
 </script>
 <GoBack/>
 <div class="dividendo_container">
+    <h1>Dividendos Socio</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

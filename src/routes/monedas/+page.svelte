@@ -31,6 +31,7 @@
 </script>
 <GoBack/>
 <div class="moneda_container">
+    <h1>Monedas</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

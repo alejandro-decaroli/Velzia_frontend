@@ -7,13 +7,11 @@
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import GoBack from "$lib/components/goback.svelte"
     import { checkUser } from "$lib/stores/auth.js";
-    import { getDetalles, registrarDetalle } from "$lib/utils/api.js";
-   // import type { PageProps } from './$types';
+    import { getDetalles } from "$lib/utils/api.js";
    import { page } from "$app/stores";
 
 
     const entity = "detalles";
-    let data = null;
     let entities = [];
     let loading = true;
     let error = null;
@@ -28,7 +26,7 @@
     };
 
    const loadProductos = async () => {
-        const result = await fetchEntity("productos", productos, data, loading, error);
+        const result = await fetchEntity("productos", productos, loading, error);
         loading = result.loading;
         error = result.error;
         productos = result.entities;
@@ -47,9 +45,9 @@
 </script>
 <GoBack/>
 <div class="detalle_container">
+    <h1>Detalles de venta</h1>
     <EntitiesTable 
         {entity} 
-        {data} 
         {entities} 
         {loading} 
         {error}

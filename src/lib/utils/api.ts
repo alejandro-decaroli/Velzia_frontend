@@ -211,7 +211,42 @@ export async function getDetalles(
         loading = true;
         error = null;
         
-        const response = await fetch(`http://localhost:3000/ventas/detalle/${id_venta}`, {
+        const response = await fetch(`http://localhost:3000/ventas/detalle_venta/${id_venta}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Error al cargar detalles`);
+        }
+
+        const responseData = await response.json();
+        entities = Array.isArray(responseData) ? responseData : (responseData["detalles"] || []);
+        
+        return { loading: false, error: null, entities };
+    } catch (err) {
+        return { 
+            loading: false, 
+            error: err instanceof Error ? err.message : 'Error desconocido', 
+            entities: [] 
+        };
+    }
+}
+
+export async function getDetallesByUser(
+    entities: any[], 
+    loading: boolean, 
+    error: string | null
+): Promise<{ loading: boolean; error: string | null; entities: any[] }> {
+    try {
+        loading = true;
+        error = null;
+        
+        const response = await fetch(`http://localhost:3000/ventas/detalles`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -300,6 +335,6 @@ export async function createEntity(route: string, formData: any, closeModal: () 
         return data;
     } catch (err) {
         error = `${err}`;
-        return error;
+        return {error};
     }
 }

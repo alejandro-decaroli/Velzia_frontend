@@ -40,6 +40,7 @@
 </script>
 <GoBack/>
 <div class="tasas_container">
+    <h1>Tasas</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

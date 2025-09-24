@@ -51,6 +51,7 @@
 </script>
 <GoBack/>
 <div class="caja_container">
+    <h1>Costos Fijos</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

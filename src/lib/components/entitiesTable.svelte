@@ -102,8 +102,9 @@
 
 <style>
     .table-container {
+        max-height: 50vh;
         width: 100%;
-        overflow-x: auto;
+        overflow: auto;
         padding: 2rem;
     }
 

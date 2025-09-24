@@ -11,7 +11,7 @@
     const entity = "transferencias";
     let entities = [];
     let loading = true;
-    let error = null;
+    let error = "";
     let cajas = [];
 
     const loadData = async () => {
@@ -41,6 +41,7 @@
 </script>
 <GoBack/>
 <div class="transferencia_container">
+    <h1>Transferencias</h1>
     <EntitiesTable 
         {entity} 
         {entities} 

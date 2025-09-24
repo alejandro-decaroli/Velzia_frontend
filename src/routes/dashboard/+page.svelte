@@ -23,14 +23,17 @@
         <button aria-label="Clientes" on:click={() => {goto("/clientes")}}>
             Clientes
         </button>
-        <button aria-label="Ventas" on:click={() => {goto("/ventas")}}>
-            Ventas
-        </button>
         <button aria-label="Monedas" on:click={() => {goto("/monedas")}}>
             Monedas
         </button>
         <button aria-label="Cajas" on:click={() => {goto("/cajas")}}>
             Cajas
+        </button>
+        <button aria-label="Ventas" on:click={() => {goto("/ventas")}}>
+            Ventas
+        </button>
+        <button aria-label="Detalles de venta" on:click={() => {goto("/detalles")}}>
+            Detalles de venta
         </button>
         <button aria-label="Costos fijos" on:click={() => {goto("/costos_fijos")}}>
             Costos fijos

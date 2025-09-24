@@ -88,54 +88,8 @@
 </script>
 <GoBack/>
 <div class="reportes_container">
-    <EntitiesTable 
-        entity="ventas" 
-        entities={ventas} 
-        loading={loading} 
-        error={error}
-    />
-    <EntitiesTable 
-        entity="productos" 
-        entities={productos} 
-        loading={loading} 
-        error={error}
-    />
-    <EntitiesTable 
-        entity="cajas" 
-        entities={cajas} 
-        loading={loading} 
-        error={error}
-    />
-    <EntitiesTable 
-        entity="clientes" 
-        entities={clientes} 
-        loading={loading} 
-        error={error}
-    />
-    <EntitiesTable 
-        entity="costos_fijos" 
-        entities={costos_fijos} 
-        loading={loading} 
-        error={error}
-    />
-    <EntitiesTable 
-        entity="costos_variables" 
-        entities={costos_variables} 
-        loading={loading} 
-        error={error}
-    />
-    <EntitiesTable 
-        entity="pagos" 
-        entities={pagos} 
-        loading={loading} 
-        error={error}
-    />
-    <EntitiesTable 
-        entity="monedas" 
-        entities={monedas} 
-        loading={loading} 
-        error={error}
-    />
+    <h1>Reportes</h1>
+    
 </div>
 
 <style>

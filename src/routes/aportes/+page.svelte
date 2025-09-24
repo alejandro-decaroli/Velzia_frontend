@@ -41,6 +41,7 @@
 </script>
 <GoBack/>
 <div class="aporte_container">
+    <h1>Aportes</h1>
     <EntitiesTable 
         {entity} 
         {entities} 
