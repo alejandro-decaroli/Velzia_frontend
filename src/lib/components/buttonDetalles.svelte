@@ -1,12 +1,11 @@
 <script>
     import { goto } from "$app/navigation";
     export let id_venta;
-    console.log(id_venta);
 </script>
 
 <button 
     class="detalles-btn" 
-    on:click={() => console.log(id_venta)}
+    on:click={() => goto(`/detalles/${id_venta}`)}
     aria-label="Gestionar detalles"
 >
     Gestionar detalles

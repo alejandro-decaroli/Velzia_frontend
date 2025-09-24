@@ -1,5 +1,5 @@
 <script>
-    import { createEntity } from "$lib/utils/api.js";
+    import { createEntity, registrarDetalle } from "$lib/utils/api.js";
     
     export let name_entity = "";
     export let route = "";
@@ -9,12 +9,14 @@
     export let cajas = {};
     export let clientes = {};
     export let rol = [];
+    export let id_venta_2 = "";
 
     let data = null;
     let loading = false;
     let showModal = false;
     let formData = {};
     let error = "";
+    let result = {};
 
     function openModal() {
         formData = {}; // Reset form data when opening
@@ -27,7 +29,11 @@
     }
 
     async function handleCreateEntity() {
-        let result = await createEntity(route, formData, closeModal, error, loading, name_entity);
+        if (name_entity === "detalle") {
+            result = await registrarDetalle(id_venta_2, false, formData, "detalle", loading, error);
+        } else {
+            result = await createEntity(route, formData, closeModal, error, loading, name_entity);
+        }
         error = result.error;
     }
 

@@ -173,7 +173,7 @@ export async function registrarDetalle(id_venta: string, showForm: boolean, enti
         loading = true;
         error = "";
         
-        const response = await fetch(`http://localhost:3000/ventas/registrarDetalle/${id_venta}`, {
+        const response = await fetch(`http://localhost:3000/ventas/registrar_detalle/${id_venta}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -182,8 +182,8 @@ export async function registrarDetalle(id_venta: string, showForm: boolean, enti
             credentials: "include"
         });
         
+        const data = await response.json();
         if (!response.ok) {
-            const data = await response.json();
             if (data.errors && Array.isArray(data.errors)) {
                 error = data.errors.map((e: any) => e.msg).join(', ');
             } else {
@@ -195,7 +195,7 @@ export async function registrarDetalle(id_venta: string, showForm: boolean, enti
         // Cerrar el formulario después de pagar
         showForm = false;
         window.location.reload();
-        return { loading: false, error, showForm };
+        return { loading: false, error, showForm, data };
     } catch (err) {
         error = `${err}`;
         return { loading: false, error, showForm };
