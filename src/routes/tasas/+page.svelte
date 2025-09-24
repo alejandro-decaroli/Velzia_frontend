@@ -9,21 +9,20 @@
     import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "tasas";
-    let data = null;
     let entities = [];
     let loading = true;
     let error = null;
     let monedas = [];
 
     const loadData = async () => {
-        const result = await fetchEntity(entity, entities, data, loading, error);
+        const result = await fetchEntity(entity, entities, loading, error);
         loading = result.loading;
         error = result.error;
         entities = result.entities;
     };
 
     const loadMonedas = async () => {
-        const result = await fetchEntity("monedas", monedas, data, loading, error);
+        const result = await fetchEntity("monedas", monedas, loading, error);
         loading = result.loading;
         error = result.error;
         monedas = result.entities;
@@ -43,7 +42,6 @@
 <div class="tasas_container">
     <EntitiesTable 
         {entity} 
-        {data} 
         {entities} 
         {loading} 
         {error}

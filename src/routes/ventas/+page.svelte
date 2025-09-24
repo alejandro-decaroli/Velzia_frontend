@@ -11,32 +11,39 @@
     import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "ventas";
-    let data = null;
     let entities = [];
     let loading = true;
     let monedas = [];
     let clientes = [];
+    let cajas = [];
     let error = null;
 
     const loadData = async () => {
-        const result = await fetchEntity(entity, entities, data, loading, error);
+        const result = await fetchEntity(entity, entities, loading, error);
         loading = result.loading;
         error = result.error;
         entities = result.entities;
     };
 
     const load_monedas= async () => {
-        const result = await fetchEntity("monedas", monedas, data, loading, error);
+        const result = await fetchEntity("monedas", monedas, loading, error);
         loading = result.loading;
         error = result.error;
         monedas = result.entities;
     };
 
     const load_clientes= async () => {
-        const result = await fetchEntity("clientes", clientes, data, loading, error);
+        const result = await fetchEntity("clientes", clientes, loading, error);
         loading = result.loading;
         error = result.error;
         clientes = result.entities;
+    };
+
+    const load_cajas= async () => {
+        const result = await fetchEntity("cajas", cajas, loading, error);
+        loading = result.loading;
+        error = result.error;
+        cajas = result.entities;
     };
 
     onMount(() => {
@@ -44,6 +51,7 @@
         loadData();
         load_monedas();
         load_clientes();
+        load_cajas();
     });
 
     const handleUpdate = async () => {
@@ -52,10 +60,9 @@
 
 </script>
 <GoBack/>
-<div class="caja_container">
+<div class="ventas_container">
     <EntitiesTable 
         {entity} 
-        {data} 
         {entities} 
         {loading} 
         {error}
@@ -65,6 +72,7 @@
                 name_entity="venta"
                 route={entity} 
                 id={item.id} 
+                cajas={cajas}
                 on:updated={handleUpdate}
             />
             <ButtonDetalles 
@@ -107,7 +115,7 @@
 </div>
 
 <style>
-    .caja_container {
+    .ventas_container {
         width: 100%;
         height: 100%;
         display: flex;

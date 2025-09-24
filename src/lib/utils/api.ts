@@ -31,7 +31,7 @@ export async function deleteEntity(route: string, id: string, name_entity: strin
     
 }
 
-export async function loadEntity(route: string, id: string, name_entity: string, showForm: boolean, entity: any, data: any, loading: boolean, error: string) {
+export async function loadEntity(route: string, id: string, name_entity: string, showForm: boolean, entity: any, loading: boolean, error: string) {
     try {
         loading = true;
         error = "";
@@ -44,8 +44,8 @@ export async function loadEntity(route: string, id: string, name_entity: string,
             credentials: "include"
         });
         
+        const data = await response.json();
         if (!response.ok) {
-            data = await response.json();
             if (data.errors && Array.isArray(data.errors)) {
                 error = data.errors.map((e: any) => e.msg).join(', ');
             } else {
@@ -55,7 +55,6 @@ export async function loadEntity(route: string, id: string, name_entity: string,
         }
         
         if (response.ok) {
-            data = await response.json();
             entity = data[name_entity];
             showForm = true;
             return { loading: false, error, entity, showForm };
@@ -66,7 +65,7 @@ export async function loadEntity(route: string, id: string, name_entity: string,
     }
 }
 
-export async function updateEntity(route: string, id: string, name_entity: string, showForm: boolean, entity: any, data: any, loading: boolean, error: string) {
+export async function updateEntity(route: string, id: string, name_entity: string, showForm: boolean, entity: any, loading: boolean, error: string) {
     try {
         loading = true;
         error = "";
@@ -235,6 +234,40 @@ export async function getDetalles(
             error: err instanceof Error ? err.message : 'Error desconocido', 
             entities: [] 
         };
+    }
+}
+
+export async function cargarDetalle(id: string, showForm: boolean, entity: any, loading: boolean, error: string) {
+    try {
+        loading = true;
+        error = "";
+        
+        const response = await fetch(`http://localhost:3000/ventas/detalle/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        });
+        
+        const data = await response.json();
+        if (!response.ok) {
+            if (data.errors && Array.isArray(data.errors)) {
+                error = data.errors.map((e: any) => e.msg).join(', ');
+            } else {
+                error = data.message || `Error al cargar el detalle`;
+            }
+            throw new Error(error);
+        }
+        
+        if (response.ok) {
+            entity = data["detalles"];
+            showForm = true;
+            return { loading: false, error, entity, showForm };
+        }
+    } catch (err) {
+        error = `${err}`;
+        return { loading: false, error };
     }
 }
 

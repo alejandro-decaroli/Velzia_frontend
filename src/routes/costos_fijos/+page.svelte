@@ -10,7 +10,6 @@
     import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "costos_fijos";
-    let data = null;
     let entities = [];
     let loading = true;
     let monedas = [];
@@ -18,21 +17,21 @@
     let error = null;
 
     const loadData = async () => {
-        const result = await fetchEntity(entity, entities, data, loading, error);
+        const result = await fetchEntity(entity, entities, loading, error);
         loading = result.loading;
         error = result.error;
         entities = result.entities;
     };
 
     const load_monedas= async () => {
-        const result = await fetchEntity("monedas", monedas, data, loading, error);
+        const result = await fetchEntity("monedas", monedas, loading, error);
         loading = result.loading;
         error = result.error;
         monedas = result.entities;
     };
 
     const load_cajas= async () => {
-        const result = await fetchEntity("cajas", cajas, data, loading, error);
+        const result = await fetchEntity("cajas", cajas, loading, error);
         loading = result.loading;
         error = result.error;
         cajas = result.entities;
@@ -54,7 +53,6 @@
 <div class="caja_container">
     <EntitiesTable 
         {entity} 
-        {data} 
         {entities} 
         {loading} 
         {error}

@@ -9,21 +9,20 @@
     import { checkUser } from "$lib/stores/auth.js";
 
     const entity = "cajas";
-    let data = null;
     let entities = [];
     let loading = true;
     let monedas = [];
     let error = null;
 
     const loadData = async () => {
-        const result = await fetchEntity(entity, entities, data, loading, error);
+        const result = await fetchEntity(entity, entities, loading, error);
         loading = result.loading;
         error = result.error;
         entities = result.entities;
     };
 
     const load_monedas= async () => {
-        const result = await fetchEntity("monedas", monedas, data, loading, error);
+        const result = await fetchEntity("monedas", monedas, loading, error);
         loading = result.loading;
         error = result.error;
         monedas = result.entities;
@@ -44,7 +43,6 @@
 <div class="caja_container">
     <EntitiesTable 
         {entity} 
-        {data} 
         {entities} 
         {loading} 
         {error}

@@ -4,7 +4,6 @@
     export let entity = "";
     export let loading = true;
     export let error = null;
-    export let data = null;
     export let entities = [];
     // Modificamos el array para incluir todas las variantes de los campos
     const standardFields = [
@@ -13,7 +12,6 @@
         "Dividendo", "dividendo",
         "Aporte", "aporte",
         "Ajuste", "ajuste",
-        "Tasa", "tasa",
         "Transferencia", "transferencia",
         "Clientes", "clientes",
         "Venta", "venta",
@@ -41,7 +39,7 @@
 
     // Función para manejar la actualización después de editar/eliminar
     function handleUpdate() {
-        loading, error, entities = fetchEntity(entity, entities, data, loading, error);
+        loading, error, entities = fetchEntity(entity, entities, loading, error);
     }
 
     function handleDate(date) {

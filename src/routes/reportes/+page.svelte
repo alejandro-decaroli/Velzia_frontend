@@ -2,73 +2,144 @@
     import { onMount } from 'svelte';
     import { fetchEntity } from "$lib/utils/api.js";
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
-    import ButtonCreate from "$lib/components/button.Create.svelte";
-    import ButtonDelete from "$lib/components/buttonDelete.svelte";
-    import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import GoBack from "$lib/components/goback.svelte"
     import { checkUser } from "$lib/stores/auth.js";
 
-    const entity = "productos";
-    let data = null;
-    let entities = [];
+    let ventas = [];
+    let productos = [];
+    let cajas = [];
+    let monedas = [];
+    let clientes = [];
+    let costos_fijos = [];
+    let costos_variables = [];
+    let pagos = [];
     let loading = true;
     let error = null;
 
-    const loadData = async () => {
-        const result = await fetchEntity(entity, entities, data, loading, error);
+    const loadCajas = async () => {
+        const result = await fetchEntity("cajas", cajas, loading, error);
         loading = result.loading;
         error = result.error;
-        entities = result.entities;
+        cajas = result.entities;
+        console.log(cajas);
+    };
+
+    const loadClientes = async () => {
+        const result = await fetchEntity("clientes", clientes, loading, error);
+        loading = result.loading;
+        error = result.error;
+        clientes = result.entities;
+    };
+
+    const loadCostosFijos = async () => {
+        const result = await fetchEntity("costos_fijos", costos_fijos, loading, error);
+        loading = result.loading;
+        error = result.error;
+        costos_fijos = result.entities;
+    };
+
+    const loadCostosVariables = async () => {
+        const result = await fetchEntity("costos_variables", costos_variables, loading, error);
+        loading = result.loading;
+        error = result.error;
+        costos_variables = result.entities;
+    };
+
+    const loadPagos = async () => {
+        const result = await fetchEntity("pagos", pagos, loading, error);
+        loading = result.loading;
+        error = result.error;
+        pagos = result.entities;
+    };
+
+    const loadMonedas = async () => {
+        const result = await fetchEntity("monedas", monedas, loading, error);
+        loading = result.loading;
+        error = result.error;
+        monedas = result.entities;
+    };
+
+    const loadProductos = async () => {
+        const result = await fetchEntity("productos", productos, loading, error);
+        loading = result.loading;
+        error = result.error;
+        productos = result.entities;
+    };
+
+    const loadVentas = async () => {
+        const result = await fetchEntity("ventas", ventas, loading, error);
+        loading = result.loading;
+        error = result.error;
+        ventas = result.entities;
     };
 
     onMount(() => {
         checkUser(error);
-        loadData();
+        loadCajas();
+        loadClientes();
+        loadCostosFijos();
+        loadCostosVariables();
+        loadPagos();
+        loadMonedas();
+        loadProductos();
+        loadVentas();
     });
-
-    const handleUpdate = async () => {
-        await loadData();
-    };
 
 </script>
 <GoBack/>
-<div class="caja_container">
+<div class="reportes_container">
     <EntitiesTable 
-        {entity} 
-        {data} 
-        {entities} 
-        {loading} 
-        {error}
-    >
-        <svelte:fragment slot="actions" let:item>
-            <ButtonDelete 
-                name_entity={entity.slice(0, -1)}
-                route={entity} 
-                id={item.id} 
-                on:deleted={handleUpdate}
-            />
-            <ButtonEdit 
-                name_entity={entity.slice(0, -1)} 
-                route={entity} 
-                id={item.id} 
-                on:updated={handleUpdate}
-            />
-        </svelte:fragment>
-    </EntitiesTable>
-    <ButtonCreate 
-        route={entity}
-        name_entity="producto"
-        fields= {{
-        nombre: "text", 
-        descripcion: "text",
-        stock: "number"
-    }}
-    
+        entity="ventas" 
+        entities={ventas} 
+        loading={loading} 
+        error={error}
+    />
+    <EntitiesTable 
+        entity="productos" 
+        entities={productos} 
+        loading={loading} 
+        error={error}
+    />
+    <EntitiesTable 
+        entity="cajas" 
+        entities={cajas} 
+        loading={loading} 
+        error={error}
+    />
+    <EntitiesTable 
+        entity="clientes" 
+        entities={clientes} 
+        loading={loading} 
+        error={error}
+    />
+    <EntitiesTable 
+        entity="costos_fijos" 
+        entities={costos_fijos} 
+        loading={loading} 
+        error={error}
+    />
+    <EntitiesTable 
+        entity="costos_variables" 
+        entities={costos_variables} 
+        loading={loading} 
+        error={error}
+    />
+    <EntitiesTable 
+        entity="pagos" 
+        entities={pagos} 
+        loading={loading} 
+        error={error}
+    />
+    <EntitiesTable 
+        entity="monedas" 
+        entities={monedas} 
+        loading={loading} 
+        error={error}
     />
 </div>
 
 <style>
-    .caja_container {
+    .reportes_container {
         width: 100%;
         height: 100%;
         display: flex;

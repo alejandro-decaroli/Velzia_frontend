@@ -4,7 +4,6 @@
     export let route = "";
     export let id = null;
 
-    let data = null;
     let error = null;
     let showConfirm = false;
     let showForm = false;
@@ -20,7 +19,7 @@
     }
 
     async function delete_entity() {
-        let result = await deleteEntity(route, id, name_entity, showForm, entity, data, loading, error);
+        let result = await deleteEntity(route, id, name_entity, showForm, entity, loading, error);
         loading = result.loading;
         error = result.error;
         showForm = result.showForm;

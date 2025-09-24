@@ -11,7 +11,6 @@
     export let rol = [];
     export let id_venta_2 = "";
 
-    let data = null;
     let loading = false;
     let showModal = false;
     let formData = {};

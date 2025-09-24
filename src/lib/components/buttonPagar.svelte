@@ -4,11 +4,9 @@
     export let name_entity = "";
     export let route = "";
     export let id = null;
-    export let token = "";
     export let cajas = [];
 
     let entity = "";
-    let data = null;
     let loading = false;
     let error = null;
     let showForm = false;
@@ -16,7 +14,7 @@
     async function handleUpdate() {
         entity.monto_pagar = document.getElementById("monto").value;
         entity.caja = document.getElementById("caja").value;
-        let result = await pagarEntity(route, id, token, name_entity, showForm, entity, loading, error);
+        let result = await pagarEntity(route, id, name_entity, showForm, entity, loading, error);
         loading = result.loading;
         error = result.error;
         showForm = result.showForm;
@@ -24,7 +22,7 @@
 
     async function handleEditClick() {
         
-        let result = await loadEntity(route, id, token, name_entity, showForm, entity, data, loading, error);
+        let result = await loadEntity(route, id, name_entity, showForm, entity, loading, error);
         loading = result.loading;
         error = result.error;
         entity = result.entity;

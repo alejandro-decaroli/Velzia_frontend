@@ -1,5 +1,5 @@
 <script>
-    import { loadEntity, updateEntity } from "$lib/utils/api.js";
+    import { loadEntity, updateEntity, cargarDetalle } from "$lib/utils/api.js";
     
     export let name_entity = "";
     export let route = "";
@@ -12,7 +12,6 @@
     export let rol = [];
 
     let entity = null;
-    let data = null;
     let loading = false;
     let error = null;
     let showForm = false;
@@ -26,6 +25,7 @@
         "Pago", "pago",
         "Dividendo", "dividendo",
         "Aporte", "aporte",
+        "Detalles", "detalles",
         "Ajuste", "ajuste",
         "Tasa", "tasa",
         "Transferencia", "transferencia",
@@ -46,7 +46,7 @@
     ];
 
     async function handleUpdate() {
-        let result = await updateEntity(route, id, name_entity, showForm, entity, data, loading, error);
+        let result = await updateEntity(route, id, name_entity, showForm, entity, loading, error);
         loading = result.loading;
         error = result.error;
         showForm = result.showForm;
@@ -54,11 +54,19 @@
 
     async function handleEditClick() {
         
-        let result = await loadEntity(route, id, name_entity, showForm, entity, data, loading, error);
-        loading = result.loading;
-        error = result.error;
-        entity = result.entity;
-        showForm = result.showForm;
+        if (name_entity === "detalle") {
+            let result = await cargarDetalle(id, showForm, entity, loading, error);
+            loading = result.loading;
+            error = result.error;
+            entity = result.entity;
+            showForm = result.showForm;
+        } else {
+            let result = await loadEntity(route, id, name_entity, showForm, entity, loading, error);
+            loading = result.loading;
+            error = result.error;
+            entity = result.entity;
+            showForm = result.showForm;
+        }
     }
 
     function handleClose() {

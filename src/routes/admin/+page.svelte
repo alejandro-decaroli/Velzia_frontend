@@ -11,11 +11,10 @@
     let error = "";
     let entities = [];
     let loading = true;
-    let data = null;
     let entity = "usuarios";
 
     const loadData = async () => {
-        const result = await fetchEntity(entity, entities, data, loading, error);
+        const result = await fetchEntity(entity, entities, loading, error);
         loading = result.loading;
         error = result.error;
         entities = result.entities;
@@ -37,7 +36,6 @@
     <h1>Hola Admin</h1>
     <EntitiesTable 
     entity={entity}
-    data={data}
     entities={entities}
     loading={loading}
     error={error}
