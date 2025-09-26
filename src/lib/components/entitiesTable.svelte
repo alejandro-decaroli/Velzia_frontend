@@ -159,6 +159,7 @@
         border-radius: 0.5rem;
         margin-bottom: 1rem;
         text-align: center;
+        white-space: normal;
     }
 
     .retry-btn {

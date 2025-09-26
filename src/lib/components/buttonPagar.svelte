@@ -159,6 +159,7 @@
         background-color: #fff5f5;
         border: 1px solid #fed7d7;
         border-radius: 0.25rem;
+        white-space: normal;
     }
 
     .cancel-btn {

@@ -10,6 +10,7 @@
     export let cajas = {};
     export let clientes = {};
     export let rol = [];
+    export let movimiento = [];
 
     let entity = null;
     let loading = false;
@@ -17,16 +18,18 @@
     let showForm = false;
     let entities = [];
     const standardFields = [
+        "Nombre_cliente", "nombre_cliente",
+        "Apellido_cliente", "apellido_cliente",
         "Venta", "venta",
         "CostoVariable", "costoVariable",
         "CostoFijo", "costoFijo",
-        "Moneda", "moneda",
         "Clientes", "clientes",
         "Pago", "pago",
         "Dividendo", "dividendo",
         "Aporte", "aporte",
         "Detalles", "detalles",
         "Ajuste", "ajuste",
+        "Moneda_asociada", "moneda_asociada",
         "Tasa", "tasa",
         "Transferencia", "transferencia",
         "Clientes", "clientes",
@@ -118,6 +121,10 @@
                                 {/each}
                             {:else if key === "rol" && rol.length > 0}
                                 {#each rol as option}
+                                    <option value={option}>{option}</option>
+                                {/each}
+                            {:else if key === "movimiento" && movimiento.length > 0}
+                                {#each movimiento as option}
                                     <option value={option}>{option}</option>
                                 {/each}
                             {:else}
@@ -241,6 +248,7 @@
         background-color: #fff5f5;
         border: 1px solid #fed7d7;
         border-radius: 0.25rem;
+        white-space: normal;
     }
 
     .cancel-btn {

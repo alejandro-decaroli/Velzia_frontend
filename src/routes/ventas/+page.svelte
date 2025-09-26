@@ -8,7 +8,7 @@
     import ButtonPagar from "$lib/components/buttonPagar.svelte";
     import GoBack from "$lib/components/goback.svelte"
     import ButtonDetalles from "$lib/components/buttonDetalles.svelte"
-    import { checkUser } from "$lib/stores/auth.js";
+    import { checkUser, user } from "$lib/stores/auth.js";
 
     const entity = "ventas";
     let entities = [];
@@ -46,8 +46,11 @@
         cajas = result.entities;
     };
 
-    onMount(() => {
-        checkUser(error);
+    onMount(async () => {
+        const userData = await checkUser(error);
+        if (userData) {
+            user.set(userData);
+        }
         loadData();
         load_monedas();
         load_clientes();
@@ -86,7 +89,7 @@
             <ButtonEdit 
             name_entity={entity.slice(0, -1)}
             route={entity} 
-            options={monedas}
+            clientes={clientes}
             monedas={monedas}
             id={item.id} 
             fields= {{

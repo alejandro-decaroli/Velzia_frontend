@@ -61,6 +61,11 @@
 {/if}
 
 <style>
+
+    .confirm-dialog p {
+        white-space: normal;
+    }
+
     button {
         padding: 0.5rem 1rem;
         border-radius: 0.5rem;
@@ -77,6 +82,7 @@
         background-color: #fff5f5;
         border: 1px solid #fed7d7;
         border-radius: 0.25rem;
+        white-space: normal;
     }
 
     .delete {

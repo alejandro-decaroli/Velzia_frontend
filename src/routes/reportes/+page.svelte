@@ -1,9 +1,8 @@
 <script>
     import { onMount } from 'svelte';
     import { fetchEntity } from "$lib/utils/api.js";
-    import EntitiesTable from "$lib/components/entitiesTable.svelte";
     import GoBack from "$lib/components/goback.svelte"
-    import { checkUser } from "$lib/stores/auth.js";
+    import { checkUser, user } from "$lib/stores/auth.js";
 
     let ventas = [];
     let productos = [];
@@ -73,8 +72,11 @@
         ventas = result.entities;
     };
 
-    onMount(() => {
-        checkUser(error);
+    onMount(async () => {
+        const userData = await checkUser(error);
+        if (userData) {
+            user.set(userData);
+        }
         loadCajas();
         loadClientes();
         loadCostosFijos();

@@ -7,7 +7,7 @@
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import ButtonPagar from "$lib/components/buttonPagar.svelte";
     import GoBack from "$lib/components/goback.svelte"
-    import { checkUser } from "$lib/stores/auth.js";
+    import { checkUser, user } from "$lib/stores/auth.js";
 
     const entity = "costos_fijos";
     let entities = [];
@@ -37,8 +37,11 @@
         cajas = result.entities;
     };
 
-    onMount(() => {
-        checkUser(error);
+    onMount(async () => {
+        const userData = await checkUser(error);
+        if (userData) {
+            user.set(userData);
+        }
         loadData();
         load_monedas();
         load_cajas();

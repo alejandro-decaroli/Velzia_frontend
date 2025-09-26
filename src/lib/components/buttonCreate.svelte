@@ -10,6 +10,7 @@
     export let clientes = {};
     export let rol = [];
     export let id_venta_2 = "";
+    export let movimiento = [];
 
     let loading = false;
     let showModal = false;
@@ -72,6 +73,10 @@
                                 {/each}
                             {:else if fieldName === "rol" && rol.length > 0}
                                 {#each rol as option}
+                                    <option value={option}>{option}</option>
+                                {/each}
+                            {:else if fieldName === "movimiento" && movimiento.length > 0}
+                                {#each movimiento as option}
                                     <option value={option}>{option}</option>
                                 {/each}
                             {:else}
@@ -166,6 +171,7 @@
         border: 1px solid red;
         padding: 0.5rem;
         border-radius: 4px;
+        white-space: normal;
     }
 
     .create {
@@ -226,5 +232,6 @@
         opacity: 0.7;
         cursor: not-allowed;
     }
+
 
 </style>

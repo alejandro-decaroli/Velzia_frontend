@@ -6,7 +6,7 @@
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import GoBack from "$lib/components/goback.svelte"
-    import { checkUser } from "$lib/stores/auth.js";
+    import { checkUser, user } from "$lib/stores/auth.js";
 
     const entity = "monedas";
     let entities = [];
@@ -20,8 +20,11 @@
         entities = result.entities;
     };
 
-    onMount(() => {
-        checkUser(error);
+    onMount(async () => {
+        const userData = await checkUser(error);
+        if (userData) {
+            user.set(userData);
+        }
         loadData();
     });
 

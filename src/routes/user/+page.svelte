@@ -1,10 +1,12 @@
 <script>
-    import { user } from "$lib/stores/auth.js";
-    import { checkUser } from "$lib/stores/auth.js";
+    import { checkUser, user } from "$lib/stores/auth.js";
     import { onMount } from 'svelte';
 
-    onMount(() => {
-        checkUser(error);
+    onMount(async () => {
+        const userData = await checkUser(error);
+        if (userData) {
+            user.set(userData);
+        }
     });
 
 

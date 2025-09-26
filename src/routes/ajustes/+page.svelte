@@ -6,7 +6,7 @@
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import GoBack from "$lib/components/goback.svelte"
-    import { checkUser } from "$lib/stores/auth.js";
+    import { checkUser, user } from "$lib/stores/auth.js";
 
     const entity = "ajustes";
     let entities = [];
@@ -28,8 +28,11 @@
         cajas = result.entities;
     };
 
-    onMount(() => {
-        checkUser(error);
+    onMount(async () => {
+        const userData = await checkUser(error);
+        if (userData) {
+            user.set(userData);
+        }
         loadData();
         load_cajas();
     });
@@ -52,10 +55,11 @@
             <ButtonEdit 
             name_entity={entity.slice(0, -1)} 
             route={entity} 
+            movimiento= { ["ingreso", "egreso"] }
             id={item.id} 
             options={ cajas }
             fields= {{
-                movimiento: "text", 
+                movimiento: "select", 
                 monto: "number",
                 caja: "select"
             }}
@@ -72,9 +76,10 @@
     <ButtonCreate 
         route={entity}
         name_entity="ajuste"
+        movimiento= { ["ingreso", "egreso"] }
         options={ cajas }
         fields= {{
-            movimiento: "text", 
+            movimiento: "select", 
             monto: "number",
             caja: "select"
         }}
