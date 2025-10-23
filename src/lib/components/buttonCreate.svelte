@@ -11,6 +11,7 @@
     export let rol = [];
     export let id_venta_2 = "";
     export let movimiento = [];
+    export let productos = [];
 
     let loading = false;
     let showModal = false;
@@ -78,6 +79,10 @@
                             {:else if fieldName === "movimiento" && movimiento.length > 0}
                                 {#each movimiento as option}
                                     <option value={option}>{option}</option>
+                                {/each}
+                            {:else if fieldName === "producto" && productos.length > 0}
+                                {#each productos as option}
+                                    <option value={option.id}>{option.nombre}</option>
                                 {/each}
                             {:else}
                                 {#each options as option}

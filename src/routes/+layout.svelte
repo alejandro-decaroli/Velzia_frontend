@@ -46,6 +46,13 @@
         justify-content: center;
         align-items: center;
         padding: 1rem;
+        white-space: wrap;
+        overflow: visible;
+    }
+
+    footer p {
+        overflow: visible;
+        white-space: wrap;
     }
 
 </style>

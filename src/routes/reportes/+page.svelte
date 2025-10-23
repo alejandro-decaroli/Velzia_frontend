@@ -1,97 +1,36 @@
 <script>
     import { onMount } from 'svelte';
-    import { fetchEntity } from "$lib/utils/api.js";
     import GoBack from "$lib/components/goback.svelte"
     import { checkUser, user } from "$lib/stores/auth.js";
+    import { goto } from '$app/navigation';
 
-    let ventas = [];
-    let productos = [];
-    let cajas = [];
-    let monedas = [];
-    let clientes = [];
-    let costos_fijos = [];
-    let costos_variables = [];
-    let pagos = [];
-    let loading = true;
     let error = null;
-
-    const loadCajas = async () => {
-        const result = await fetchEntity("cajas", cajas, loading, error);
-        loading = result.loading;
-        error = result.error;
-        cajas = result.entities;
-        console.log(cajas);
-    };
-
-    const loadClientes = async () => {
-        const result = await fetchEntity("clientes", clientes, loading, error);
-        loading = result.loading;
-        error = result.error;
-        clientes = result.entities;
-    };
-
-    const loadCostosFijos = async () => {
-        const result = await fetchEntity("costos_fijos", costos_fijos, loading, error);
-        loading = result.loading;
-        error = result.error;
-        costos_fijos = result.entities;
-    };
-
-    const loadCostosVariables = async () => {
-        const result = await fetchEntity("costos_variables", costos_variables, loading, error);
-        loading = result.loading;
-        error = result.error;
-        costos_variables = result.entities;
-    };
-
-    const loadPagos = async () => {
-        const result = await fetchEntity("pagos", pagos, loading, error);
-        loading = result.loading;
-        error = result.error;
-        pagos = result.entities;
-    };
-
-    const loadMonedas = async () => {
-        const result = await fetchEntity("monedas", monedas, loading, error);
-        loading = result.loading;
-        error = result.error;
-        monedas = result.entities;
-    };
-
-    const loadProductos = async () => {
-        const result = await fetchEntity("productos", productos, loading, error);
-        loading = result.loading;
-        error = result.error;
-        productos = result.entities;
-    };
-
-    const loadVentas = async () => {
-        const result = await fetchEntity("ventas", ventas, loading, error);
-        loading = result.loading;
-        error = result.error;
-        ventas = result.entities;
-    };
 
     onMount(async () => {
         const userData = await checkUser(error);
         if (userData) {
             user.set(userData);
         }
-        loadCajas();
-        loadClientes();
-        loadCostosFijos();
-        loadCostosVariables();
-        loadPagos();
-        loadMonedas();
-        loadProductos();
-        loadVentas();
     });
 
 </script>
 <GoBack/>
 <div class="reportes_container">
     <h1>Reportes</h1>
-    
+    <div class="reportes">
+        <button aria-label="Reporte de ventas" on:click={() => {goto("/reportes/ventas")}}>
+            Reporte de ventas
+        </button>
+        <button aria-label="Cuentas por pagar" on:click={() => {goto("/reportes/cuentas_pagar")}}>
+            Cuentas por pagar
+        </button>
+        <button aria-label="Cuentas por cobrar" on:click={() => {goto("/reportes/cuentas_cobrar")}}>
+            Cuentas por cobrar
+        </button>
+        <button aria-label="Proyección" on:click={() => {goto("/reportes/proyeccion")}}>
+            Proyección
+        </button>
+    </div>
 </div>
 
 <style>
@@ -102,6 +41,24 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        gap: 3rem;
+    }
+
+    .reportes {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         gap: 1rem;
+    }
+    button {
+        background-color: #1D3557;
+        color: white;
+        padding: 1rem;
+        border-radius: 1rem;
+        width: 150px;
+        height: 100px;
+        margin: 0 auto;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
 </style>

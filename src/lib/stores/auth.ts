@@ -1,12 +1,12 @@
 // src/lib/stores/auth.ts
 import { writable } from "svelte/store";
 import { goto } from '$app/navigation';
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export const user = writable(null);
 
 export async function checkUser(error: string){
     try {
-        const response = await fetch("http://localhost:3000/usuarios/check-user", {
+        const response = await fetch(`${API_URL}/usuarios/check-user`, {
             method: "GET",
             credentials: "include"
         });
@@ -68,7 +68,7 @@ export async function checkUser(error: string){
 
 export async function logout() {
     try {
-        const response = await fetch("http://localhost:3000/usuarios/logout", {
+        const response = await fetch(`${API_URL}/usuarios/logout`, {
             method: "POST",
             credentials: "include"
         });
@@ -89,7 +89,7 @@ export async function checkAdmin(error: string) {
 
         const isUser = await checkUser(error);
 
-        const response = await fetch("http://localhost:3000/usuarios/check-admin", {
+        const response = await fetch(`${API_URL}/usuarios/check-admin`, {
             method: "GET",
             credentials: "include"
         });

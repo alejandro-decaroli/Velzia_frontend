@@ -1,7 +1,8 @@
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export async function deleteEntity(route: string, id: string, name_entity: string, loading: boolean, error: string) {
     try {
-        const response = await fetch(`http://localhost:3000/${route}/delete/${id}`, {
+        const response = await fetch(`${API_URL}/${route}/delete/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -36,7 +37,7 @@ export async function loadEntity(route: string, id: string, name_entity: string,
         loading = true;
         error = "";
         
-        const response = await fetch(`http://localhost:3000/${route}/${id}`, {
+        const response = await fetch(`${API_URL}/${route}/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -70,7 +71,7 @@ export async function updateEntity(route: string, id: string, name_entity: strin
         loading = true;
         error = "";
         
-        const response = await fetch(`http://localhost:3000/${route}/update/${id}`, {
+        const response = await fetch(`${API_URL}/${route}/update/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -104,17 +105,21 @@ export async function fetchEntity(
     entity: string, 
     entities: any[], 
     loading: boolean, 
-    error: string | null
+    error: string | null,
+    filtro: string,
+    fecha: string
 ): Promise<{ loading: boolean; error: string | null; entities: any[] }> {
     try {
         loading = true;
         error = null;
+        const params = new URLSearchParams();
+        if (filtro) params.append('filtro', filtro);
+        if (fecha) params.append('fecha', fecha);
         
-        const response = await fetch(`http://localhost:3000/${entity}`, {
+        const response = await fetch(`${API_URL}/${entity}?${params.toString()}`, {
             method: "GET",
             credentials: "include"
         });
-        
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || `Error al cargar ${entity}`);
@@ -138,7 +143,7 @@ export async function pagarEntity(route: string, id: string, name_entity: string
         loading = true;
         error = "";
         
-        const response = await fetch(`http://localhost:3000/${route}/pagar/${id}`, {
+        const response = await fetch(`${API_URL}/${route}/pagar/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -172,7 +177,7 @@ export async function registrarDetalle(id_venta: string, showForm: boolean, enti
         loading = true;
         error = "";
         
-        const response = await fetch(`http://localhost:3000/ventas/registrar_detalle/${id_venta}`, {
+        const response = await fetch(`${API_URL}/ventas/registrar_detalle/${id_venta}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -211,7 +216,7 @@ export async function getDetalles(
         loading = true;
         error = null;
         
-        const response = await fetch(`http://localhost:3000/ventas/detalle_venta/${id_venta}`, {
+        const response = await fetch(`${API_URL}/ventas/detalle_venta/${id_venta}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -246,7 +251,7 @@ export async function getDetallesByUser(
         loading = true;
         error = null;
         
-        const response = await fetch(`http://localhost:3000/ventas/detalles`, {
+        const response = await fetch(`${API_URL}/ventas/detalles`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -277,7 +282,7 @@ export async function cargarDetalle(id: string, showForm: boolean, entity: any, 
         loading = true;
         error = "";
         
-        const response = await fetch(`http://localhost:3000/ventas/detalle/${id}`, {
+        const response = await fetch(`${API_URL}/ventas/detalle/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -308,7 +313,7 @@ export async function cargarDetalle(id: string, showForm: boolean, entity: any, 
 
 export async function createEntity(route: string, formData: any, closeModal: () => void, error: string, loading: boolean, name_entity: string) {
     try {
-        const response = await fetch(`http://localhost:3000/${route}/create`, {
+        const response = await fetch(`${API_URL}/${route}/create`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

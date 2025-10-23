@@ -3,7 +3,6 @@
     import ErrorBox from "./errorbox.svelte";
     import { goto } from '$app/navigation';
     import { user } from "../stores/auth";
-    
 
     let success = "";
 	let email = "";
@@ -11,23 +10,21 @@
 	let error = "";
     let data = null;
 	let validationErrors = [];
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
     async function redirect(data) {
         setTimeout(async () => {
             user.set({ email: data.user_json.email, nombre: data.user_json.nombre, apellido: data.user_json.apellido});
             await goto("/dashboard");
-            // después del login exitoso
         }, 2000);
     }
 
 	async function handleLogin(event) {
 
-		event.preventDefault(); // evitar el envío automático
+		event.preventDefault();
         
-
-		// Si pasa la validación del cliente, hacemos fetch
 		try {
-			const response = await fetch("http://localhost:3000/usuarios/login", {
+			const response = await fetch(`${API_URL}/usuarios/login`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
@@ -79,7 +76,7 @@
             on:input={() => (validationErrors = [], error = "", success = "")}
         />
 
-        <button type="submit">Login</button>
+        <button type="submit">Iniciar sesión</button>
     </form>
 
     <ErrorBox validationErrors={validationErrors} error={error} />

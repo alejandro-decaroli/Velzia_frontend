@@ -1,36 +1,70 @@
 <script>
     import { fetchEntity } from "$lib/utils/api.js";
-    
+    import { onMount } from "svelte";
+
+    export let fecha = "";
+    export let filtro = "";
     export let entity = "";
     export let loading = true;
     export let error = null;
     export let entities = [];
-    // Modificamos el array para incluir todas las variantes de los campos
-    const standardFields = [
-        "Clientes", "clientes",
-        "Pago", "pago",
-        "Dividendo", "dividendo",
-        "Aporte", "aporte",
-        "Ajuste", "ajuste",
-        "Transferencia", "transferencia",
-        "Clientes", "clientes",
-        "Venta", "venta",
-        "Costo_variable", "costo_variable",
-        "Costo_fijo", "costo_fijo",
-        "cliente", "Cliente",
-        "Moneda", "moneda",
-        "caja", "Caja",
-        "Visible", "visible",
-        "Detalles", "detalles",
-        "usuario", "Usuario",
-        "caja_origen", "Caja Origen",
-        "caja_destino", "Caja Destino",
-        "ActualizadoEn", "actualizadoEn",
-        "moneda_origen", "Moneda Origen",
-        "moneda_destino", "Moneda Destino",
-        "eliminadoEn", "EliminadoEn"
-    ];
+    let standardFields = [];
 
+    onMount(() => {
+        if (entity === "usuarios") {
+            standardFields = [
+                "Tasa", "tasa",
+                "Clientes", "clientes",
+                "Pago", "pago",
+                "Dividendo", "dividendo",
+                "Aporte", "aporte",
+                "Ajuste", "ajuste",
+                "Transferencia", "transferencia",
+                "Clientes", "clientes",
+                "Venta", "venta",
+                "Costo_variable", "costo_variable",
+                "Costo_fijo", "costo_fijo",
+                "cliente", "Cliente",
+                "Moneda", "moneda",
+                "caja", "Caja",
+                "Visible", "visible",
+                "Detalles", "detalles",
+                "usuario", "Usuario",
+                "caja_origen", "Caja Origen",
+                "caja_destino", "Caja Destino",
+                "ActualizadoEn", "actualizadoEn",
+                "moneda_origen", "Moneda Origen",
+                "moneda_destino", "Moneda Destino",
+                "eliminadoEn", "EliminadoEn"
+            ];
+        } else {
+            standardFields = [
+                "Clientes", "clientes",
+                "Pago", "pago",
+                "Dividendo", "dividendo",
+                "Aporte", "aporte",
+                "Ajuste", "ajuste",
+                "Transferencia", "transferencia",
+                "Clientes", "clientes",
+                "Venta", "venta",
+                "Costo_variable", "costo_variable",
+                "Costo_fijo", "costo_fijo",
+                "cliente", "Cliente",
+                "Moneda", "moneda",
+                "caja", "Caja",
+                "Visible", "visible",
+                "Detalles", "detalles",
+                "usuario", "Usuario",
+                "caja_origen", "Caja Origen",
+                "caja_destino", "Caja Destino",
+                "ActualizadoEn", "actualizadoEn",
+                "moneda_origen", "Moneda Origen",
+                "moneda_destino", "Moneda Destino",
+                "eliminadoEn", "EliminadoEn"
+            ];
+        }
+    });
+    
     // Función auxiliar para normalizar las claves
     function normalizeKey(key) {
         if (!key) return '';
@@ -39,7 +73,7 @@
 
     // Función para manejar la actualización después de editar/eliminar
     function handleUpdate() {
-        loading, error, entities = fetchEntity(entity, entities, loading, error);
+        loading, error, entities = fetchEntity(entity, entities, loading, error, filtro, fecha);
     }
 
     function handleDate(date) {
@@ -86,6 +120,8 @@
                             as [key, value]}
                             {#if key === "creadoEn" || key === "actualizadoEn" || key === "eliminadoEn"}
                                 <td>{handleDate(value)}</td>
+                            {:else if key === "producto"}
+                                <td>{value.nombre}</td>
                             {:else}
                                 <td>{value}</td>
                             {/if}

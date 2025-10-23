@@ -1,5 +1,6 @@
 <script>
     import { loadEntity, updateEntity, cargarDetalle } from "$lib/utils/api.js";
+    import { onMount } from "svelte";
     
     export let name_entity = "";
     export let route = "";
@@ -11,42 +12,83 @@
     export let clientes = {};
     export let rol = [];
     export let movimiento = [];
+    export let productos = [];
 
     let entity = null;
     let loading = false;
     let error = null;
     let showForm = false;
     let entities = [];
-    const standardFields = [
-        "Nombre_cliente", "nombre_cliente",
-        "Apellido_cliente", "apellido_cliente",
-        "Venta", "venta",
-        "CostoVariable", "costoVariable",
-        "CostoFijo", "costoFijo",
-        "Clientes", "clientes",
-        "Pago", "pago",
-        "Dividendo", "dividendo",
-        "Aporte", "aporte",
-        "Detalles", "detalles",
-        "Ajuste", "ajuste",
-        "Moneda_asociada", "moneda_asociada",
-        "Tasa", "tasa",
-        "Transferencia", "transferencia",
-        "Clientes", "clientes",
-        "estado", "Estado",
-        "id", "Id", "ID",
-        "usuario", "Usuario",
-        "visible", "Visible",
-        "nombre_caja_origen", "Nombre_Caja_Origen",
-        "nombre_caja_destino", "Nombre_Caja_Destino",
-        "tipo_moneda", "Tipo Moneda",
-        "nombre_moneda_origen", "Nombre Moneda Origen",
-        "nombre_moneda_destino", "Nombre Moneda Destino",
-        "Nombre_moneda", "nombre_Moneda", "nombre_moneda",
-        "actualizadoEn", "ActualizadoEn",
-        "eliminadoEn", "EliminadoEn",
-        "creadoEn", "CreadoEn" 
-    ];
+    let standardFields = [];
+
+    onMount(() => {
+        if (name_entity === "dividendo_socio" || name_entity === "aporte_socio" || name_entity === "ajuste") {
+            standardFields = [
+                "Nombre_cliente", "nombre_cliente",
+                "Apellido_cliente", "apellido_cliente",
+                "Venta", "venta",
+                "CostoVariable", "costoVariable",
+                "CostoFijo", "costoFijo",
+                "Clientes", "clientes",
+                "Pago", "pago",
+                "Dividendo", "dividendo",
+                "Aporte", "aporte",
+                "Detalles", "detalles",
+                "Ajuste", "ajuste",
+                "Moneda_asociada", "moneda_asociada",
+                "Transferencia", "transferencia",
+                "Clientes", "clientes",
+                "estado", "Estado",
+                "id", "Id", "ID",
+                "usuario", "Usuario",
+                "visible", "Visible",
+                "nombre_caja_origen", "Nombre_Caja_Origen",
+                "nombre_caja_destino", "Nombre_Caja_Destino",
+                "tipo_moneda", "Tipo Moneda",
+                "nombre_moneda_origen", "Nombre Moneda Origen",
+                "nombre_moneda_destino", "Nombre Moneda Destino",
+                "Nombre_moneda", "nombre_Moneda", "nombre_moneda",
+                "actualizadoEn", "ActualizadoEn",
+                "eliminadoEn", "EliminadoEn",
+                "creadoEn", "CreadoEn",
+                "Subtotal", "subtotal",
+                "Monto_pagado", "monto_pagado",
+                "Nombre_caja", "nombre_caja",
+            ]
+        } else {
+            standardFields = [
+                "Nombre_cliente", "nombre_cliente",
+                "Apellido_cliente", "apellido_cliente",
+                "Venta", "venta",
+                "CostoVariable", "costoVariable",
+                "CostoFijo", "costoFijo",
+                "Clientes", "clientes",
+                "Pago", "pago",
+                "Dividendo", "dividendo",
+                "Aporte", "aporte",
+                "Detalles", "detalles",
+                "Ajuste", "ajuste",
+                "Moneda_asociada", "moneda_asociada",
+                "Transferencia", "transferencia",
+                "Clientes", "clientes",
+                "estado", "Estado",
+                "id", "Id", "ID",
+                "usuario", "Usuario",
+                "visible", "Visible",
+                "nombre_caja_origen", "Nombre_Caja_Origen",
+                "nombre_caja_destino", "Nombre_Caja_Destino",
+                "tipo_moneda", "Tipo Moneda",
+                "nombre_moneda_origen", "Nombre Moneda Origen",
+                "nombre_moneda_destino", "Nombre Moneda Destino",
+                "Nombre_moneda", "nombre_Moneda", "nombre_moneda",
+                "actualizadoEn", "ActualizadoEn",
+                "eliminadoEn", "EliminadoEn",
+                "creadoEn", "CreadoEn",
+                "Subtotal", "subtotal",
+                "Monto_pagado", "monto_pagado",
+            ];
+        }
+    });
 
     async function handleUpdate() {
         let result = await updateEntity(route, id, name_entity, showForm, entity, loading, error);
@@ -126,6 +168,10 @@
                             {:else if key === "movimiento" && movimiento.length > 0}
                                 {#each movimiento as option}
                                     <option value={option}>{option}</option>
+                                {/each}
+                            {:else if key === "producto" && productos.length > 0}
+                                {#each productos as option}
+                                    <option value={option.id}>{option.nombre}</option>
                                 {/each}
                             {:else}
                                 {#each options as option}

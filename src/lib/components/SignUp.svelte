@@ -3,7 +3,7 @@
     import ErrorBox from "./errorbox.svelte";
     import { goto } from '$app/navigation';
     import { user } from "../stores/auth";
-
+    
     let success = "";
 	let email = "";
 	let contrasenia = "";
@@ -12,22 +12,21 @@
 	let error = "";
 	let validationErrors = [];
     let data = null;
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
     async function redirect(data) {
         setTimeout(async () => {
             user.set({ email: data.user_json.email, nombre: data.user_json.nombre, apellido: data.user_json.apellido});
             await goto("/dashboard");
-            // después del login exitoso
         }, 2000);
     }
 
 	async function handleLogin(event) {
 
-		event.preventDefault(); // evitar el envío automático
+		event.preventDefault();
 
-		// Si pasa la validación del cliente, hacemos fetch
 		try {
-			const response = await fetch("http://localhost:3000/usuarios/sign-up", {
+			const response = await fetch(`${API_URL}/usuarios/sign-up`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json"
@@ -48,7 +47,7 @@
 			} else {
 				validationErrors = [];
 				error = "";
-				success = "Sign Up exitoso";
+				success = "Registrado exitosamente";
                 redirect(data);
 			}
 		} catch (e) {
@@ -97,7 +96,7 @@
             on:input={() => (validationErrors = [], error = "", success = "")}
         />
 
-        <button type="submit">Sign Up</button>
+        <button type="submit">Registrarse</button>
     </form>
 
     <ErrorBox validationErrors={validationErrors} error={error} />

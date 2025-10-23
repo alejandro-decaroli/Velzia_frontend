@@ -1,8 +1,9 @@
 <script>
     import { goto } from "$app/navigation";
+    export let route = "/dashboard"
 </script>
 
-<button onclick={() => goto("/dashboard")}>
+<button onclick={() => goto(route)}>
     <img src="/goback_1.png" alt="icon">
 </button>
 

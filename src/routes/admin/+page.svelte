@@ -42,20 +42,6 @@
     >
 
     <svelte:fragment slot="actions" let:item>
-            <ButtonEdit 
-            name_entity={entity.slice(0, -1)} 
-            route={entity} 
-            id={item.id} 
-            rol={ ["admin", "user"] }
-            fields= {{
-                nombre: "text", 
-                apellido: "text",
-                email: "text",
-                contraseña: "text",
-                rol: "select"
-            }}
-                on:updated={handleUpdate}
-                />
             <ButtonDelete 
                 name_entity={entity.slice(0, -1)}
                 route={entity} 

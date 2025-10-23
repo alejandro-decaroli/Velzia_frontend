@@ -8,7 +8,7 @@
     import GoBack from "$lib/components/goback.svelte"
     import { checkUser, user } from "$lib/stores/auth.js";
     import { getDetalles } from "$lib/utils/api.js";
-   import { page } from "$app/stores";
+    import { page } from "$app/stores";
 
 
     const entity = "detalles";
@@ -46,7 +46,7 @@
     };
 
 </script>
-<GoBack/>
+<GoBack route="/ventas"/>
 <div class="detalle_container">
     <h1>Detalles de venta</h1>
     <EntitiesTable 
@@ -59,7 +59,7 @@
             <ButtonEdit 
             name_entity="detalle"
             route="ventas/detalles" 
-            options={ productos }
+            productos={ productos }
             id={item.id} 
             fields= {{
                 descuento: "number",
@@ -80,7 +80,7 @@
     <ButtonCreate 
         route={entity}
         name_entity="detalle"
-        options={ productos }
+        productos={ productos }
         id_venta_2={id_venta}
         fields= {{ 
             descuento: "number",

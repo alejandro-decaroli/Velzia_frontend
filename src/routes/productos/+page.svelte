@@ -46,7 +46,12 @@
             <ButtonEdit 
             name_entity={entity.slice(0, -1)} 
             route={entity} 
-            id={item.id}    
+            id={item.id}
+            fields= {{
+                nombre: "text", 
+                descripcion: "text",
+                stock: "number"
+            }}    
             on:updated={handleUpdate}
             />
             <ButtonDelete 

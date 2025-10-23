@@ -25,8 +25,8 @@
     <Logo />
     {#if $user === null}
         <ul class="nav-links" class:open={menuUser} >
-            <li><a href="/signup">Sign Up</a></li>
-            <li><a href="/login">Login</a></li>
+            <li><a href="/signup">Registrarse</a></li>
+            <li><a href="/login">Iniciar sesión</a></li>
         </ul>
     {:else}
         <ul class="user-menu">
@@ -38,8 +38,8 @@
                 <li class="user-name"><p>{$user?.nombre} {$user?.apellido}</p></li>
                 <li><p>{$user?.email}</p></li>
                 <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/user">Profile</a></li>
-                <li><button on:click={logout} >Logout</button></li>
+                <li><a href="/user">Perfil</a></li>
+                <li><button on:click={logout} >Cerrar sesión</button></li>
             </ul>
         </ul>
     {/if}
