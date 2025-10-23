@@ -40,15 +40,6 @@
     loading={loading}
     error={error}
     >
-
-    <svelte:fragment slot="actions" let:item>
-            <ButtonDelete 
-                name_entity={entity.slice(0, -1)}
-                route={entity} 
-                id={item.id} 
-                on:deleted={handleUpdate}
-                />
-        </svelte:fragment>
     </EntitiesTable>
     <ButtonCreate 
         route={entity}

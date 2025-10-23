@@ -12,6 +12,7 @@
     export let id_venta_2 = "";
     export let movimiento = [];
     export let productos = [];
+    export let principal = [];
 
     let loading = false;
     let showModal = false;
@@ -84,9 +85,9 @@
                                 {#each productos as option}
                                     <option value={option.id}>{option.nombre}</option>
                                 {/each}
-                            {:else}
-                                {#each options as option}
-                                    <option value={option.id}>{option.nombre}</option>
+                            {:else if fieldName === "principal" && principal.length > 0}
+                                {#each principal as option}
+                                    <option value={option}>{option}</option>
                                 {/each}
                             {/if}
                         </select>

@@ -12,6 +12,7 @@
     export let clientes = {};
     export let rol = [];
     export let movimiento = [];
+    export let principal = [];
     export let productos = [];
 
     let entity = null;
@@ -173,9 +174,9 @@
                                 {#each productos as option}
                                     <option value={option.id}>{option.nombre}</option>
                                 {/each}
-                            {:else}
-                                {#each options as option}
-                                    <option value={option.id}>{option.nombre}</option>
+                            {:else if key === "principal" && principal.length > 0}
+                                {#each principal as option}
+                                    <option value={option}>{option}</option>
                                 {/each}
                             {/if}
                         </select>

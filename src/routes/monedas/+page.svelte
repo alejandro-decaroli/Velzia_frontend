@@ -43,10 +43,16 @@
     >
         <svelte:fragment slot="actions" let:item>
             <ButtonEdit 
-            name_entity={entity.slice(0, -1)} 
-            route={entity} 
-            id={item.id} 
-            on:updated={handleUpdate}
+                name_entity={entity.slice(0, -1)} 
+                route={entity} 
+                id={item.id} 
+                principal={ [true, false] }
+                fields= {{
+                    nombre: "text", 
+                    codigo_iso: "text",
+                    principal: "select"
+                }}
+                on:updated={handleUpdate}
             />
             <ButtonDelete 
                 name_entity={entity.slice(0, -1)}
@@ -59,9 +65,11 @@
     <ButtonCreate 
         route={entity}
         name_entity="moneda"
+        principal={ [true, false] }
         fields= {{
         nombre: "text", 
-        codigo_iso: "text"
+        codigo_iso: "text",
+        principal: "select"
     }}/>
 </div>
 

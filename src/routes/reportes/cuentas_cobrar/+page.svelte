@@ -8,10 +8,11 @@
     let error = null;
     let ventas_pendientes = [];
     let monedas = [];
-    let moneda_principal = "";
+    let moneda_principal = null;
     let total_por_cobrar = 0;
     let loading = false;
     let tasas = [];
+    let moneda_principal_codigo_iso = "";
 
     onMount(async () => {
         const userData = await checkUser(error);
@@ -21,18 +22,22 @@
         loading = true;
         monedas = await fetchEntity("monedas", [], false, null, "", "");
         monedas = monedas.entities;
-        moneda_principal = monedas.find(monedas => monedas.id === 1).codigo_iso;
+        moneda_principal = monedas.find(monedas => monedas.principal === true);
+        if (!moneda_principal) {
+            throw new Error("No se encontro moneda principal");
+        }
+        moneda_principal_codigo_iso = moneda_principal.codigo_iso;
         tasas = await fetchEntity("tasas", [], false, null, "", "");
         tasas = tasas.entities;
         ventas_pendientes = await fetchEntity("ventas", [], false, null, "Pendiente", "");
         ventas_pendientes = ventas_pendientes.entities;
         if (ventas_pendientes.length > 0) {
             ventas_pendientes.forEach(venta => {
-                if (venta.moneda.id === 1) {
+                if (venta.moneda.id === moneda_principal.id) {
                     total_por_cobrar += venta.total - venta.total_pagado;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === 1) {
+                        if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
                             total_por_cobrar += (venta.total - venta.total_pagado) / tasa.tasa;
                         }
                     })
@@ -46,7 +51,7 @@
 <GoBack route={"/reportes"}/>
 <div class="reportes_container">
     <h1>Cuentas por cobrar</h1>
-    <p>Total por cobrar: ${total_por_cobrar} {moneda_principal}</p>
+    <p>Total por cobrar: ${total_por_cobrar} {moneda_principal_codigo_iso}</p>
     <EntitiesTable entity="ventas" entities={ventas_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
 </div>
 

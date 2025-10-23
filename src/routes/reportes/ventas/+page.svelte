@@ -8,7 +8,8 @@
     let ventas = [];
     let tasas = [];
     let monedas = [];
-    let moneda_principal = "";
+    let moneda_principal = null;
+    let moneda_principal_codigo_iso = "";
     let ventasPagadas = [];
     let ventasPendientes = [];
     let ingreso_ventas = 0;
@@ -30,22 +31,27 @@
         tasas = tasas.entities;
         monedas = await fetchEntity("monedas", error);
         monedas = monedas.entities;
+        moneda_principal = monedas.find(monedas => monedas.principal === true);
+        if (!moneda_principal) {
+            throw new Error("No se encontro moneda principal");
+        }
+        moneda_principal_codigo_iso = moneda_principal.codigo_iso;
         ventas = await fetchEntity("ventas", error);
         ventas = ventas.entities;
         if (ventas.length > 0) {
             ventas.forEach(venta => {
-                if (venta.moneda.id === 1) {
+                if (venta.moneda.id === moneda_principal.id) {
                     ingreso_ventas += venta.total;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === 1) {
+                        if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
                             ingreso_ventas += venta.total / tasa.tasa;
                         }
                     })
                 }
                 if (venta.detalles.length > 0) {
                     venta.detalles.forEach(detalle => {
-                        if (venta.moneda.id === 1) {
+                        if (venta.moneda.id === moneda_principal.id) {
                             productos.push({
                                 nombre: detalle.producto.nombre,
                                 cantidad: detalle.cantidad,
@@ -53,7 +59,7 @@
                             });
                         } else {
                             tasas.forEach(tasa => {
-                                if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === 1) {
+                                if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
                                     productos.push({
                                         nombre: detalle.producto.nombre,
                                         cantidad: detalle.cantidad,
@@ -66,23 +72,23 @@
                 }
                 if (venta.estado === "Paga") {
                     ventasPagadas.push(venta);
-                    if (venta.moneda.id === 1) {
+                    if (venta.moneda.id === moneda_principal.id) {
                         ingreso_ventas_pagas += venta.total_pagado;
                     } else {
                         tasas.forEach(tasa => {
-                            if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === 1) {
+                            if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
                                 ingreso_ventas_pagas += venta.total_pagado / tasa.tasa;
                             }
                         })
                     }
                 } else {
                     ventasPendientes.push(venta);
-                    if (venta.moneda.id === 1) {
+                    if (venta.moneda.id === moneda_principal.id) {
                         ingreso_ventas_pendientes += venta.total_pagado;
                         ingreso_ventas_por_cobrar += venta.total - venta.total_pagado;
                     } else {
                         tasas.forEach(tasa => {
-                            if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === 1) {
+                            if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
                                 ingreso_ventas_pendientes += venta.total_pagado / tasa.tasa;
                                 ingreso_ventas_por_cobrar += (venta.total - venta.total_pagado) / tasa.tasa;
                             }
@@ -124,7 +130,6 @@
                 producto_menos_rentable = producto;
             }
         })
-        moneda_principal = monedas.find(monedas => monedas.id === 1).codigo_iso;
     });
 
 </script>
@@ -139,10 +144,10 @@
             <p>Total de ventas pendientes: {ventasPendientes.length}</p>
             <p>Porcentaje de ventas pagas: {ventasPagadas.length / ventas.length * 100}%</p>
             <p>Porcentaje de ventas pendientes: {ventasPendientes.length / ventas.length * 100}%</p>
-            <p>Ingreso total: ${ingreso_ventas} {moneda_principal}</p>    
-            <p>Ingreso de ventas pagas: ${ingreso_ventas_pagas} {moneda_principal}</p>
-            <p>Ingreso de ventas pendientes: ${ingreso_ventas_pendientes} {moneda_principal}</p>
-            <p>Ingreso por cobrar: ${ingreso_ventas_por_cobrar} {moneda_principal}</p>
+            <p>Ingreso total: ${ingreso_ventas} {moneda_principal_codigo_iso}</p>    
+            <p>Ingreso de ventas pagas: ${ingreso_ventas_pagas} {moneda_principal_codigo_iso}</p>
+            <p>Ingreso de ventas pendientes: ${ingreso_ventas_pendientes} {moneda_principal_codigo_iso}</p>
+            <p>Ingreso por cobrar: ${ingreso_ventas_por_cobrar} {moneda_principal_codigo_iso}</p>
             <p>Porcentaje de ingreso de ventas pagas: {ingreso_ventas_pagas / ingreso_ventas * 100}%</p>
             <p>Porcentaje de ingreso de ventas pendientes: {ingreso_ventas_pendientes / ingreso_ventas * 100}%</p>
             <p>Porcentaje de ingreso por cobrar: {ingreso_ventas_por_cobrar / ingreso_ventas * 100}%</p>
@@ -156,9 +161,9 @@
             <p>Producto menos vendido: {producto_menos_vendido.nombre}</p>
             <p>Cantidad vendida: {producto_menos_vendido.cantidad}</p>
             <p>Producto más rentable: {producto_mas_rentable.nombre}</p>
-            <p>Ingreso: ${producto_mas_rentable.subtotal} {moneda_principal}</p>
+            <p>Ingreso: ${producto_mas_rentable.subtotal} {moneda_principal_codigo_iso}</p>
             <p>Producto menos rentable: {producto_menos_rentable.nombre}</p>
-            <p>Ingreso: ${producto_menos_rentable.subtotal} {moneda_principal}</p>
+            <p>Ingreso: ${producto_menos_rentable.subtotal} {moneda_principal_codigo_iso}</p>
         </div>
     </div>
 </div>
