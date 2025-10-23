@@ -18,8 +18,8 @@
     let cajas = [];
     let error = null;
 
-    const loadData = async () => {
-        const result = await fetchEntity(entity, entities, loading, error);
+    const loadData = async (filtro, fecha) => {
+        const result = await fetchEntity(entity, entities, loading, error, filtro, fecha);
         loading = result.loading;
         error = result.error;
         entities = result.entities;
@@ -51,20 +51,37 @@
         if (userData) {
             user.set(userData);
         }
-        loadData();
+        loadData("", "");
         load_monedas();
         load_clientes();
         load_cajas();
     });
 
     const handleUpdate = async () => {
-        await loadData();
+        await loadData(
+            document.getElementById("filtro").value,
+            document.getElementById("fecha").value
+        );
     };
 
 </script>
 <GoBack/>
 <div class="ventas_container">
     <h1>Ventas</h1>
+    <div>
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha">
+        <label for="filtro">Estado:</label>
+        <select name="filtro" id="filtro">
+            <option value="">Todos</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Paga">Paga</option>
+        </select>
+        <button type="button" onclick={() => loadData(
+            document.getElementById("filtro").value,
+            document.getElementById("fecha").value
+        )}>Actualizar</button>
+    </div>
     <EntitiesTable 
         {entity} 
         {entities} 

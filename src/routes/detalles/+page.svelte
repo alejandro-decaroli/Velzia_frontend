@@ -14,8 +14,8 @@
     let error = null;
     let productos = [];
     
-    const loadData = async () => {
-        const result = await getDetallesByUser(entities, loading, error);
+    const loadData = async (fecha) => {
+        const result = await getDetallesByUser(entities, loading, error, "", fecha);
         loading = result.loading;
         error = result.error;
         entities = result.entities;
@@ -33,18 +33,25 @@
         if (userData) {
             user.set(userData);
         }
-        loadData();
+        loadData("");
         loadProductos();
     });
 
     const handleUpdate = async () => {
-        await loadData();
+        await loadData(document.getElementById("fecha").value);
     };
 
 </script>
 <GoBack/>
 <div class="detalle_container">
     <h1>Detalles de ventas</h1>
+    <div>
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha">
+        <button type="button" onclick={() => loadData(
+            document.getElementById("fecha").value
+        )}>Actualizar</button>
+    </div>
     <EntitiesTable 
         {entity}  
         {entities} 
