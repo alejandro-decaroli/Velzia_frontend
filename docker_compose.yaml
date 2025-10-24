@@ -9,4 +9,5 @@ services:
       - ./src:/app/src
       - /app/node_modules
     environment:
-      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=5173
