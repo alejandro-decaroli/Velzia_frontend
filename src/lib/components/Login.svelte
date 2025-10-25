@@ -12,8 +12,6 @@
 	let validationErrors = [];
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-    console.log("Al principio antes del login", API_URL);
-
     async function redirect(data) {
         setTimeout(async () => {
             user.set({ email: data.user_json.email, nombre: data.user_json.nombre, apellido: data.user_json.apellido});
@@ -26,7 +24,6 @@
 		event.preventDefault();
         
 		try {
-            console.log("Dentro de handleLogin", API_URL);
 			const response = await fetch(`${API_URL}/usuarios/login`, {
 				method: "POST",
 				headers: {
