@@ -26,41 +26,45 @@ Es necesario tener instalado [docker](https://www.docker.com/) para levantar la 
 Clonar el proyecto
 
 ```bash
-  git clone https://github.com/alejandro-decaroli/Velzia_backend.git
+  git clone https://github.com/alejandro-decaroli/Velzia_frontend.git
 ```
 
 Ir a la raiz del proyecto
 
 ```bash
-  cd Velzia_backend
+  cd Velzia_frontend
 ```
 
-Install dependencies
+Crear un archivo .env y escribir las variables de entorno que se proporcionan debajo.
+
+```bash
+  cd src
+  touch .env
+``` 
+
+### Variables de entorno
+
+```
+NODE_ENV=development
+VITE_API_URL=http://localhost:3000
+```
+
+Ahora desde docker_compose.yaml levantar el frontend.
+
+```
+docker-compose -f docker_compose.yaml up frontend
+``` 
+
+Otra alternativa a docker es instalar las dependencias.
 
 ```bash
   npm install
 ```
 
-Crear un archivo .env y escribir las variables de entorno que se proporcionan en el REEDME.
+Posteriormente en terminal ejecutar:
 
 ```bash
-  cd src
-  touch .env
-```
-
-Puede elegir levantar el frontend con el docker o con el comando npm run dev
-
-```bash
-  npm run dev
-```
-
-
-## Variables de entorno
-
-En un archivo .env es necesario declarar la variable de entorno para apuntar al backend
-```
-VITE_API_URL=http://localhost:3000
-
+  npm run start:dev
 ```
 
 
@@ -75,7 +79,17 @@ Ejecutar el siguiente comando:
 
 ## Documentación
 
+La aplicacion completa se encuentra desplegada en https://render.com/.
 
+El backend: https://velzia-backend.onrender.com/
+
+El frontend: https://velzia-frontend.onrender.com/
+
+Las instancias se encuentran "dormidas" por ende es necesario esperar a que "despierten" para poder utilizar la app, solo entren a los enlaces y esperen a que ambos carguen correctamente.
+
+# Documentación de la API
+
+Puedes consultar la documentación completa de la API [aquí](docs/api.md).
 ## Tech Stack
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
@@ -84,7 +98,7 @@ Ejecutar el siguiente comando:
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
-![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte)
+![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
 ![Render](https://img.shields.io/badge/Render-%46E3B7.svg?style=for-the-badge&logo=render&logoColor=white)
 ## License
 
