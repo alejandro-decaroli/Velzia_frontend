@@ -9,5 +9,7 @@ services:
       - ./src:/app/src
       - /app/node_modules
     environment:
-      - HOST=0.0.0.0
+      - HOST=localhost
       - PORT=5173
+      - VITE_API_URL=http://localhost:3000
+    command: ["npm", "run", "start:dev"]
