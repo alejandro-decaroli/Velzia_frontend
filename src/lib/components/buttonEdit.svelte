@@ -55,6 +55,7 @@
                 "Subtotal", "subtotal",
                 "Monto_pagado", "monto_pagado",
                 "Nombre_caja", "nombre_caja",
+                "Codigo", "codigo",
             ]
         } else {
             standardFields = [
@@ -87,6 +88,7 @@
                 "creadoEn", "CreadoEn",
                 "Subtotal", "subtotal",
                 "Monto_pagado", "monto_pagado",
+                "Codigo", "codigo",
             ];
         }
     });
@@ -150,11 +152,11 @@
                     <label for={capitalizedKey}>{capitalizedKey}:</label>
                     {#if fields[key] === "select"}
                         <select id={capitalizedKey} bind:value={entity[key]}>
-                            {#if key === "moneda" && monedas.length > 0}
+                            {#if key === "moneda" || key === "moneda_origen" || key === "moneda_destino" && monedas.length > 0}
                                 {#each monedas as option}
                                     <option value={option.id}>{option.nombre}</option>
                                 {/each}
-                            {:else if key === "caja" && cajas.length > 0}
+                            {:else if key === "caja" || key === "caja_origen" || key === "caja_destino" && cajas.length > 0}
                                 {#each cajas as option}
                                     <option value={option.id}>{option.nombre}</option>
                                 {/each}

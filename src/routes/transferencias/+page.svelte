@@ -63,7 +63,7 @@
             name_entity={entity.slice(0, -1)} 
             route={entity} 
             id={item.id} 
-            options={ cajas }
+            cajas={ cajas }
             fields= {{
                 monto: "number", 
                 caja_origen: "select",
@@ -83,13 +83,13 @@
     <ButtonCreate 
         route={entity}
         name_entity="transferencia"
-        options={ cajas }
+        cajas={ cajas }
         fields= {{
-        monto: "number", 
-        caja_origen: "select",
-        caja_destino: "select",
-        motivo: "text"
-    }}
+            monto: "number", 
+            caja_origen: "select",
+            caja_destino: "select",
+            motivo: "text"
+        }}
     />
 </div>
 

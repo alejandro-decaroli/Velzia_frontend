@@ -62,7 +62,7 @@
             <ButtonEdit 
             name_entity="detalle"
             route="ventas/detalles" 
-            options={ productos }
+            productos={ productos }
             id={item.id} 
             fields= {{
                 descuento: "number",

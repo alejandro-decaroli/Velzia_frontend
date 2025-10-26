@@ -63,7 +63,7 @@
             name_entity="dividendo_socio"
             route={entity} 
             id={item.id} 
-            options={ cajas }
+            cajas={ cajas }
             fields= {{
                 monto: "number",
                 caja: "select"
@@ -81,12 +81,11 @@
     <ButtonCreate 
         route={entity}
         name_entity="dividendo_socio"
-        options={ cajas }
+        cajas={ cajas }
         fields= {{
-        monto: "number",
-        caja: "select"
-    }}
-    
+            monto: "number",
+            caja: "select"
+        }}
     />
 </div>
 

@@ -38,9 +38,7 @@
     });
 
     const handleUpdate = async () => {
-        await loadData(
-            document.getElementById("fecha").value
-        );
+        await loadData(document.getElementById("fecha").value);
     };
 
 </script>
@@ -65,7 +63,7 @@
             name_entity={entity.slice(0, -1)} 
             route={entity} 
             id={item.id} 
-            options={ monedas }
+            monedas={ monedas }
             fields= {{
                 nombre: "text", 
                 monto: "number",
@@ -84,12 +82,12 @@
     <ButtonCreate 
         route={entity}
         name_entity="caja"
-        options={ monedas }
+        monedas={ monedas }
         fields= {{
-        nombre: "text", 
-        monto: "number",
-        moneda: "select"
-    }}
+            nombre: "text", 
+            monto: "number",
+            moneda: "select"
+        }}
     
     />
 </div>

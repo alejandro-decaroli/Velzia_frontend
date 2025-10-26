@@ -61,11 +61,11 @@
                     <label for={fieldName}>{fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}</label>
                     {#if fieldType === "select"}
                         <select id={fieldName} name={fieldName} bind:value={formData[fieldName]}>
-                            {#if fieldName === "moneda" && monedas.length > 0}
+                            {#if fieldName === "moneda" || fieldName === "moneda_origen" || fieldName === "moneda_destino" && monedas.length > 0}
                                 {#each monedas as option}
                                     <option value={option.id}>{option.nombre}</option>
                                 {/each}
-                            {:else if fieldName === "caja" && cajas.length > 0}
+                            {:else if fieldName === "caja" || fieldName === "caja_origen" || fieldName === "caja_destino" && cajas.length > 0}
                                 {#each cajas as option}
                                     <option value={option.id}>{option.nombre}</option>
                                 {/each}

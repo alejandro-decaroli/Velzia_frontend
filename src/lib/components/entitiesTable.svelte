@@ -60,7 +60,8 @@
                 "ActualizadoEn", "actualizadoEn",
                 "moneda_origen", "Moneda Origen",
                 "moneda_destino", "Moneda Destino",
-                "eliminadoEn", "EliminadoEn"
+                "eliminadoEn", "EliminadoEn",
+                "id", "Id", "ID",
             ];
         }
     });

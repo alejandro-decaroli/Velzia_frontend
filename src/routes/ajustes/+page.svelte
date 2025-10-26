@@ -74,7 +74,7 @@
             route={entity} 
             movimiento= { ["ingreso", "egreso"] }
             id={item.id} 
-            options={ cajas }
+            cajas={ cajas }
             fields= {{
                 movimiento: "select", 
                 monto: "number",
@@ -94,7 +94,7 @@
         route={entity}
         name_entity="ajuste"
         movimiento= { ["ingreso", "egreso"] }
-        options={ cajas }
+        cajas={ cajas }
         fields= {{
             movimiento: "select", 
             monto: "number",

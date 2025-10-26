@@ -65,7 +65,7 @@
             name_entity="aporte_socio"
             route={entity} 
             id={item.id} 
-            options={ cajas }
+            cajas={ cajas }
             fields= {{ 
                 monto: "number",
                 caja: "select"
@@ -83,7 +83,7 @@
     <ButtonCreate 
         route={entity}
         name_entity="aporte_socio"
-        options={ cajas }
+        cajas={ cajas }
         fields= {{ 
             monto: "number",
             caja: "select"

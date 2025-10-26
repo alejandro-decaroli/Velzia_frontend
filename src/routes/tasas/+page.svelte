@@ -22,7 +22,7 @@
     };
 
     const loadMonedas = async () => {
-        const result = await fetchEntity("monedas", monedas, loading, error);
+        const result = await fetchEntity("monedas", monedas, loading, error, "", "");
         loading = result.loading;
         error = result.error;
         monedas = result.entities;
@@ -62,10 +62,11 @@
             name_entity={entity.slice(0, -1)} 
             route={entity} 
             id={item.id}
-            fields= {{ tasa: "number", 
+            monedas= { monedas }
+            fields= {{ 
+                tasa: "number", 
                 moneda_origen: "select",
                 moneda_destino: "select" }}
-                options= { monedas }
                 on:updated={handleUpdate}
                 />
             <ButtonDelete 
@@ -79,12 +80,12 @@
     <ButtonCreate 
         route={entity}
         name_entity="tasa"
-        options= { monedas }
+        monedas= { monedas }
         fields= {{
-        tasa: "number", 
-        moneda_origen: "select",
-        moneda_destino: "select"
-    }}/>
+            tasa: "number", 
+            moneda_origen: "select",
+            moneda_destino: "select"
+        }}/>
 </div>
 
 <style>
