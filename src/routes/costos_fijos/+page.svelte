@@ -96,6 +96,7 @@
                 adjudicacion: "text",
                 monto: "number",
                 moneda: "select",
+                categoria: "text",
             }}
             on:updated={handleUpdate}
             />
@@ -115,6 +116,7 @@
             adjudicacion: "text",
             monto: "number",
             moneda: "select",
+            categoria: "text",
         }}
     />
 </div>

@@ -94,8 +94,11 @@
             id={item.id} 
             fields= {{
                 adjudicacion: "text",
-                monto: "number",
                 moneda: "select",
+                categoria: "text",
+                cantidad: "number",
+                unidad: "text",
+                precio_unitario: "number",
             }}
             on:updated={handleUpdate}
             />
@@ -113,8 +116,11 @@
         monedas={monedas}
         fields= {{ 
             adjudicacion: "text",
-            monto: "number",
             moneda: "select",
+            categoria: "text",
+            cantidad: "number",
+            unidad: "text",
+            precio_unitario: "number",
         }}
     />
 </div>
