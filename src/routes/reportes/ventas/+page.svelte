@@ -44,7 +44,7 @@
                     ingreso_ventas += venta.total;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                        if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                             ingreso_ventas += venta.total / tasa.tasa;
                         }
                     })
@@ -59,7 +59,7 @@
                             });
                         } else {
                             tasas.forEach(tasa => {
-                                if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                                if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                                     productos.push({
                                         nombre: detalle.producto.nombre,
                                         cantidad: detalle.cantidad,
@@ -76,7 +76,7 @@
                         ingreso_ventas_pagas += venta.total_pagado;
                     } else {
                         tasas.forEach(tasa => {
-                            if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                            if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                                 ingreso_ventas_pagas += venta.total_pagado / tasa.tasa;
                             }
                         })
@@ -88,7 +88,7 @@
                         ingreso_ventas_por_cobrar += venta.total - venta.total_pagado;
                     } else {
                         tasas.forEach(tasa => {
-                            if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                            if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                                 ingreso_ventas_pendientes += venta.total_pagado / tasa.tasa;
                                 ingreso_ventas_por_cobrar += (venta.total - venta.total_pagado) / tasa.tasa;
                             }

@@ -45,7 +45,7 @@
                     total_por_cobrar += (venta.total - venta.total_pagado);
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                        if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                             ingresos += venta.total_pagado / tasa.tasa;
                             total_por_cobrar += (venta.total - venta.total_pagado) / tasa.tasa;
                         }
@@ -57,11 +57,11 @@
         cajas = cajas.entities;
         if (cajas.length > 0) {
             cajas.forEach(caja => {
-                if (caja.moneda === moneda_principal.id) {
+                if (caja.moneda.id === moneda_principal.id) {
                     monto_caja += caja.monto;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === caja.moneda && tasa.moneda_origen === moneda_principal.id) {
+                        if (tasa.moneda_destino.id === caja.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                             monto_caja += (caja.monto / tasa.tasa);
                         }
                     })
@@ -77,7 +77,7 @@
                     total_por_pagar += costos_fijo.monto - costos_fijo.monto_pagado;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === costos_fijo.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                        if (tasa.moneda_destino.id === costos_fijo.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                             costos += (costos_fijo.monto_pagado / tasa.tasa);
                             total_por_pagar += ((costos_fijo.monto - costos_fijo.monto_pagado) / tasa.tasa);
                         }
@@ -95,7 +95,7 @@
                     total_por_pagar += costos_variable.monto - costos_variable.monto_pagado;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === costos_variable.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                        if (tasa.moneda_destino.id === costos_variable.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                             costos += (costos_variable.monto_pagado / tasa.tasa);
                             total_por_pagar += ((costos_variable.monto - costos_variable.monto_pagado) / tasa.tasa);
                         }

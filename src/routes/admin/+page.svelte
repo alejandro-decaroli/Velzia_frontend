@@ -4,14 +4,13 @@
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
     import GoBack from "$lib/components/goback.svelte"
     import ButtonCreate from "$lib/components/buttonCreate.svelte";
-    import ButtonEdit from "$lib/components/buttonEdit.svelte";
-    import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import { fetchEntity } from "$lib/utils/api.js";
 
     let error = "";
     let entities = [];
     let loading = true;
     let entity = "usuarios";
+    let acciones = false;
 
     const loadData = async () => {
         const result = await fetchEntity(entity, entities, loading, error);
@@ -39,6 +38,7 @@
     entities={entities}
     loading={loading}
     error={error}
+    acciones={acciones}
     >
     </EntitiesTable>
     <ButtonCreate 

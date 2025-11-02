@@ -10,6 +10,7 @@
     let monedas = [];
     let moneda_principal = null;
     let total_por_cobrar = 0;
+    let acciones = false;
     let loading = false;
     let tasas = [];
     let moneda_principal_codigo_iso = "";
@@ -37,7 +38,7 @@
                     total_por_cobrar += venta.total - venta.total_pagado;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === venta.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                        if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                             total_por_cobrar += (venta.total - venta.total_pagado) / tasa.tasa;
                         }
                     })
@@ -52,7 +53,7 @@
 <div class="reportes_container">
     <h1>Cuentas por cobrar</h1>
     <p>Total por cobrar: ${total_por_cobrar} {moneda_principal_codigo_iso}</p>
-    <EntitiesTable entity="ventas" entities={ventas_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
+    <EntitiesTable acciones={acciones} entity="ventas" entities={ventas_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
 </div>
 
 <style>

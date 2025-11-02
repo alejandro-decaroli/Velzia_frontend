@@ -2,6 +2,7 @@
     import { fetchEntity } from "$lib/utils/api.js";
     import { onMount } from "svelte";
 
+    export let acciones = true;
     export let fecha = "";
     export let filtro = "";
     export let entity = "";
@@ -105,7 +106,30 @@
                             as {original, display}}
                             <th>{display.charAt(0).toUpperCase() + display.slice(1)}</th>
                         {/each}
-                        <th>Acciones</th>
+                        {#if entity === "costos_fijos" || entity === "costos_variables" || entity === "cajas" || entity === "ventas" || entity === "pagos"}
+                            <th>Moneda</th>
+                        {/if}
+                        {#if entity === "ventas"}
+                            <th>Cliente</th>
+                        {/if}
+                        {#if entity === "pagos"}
+                            <th>Caja</th>
+                            <th>Codigo tipo de pago</th>
+                        {/if}
+                        {#if entity === "tasas"}
+                            <th>Moneda origen</th>
+                            <th>Moneda destino</th>
+                        {/if}
+                        {#if entity === "transferencias"}
+                            <th>Caja origen</th>
+                            <th>Caja destino</th>
+                        {/if}
+                        {#if entity === "ajustes" || entity === "aportes_socio" || entity === "dividendos_socio"}
+                            <th>Caja</th>
+                        {/if}
+                        {#if acciones}
+                            <th>Acciones</th>
+                        {/if}
                     {:else}
                         <th>No hay datos disponibles</th>
                     {/if}
@@ -127,9 +151,41 @@
                                 <td>{value}</td>
                             {/if}
                         {/each}
-                        <td class="actions">
-                            <slot name="actions" {item}/>
-                        </td>
+                        {#if entity === "costos_fijos" || entity === "costos_variables" || entity === "cajas" || entity === "ventas"}
+                            <td>{item.moneda.codigo_iso}</td>
+                        {/if}
+                        {#if entity === "ventas"}
+                            <td>{item.cliente.nombre + " " + item.cliente.apellido}</td>
+                        {/if}
+                        {#if entity === "pagos"}
+                            <td>{item.caja.moneda.codigo_iso}</td>
+                            <td>{item.caja.nombre}</td>
+                            {#if item.venta}
+                                <td>{item.venta.cod}</td>
+                            {/if}
+                            {#if item.costo_fijo}
+                                <td>{item.costo_fijo.cod}</td>
+                            {/if}
+                            {#if item.costo_variable}
+                                <td>{item.costo_variable.cod}</td>
+                            {/if}
+                        {/if}
+                        {#if entity === "tasas"}
+                            <td>{item.moneda_origen.codigo_iso}</td>
+                            <td>{item.moneda_destino.codigo_iso}</td>
+                        {/if}
+                        {#if entity === "transferencias"}
+                            <td>{item.caja_origen.nombre}</td>
+                            <td>{item.caja_destino.nombre}</td>
+                        {/if}
+                        {#if entity === "ajustes" || entity === "aportes_socio" || entity === "dividendos_socio"}
+                            <td>{item.caja.nombre}</td>
+                        {/if}
+                        {#if acciones}
+                            <td class="actions">
+                                <slot name="actions" {item}/>
+                            </td>
+                        {/if}
                     </tr>
                 {/each}
             </tbody>

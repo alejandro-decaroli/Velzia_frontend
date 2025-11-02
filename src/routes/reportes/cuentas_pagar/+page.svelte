@@ -14,6 +14,7 @@
     let moneda_principal_codigo_iso = "";
     let moneda_principal = null;
     let loading = false;
+    let acciones = false;
 
     onMount(async () => {
         const userData = await checkUser(error);
@@ -38,7 +39,7 @@
                     total_por_pagar += costos_fijo.monto - costos_fijo.monto_pagado;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === costos_fijo.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                        if (tasa.moneda_destino.id === costos_fijo.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                             total_por_pagar += (costos_fijo.monto - costos_fijo.monto_pagado) / tasa.tasa;
                         }
                     })
@@ -53,7 +54,7 @@
                     total_por_pagar += costos_variable.monto - costos_variable.monto_pagado;
                 } else {
                     tasas.forEach(tasa => {
-                        if (tasa.moneda_destino === costos_variable.moneda.id && tasa.moneda_origen === moneda_principal.id) {
+                        if (tasa.moneda_destino.id === costos_variable.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
                             total_por_pagar += (costos_variable.monto - costos_variable.monto_pagado) / tasa.tasa;
                         }
                     })
@@ -69,8 +70,8 @@
 <div class="reportes_container">
     <h1>Cuentas por pagar</h1>
     <p>Total por pagar: ${total_por_pagar} {moneda_principal_codigo_iso}</p>
-    <EntitiesTable entity="costos_fijos" entities={costos_fijos_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
-    <EntitiesTable entity="costos_variables" entities={costos_variables_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
+    <EntitiesTable acciones={acciones} entity="costos_fijos" entities={costos_fijos_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
+    <EntitiesTable acciones={acciones} entity="costos_variables" entities={costos_variables_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
 </div>
 
 <style>
