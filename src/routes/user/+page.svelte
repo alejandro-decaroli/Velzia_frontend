@@ -1,7 +1,8 @@
 <script>
     import { checkUser, user } from "$lib/stores/auth.js";
     import { onMount } from 'svelte';
-
+    import GoBack from "$lib/components/goback.svelte"
+    let error = "";
     onMount(async () => {
         const userData = await checkUser(error);
         if (userData) {
@@ -12,6 +13,7 @@
 
 
 </script>
+<GoBack/>
 <div class="user-profile-container">
     <h1>Hola {$user?.nombre} {$user?.apellido}, bienvenido/a a tu perfil</h1>
     <div class="user-info">

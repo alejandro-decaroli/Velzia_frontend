@@ -5,12 +5,12 @@
     import GoBack from "$lib/components/goback.svelte"
     import ButtonCreate from "$lib/components/buttonCreate.svelte";
     import { fetchEntity } from "$lib/utils/api.js";
+    import { user } from "$lib/stores/auth.js";
 
     let error = "";
     let entities = [];
     let loading = true;
     let entity = "usuarios";
-    let acciones = false;
 
     const loadData = async () => {
         const result = await fetchEntity(entity, entities, loading, error);
@@ -19,9 +19,12 @@
         entities = result.entities;
     };
 
-    onMount(() => {
-        checkAdmin(error);
-        loadData();
+    onMount(async () => {
+       const user_data = await checkAdmin(error);
+       if (user_data) {
+           user.set(user_data);
+       }
+       loadData();
     });
 
     const handleUpdate = async () => {
@@ -38,7 +41,7 @@
     entities={entities}
     loading={loading}
     error={error}
-    acciones={acciones}
+    acciones={false}
     >
     </EntitiesTable>
     <ButtonCreate 
@@ -52,7 +55,6 @@
             contraseña: "text",
             rol: "select"
         }}
-    
     />
 </div>
 <style>

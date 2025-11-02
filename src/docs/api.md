@@ -164,7 +164,6 @@ Content-Type: application/json
 {
   "nombre": "GZCaja",
   "moneda": 1,
-  "siglas": "GZ",
   "monto": 100
 }
 ```
@@ -178,7 +177,6 @@ Content-Type: application/json
 {
   "nombre": "caja Actualizado",
   "moneda": 1,
-  "siglas": "CA",
   "monto": 100
 }
 ```
@@ -212,8 +210,7 @@ Content-Type: application/json
   "apellido": "Apellido",
   "telefono": "12345678",
   "email": "pepe2@gmail.com",
-  "direccion": "direccion",
-  "siglas": "PP2"
+  "direccion": "direccion"
 }
 ```
 ### Actualizar cliente
@@ -227,8 +224,7 @@ Content-Type: application/json
   "apellido": "Apellido",
   "telefono": "12345678",
   "email": "pepe2@gmail.com",
-  "direccion": "direccion",
-  "siglas": "PP2"
+  "direccion": "direccion"
 }
 ```
 
@@ -259,7 +255,9 @@ Content-Type: application/json
 {
   "caja": 1,
   "adjudicacion": "NC",
-  "monto": 100
+  "monto": 100,
+  "moneda": 1,
+  "categoria": "Costo fijo"
 }
 ```
 
@@ -272,13 +270,28 @@ Content-Type: application/json
 {
   "caja": 2,
   "adjudicacion": "Cliente Actualizado",
-  "monto": 200
+  "monto": 200,
+  "moneda": 1,
+  "categoria": "Costo fijo"
 }
 ```
 
 ### Eliminar costos fijos
+Authorization: Bearer <token>
 ```http
 DELETE http://localhost:3000/costos_fijos/delete/5
+```
+
+### Pagar costos fijos
+Authorization: Bearer <token>
+```http
+POST http://localhost:3000/costos_fijos/pagar/5
+Content-Type: application/json
+
+{
+  "caja": 2,
+  "monto_pagar": 200
+}
 ```
 
 ### Obtener todos los costos variables
@@ -301,10 +314,12 @@ Content-Type: application/json
 
 {
   "caja": 1,
-  "adjudicacion": "Adjudicacion",
-  "monto_real": 100,
-  "venta": 1,
-  "presupuestado": 100
+  "adjudicacion": "Adjudicacion", 
+  "cantidad": 1,
+  "precio_unitario": 100,
+  "unidad": "unidad",
+  "moneda": 1,
+  "categoria": "Costo variable"
 }
 ```
 
@@ -317,9 +332,11 @@ Content-Type: application/json
 {
   "caja": 1,
   "adjudicacion": "Adjudicacion",
-  "monto_real": 200,
-  "venta": 1,
-  "presupuestado": 200
+  "cantidad": 1,
+  "precio_unitario": 200,
+  "unidad": "unidad",
+  "moneda": 1,
+  "categoria": "Costo variable"
 }
 ```
 
@@ -327,6 +344,18 @@ Content-Type: application/json
 Authorization: Bearer <token>
 ```http
 DELETE http://localhost:3000/costos_variables/delete/1
+```
+
+### Pagar costo variable
+Authorization: Bearer <token>
+```http
+POST http://localhost:3000/costos_variables/pagar/1
+Content-Type: application/json
+
+{
+  "caja": 2,
+  "monto_pagar": 200
+}
 ```
 
 ### Obtener todos los dividendos
@@ -480,7 +509,8 @@ Content-Type: application/json
 {
   "caja_origen": 1,
   "caja_destino": 22,
-  "monto": 1000
+  "monto": 1000,
+  "motivo": "Motivo"
 }
 ```
 
@@ -493,7 +523,8 @@ Content-Type: application/json
 {
   "caja_origen": 2,
   "caja_destino": 1,
-  "monto": 1000
+  "monto": 1000,
+  "motivo": "Motivo"
 }
 ```
 
@@ -523,7 +554,6 @@ Content-Type: application/json
 
 {
   "cliente": 1,
-  "monto": 1000,
   "moneda": 1
 }
 ```
@@ -536,7 +566,6 @@ Content-Type: application/json
 
 {
   "cliente": 10,
-  "monto": 1000,
   "moneda": 1
 }
 ```
@@ -567,7 +596,7 @@ Content-Type: application/json
 
 {
   "caja": 1,
-  "monto": 150
+  "monto_pagar": 150
 }
 
 ### Obtener todos los productos
@@ -590,7 +619,7 @@ Content-Type: application/json
 
 {
   "nombre": "Producto",
-  "precio": 100,
+  "descripcion": "Descripcion",
   "stock": 10
 }
 ```
@@ -603,7 +632,7 @@ Content-Type: application/json
 
 {
   "nombre": "Producto",
-  "precio": 100,
+  "descripcion": "Descripcion",
   "stock": 10
 }
 ```
@@ -613,4 +642,5 @@ Authorization: Bearer <token>
 ```http
 DELETE http://localhost:3000/productos/delete/1
 ```
+
 
