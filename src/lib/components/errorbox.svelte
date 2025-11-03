@@ -1,6 +1,6 @@
 <script>
-    export let validationErrors;
-    export let error;
+    export let validationErrors = [];
+    export let error = "";
 </script>
 
 {#if validationErrors.length > 0}
@@ -27,7 +27,7 @@
         color: white;
         padding: 1rem;
         border-radius: 1rem;
-        width: 300px;
+        width: auto;
         margin: 0 auto;
     }
 </style>

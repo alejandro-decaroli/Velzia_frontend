@@ -88,7 +88,8 @@
                 "creadoEn", "CreadoEn",
                 "Subtotal", "subtotal",
                 "Monto_pagado", "monto_pagado",
-                "Codigo", "codigo",
+                "Cod", "cod",
+
             ];
         }
     });

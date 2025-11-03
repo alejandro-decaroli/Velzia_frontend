@@ -127,6 +127,9 @@
                         {#if entity === "ajustes" || entity === "aportes_socio" || entity === "dividendos_socio"}
                             <th>Caja</th>
                         {/if}
+                        {#if entity === "detalles"}
+                            <th>Cod de venta</th>
+                        {/if}
                         {#if acciones}
                             <th>Acciones</th>
                         {/if}
@@ -180,6 +183,9 @@
                         {/if}
                         {#if entity === "ajustes" || entity === "aportes_socio" || entity === "dividendos_socio"}
                             <td>{item.caja.nombre}</td>
+                        {/if}
+                        {#if entity === "detalles"}
+                            <td>{item.venta.cod}</td>
                         {/if}
                         {#if acciones}
                             <td class="actions">
