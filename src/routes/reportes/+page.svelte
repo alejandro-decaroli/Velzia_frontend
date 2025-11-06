@@ -11,6 +11,7 @@
     let moneda_principal = null;
     let tasas = [];
     let tasas_ok = true;
+    let ids = [];
 
     onMount(async () => {
         const userData = await checkUser(error);
@@ -23,10 +24,12 @@
             moneda_principal = monedas.find(monedas => monedas.principal === true);
             tasas = await fetchEntity("tasas", [], false, null, "", "");
             tasas = tasas.entities;
-            const ids = tasas.map(m => m.moneda_destino.id);
+            ids = tasas.map(m => m.moneda_destino.id);
             monedas.forEach(monedas => {
-                if (!ids.includes(monedas.id)) {
-                    tasas_ok = false;
+                if (monedas.id !== moneda_principal.id) {
+                    if (!ids.includes(monedas.id)) {
+                        tasas_ok = false;
+                    }
                 }
             });
             if (!moneda_principal) {
@@ -36,7 +39,7 @@
                 throw new Error("No existen tasas de cambio para todas las monedas");
             }
             if (!tasas_ok && monedas.length > 1) {
-                throw new Error("No existen tasas de cambio para todas las monedas 2");
+                throw new Error("No existen tasas de cambio para todas las monedas");
             }
         } catch (error) {
             console.error(error);
