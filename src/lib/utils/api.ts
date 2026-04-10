@@ -13,7 +13,6 @@ export async function deleteEntity(route: string, id: string, name_entity: strin
         });
         
         if (response.ok) {
-            // Recargar la página después de eliminar
             window.location.reload();
             return { loading, error };
         } 
@@ -92,7 +91,6 @@ export async function updateEntity(route: string, id: string, name_entity: strin
             throw new Error(error);
         }
         
-        // Cerrar el formulario después de actualizar
         showForm = false;
         window.location.reload();
         return { loading: false, error, showForm };
@@ -164,7 +162,6 @@ export async function pagarEntity(route: string, id: string, name_entity: string
             throw new Error(error);
         }
         
-        // Cerrar el formulario después de pagar
         showForm = false;
         window.location.reload();
         return { loading: false, error, showForm };
@@ -198,7 +195,6 @@ export async function registrarDetalle(id_venta: string, showForm: boolean, enti
             throw new Error(error);
         }
         
-        // Cerrar el formulario después de pagar
         showForm = false;
         window.location.reload();
         return { loading: false, error, showForm, data };
@@ -328,7 +324,6 @@ export async function createEntity(route: string, formData: any, closeModal: () 
 
         if (response.ok) {
             closeModal();
-            // Recargar la página después de crear para ver los cambios
             window.location.reload();
         } 
         if (!response.ok) {

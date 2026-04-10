@@ -143,7 +143,6 @@
         gap: 1rem;
     }
 
-    /* Móviles (menú oculto por defecto) */
     @media (max-width: 350px) {
 
         .nav-links {
@@ -155,7 +154,6 @@
 
     }
 
-    /* Pantallas grandes (siempre visible) */
     @media (max-width: 365px) {
         .user-name-user-menu {
             display: none;

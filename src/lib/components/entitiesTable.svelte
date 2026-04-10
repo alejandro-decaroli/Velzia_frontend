@@ -67,13 +67,13 @@
         }
     });
     
-    // Función auxiliar para normalizar las claves
+    
     function normalizeKey(key) {
         if (!key) return '';
         return key.toLowerCase().replace(/_/g, '');
     }
 
-    // Función para manejar la actualización después de editar/eliminar
+    
     function handleUpdate() {
         loading, error, entities = fetchEntity(entity, entities, loading, error, filtro, fecha);
     }
