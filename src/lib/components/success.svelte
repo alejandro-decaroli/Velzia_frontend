@@ -1,5 +1,5 @@
-<script>
-    export let success;
+<script lang="ts">
+    export let success: string = "";
 </script>
 
 {#if success}

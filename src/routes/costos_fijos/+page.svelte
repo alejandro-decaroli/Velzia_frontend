@@ -1,134 +1,64 @@
-<script>
-    import { onMount } from 'svelte';   
-    import { fetchEntity } from "$lib/utils/api.js";
-    import EntitiesTable from "$lib/components/entitiesTable.svelte";
+<script lang="ts">
+    import { onMount } from "svelte";
+    import CrudPage from "$lib/components/CrudPage.svelte";
     import ButtonCreate from "$lib/components/buttonCreate.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import ButtonPagar from "$lib/components/buttonPagar.svelte";
-    import GoBack from "$lib/components/goback.svelte"
-    import { checkUser, user } from "$lib/stores/auth.js";
+    import { ENTITY_CONFIGS } from "$lib/utils/entityConfig";
+    import { fetchEntity } from "$lib/utils/api";
 
-    const entity = "costos_fijos";
-    let entities = [];
-    let loading = true;
-    let monedas = [];
-    let cajas = [];
-    let error = null;
-
-    const loadData = async (filtro, fecha) => {
-        const result = await fetchEntity(entity, entities, loading, error, filtro, fecha);
-        loading = result.loading;
-        error = result.error;
-        entities = result.entities;
-    };
-
-    const load_monedas= async () => {
-        const result = await fetchEntity("monedas", monedas, loading, error);
-        loading = result.loading;
-        error = result.error;
-        monedas = result.entities;
-    };
-
-    const load_cajas= async () => {
-        const result = await fetchEntity("cajas", cajas, loading, error);
-        loading = result.loading;
-        error = result.error;
-        cajas = result.entities;
-    };
+    const config = ENTITY_CONFIGS.costos_fijos;
+    let monedas: any[] = [];
+    let cajas: any[] = [];
 
     onMount(async () => {
-        const userData = await checkUser(error);
-        if (userData) {
-            user.set(userData);
-        }
-        loadData("", "");
-        load_monedas();
-        load_cajas();
+        const [resMonedas, resCajas] = await Promise.all([
+            fetchEntity("monedas", [], true, null, "", ""),
+            fetchEntity("cajas", [], true, null, "", "")
+        ]);
+        monedas = resMonedas.entities || [];
+        cajas = resCajas.entities || [];
     });
-
-    const handleUpdate = async () => {
-        await loadData(
-            document.getElementById("filtro").value,
-            document.getElementById("fecha").value
-        );
-    };
-
 </script>
-<GoBack/>
-<div class="caja_container">
-    <h1>Costos Fijos</h1>
-    <div>
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha">
-        <label for="filtro">Estado:</label>
-        <select name="filtro" id="filtro">
-            <option value="">Todos</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="Paga">Paga</option>
-        </select>
-        <button type="button" onclick={() => loadData(
-            document.getElementById("filtro").value,
-            document.getElementById("fecha").value
-        )}>Actualizar</button>
-    </div>
-    <EntitiesTable 
-        {entity} 
-        {entities} 
-        {loading} 
-        {error}
-    >
-        <svelte:fragment slot="actions" let:item>
-            <ButtonPagar 
-                name_entity="costo_fijo"
-                route={entity} 
-                id={item.id} 
-                cajas={cajas}
-                on:updated={handleUpdate}
-            />
-            <ButtonEdit 
-            name_entity="costo_fijo"
-            route={entity} 
-            options={monedas}
-            monedas={monedas}
-            id={item.id} 
-            fields= {{
-                adjudicacion: "text",
-                monto: "number",
-                moneda: "select",
-                categoria: "text",
-            }}
-            on:updated={handleUpdate}
-            />
-            <ButtonDelete 
-                name_entity="costo_fijo"
-                route={entity} 
-                id={item.id} 
-                on:deleted={handleUpdate}
-            />
-        </svelte:fragment>
-    </EntitiesTable>
-    <ButtonCreate 
-        route={entity}
-        name_entity="costo_fijo"
-        monedas={monedas}
-        fields= {{ 
-            adjudicacion: "text",
-            monto: "number",
-            moneda: "select",
-            categoria: "text",
-        }}
-    />
-</div>
 
-<style>
-    .caja_container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-</style>
+<CrudPage 
+    entityKey={config.route} 
+    title={config.title} 
+    hasDateFilter={config.hasDateFilter}
+    hasStatusFilter={config.hasStatusFilter}
+>
+    <svelte:fragment slot="actions" let:item let:handleUpdate>
+        <ButtonPagar 
+            name_entity={config.name}
+            route={config.route} 
+            id={item.id} 
+            {cajas}
+            on:updated={handleUpdate}
+        />
+        <ButtonEdit 
+            name_entity={config.name}
+            route={config.route} 
+            {monedas}
+            id={item.id} 
+            fields={config.fields}
+            on:updated={handleUpdate}
+        />
+        <ButtonDelete 
+            name_entity={config.name}
+            route={config.route} 
+            id={item.id}
+            on:deleted={handleUpdate}
+        />
+    </svelte:fragment>
+    
+    <svelte:fragment slot="controls" let:handleUpdate>
+        <ButtonCreate 
+            route={config.route}
+            name_entity={config.name}
+            {monedas}
+            fields={config.fields}
+            on:created={handleUpdate}
+        />
+    </svelte:fragment>
+</CrudPage>

@@ -6,7 +6,6 @@
     
     let error = null;
     let costos_fijos = [];
-    let costos_variables = [];
     let ventas = [];
     let ingresos = 0;
     let monedas = [];
@@ -84,23 +83,6 @@
                     })
                 }
                 
-            })
-        }
-        costos_variables = await fetchEntity("costos_variables", [], false, null, "", "");
-        costos_variables = costos_variables.entities;
-        if (costos_variables.length > 0) {
-            costos_variables.forEach(costos_variable => {
-                if (costos_variable.moneda.id === moneda_principal.id) {
-                    costos += costos_variable.monto_pagado;
-                    total_por_pagar += costos_variable.monto - costos_variable.monto_pagado;
-                } else {
-                    tasas.forEach(tasa => {
-                        if (tasa.moneda_destino.id === costos_variable.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                            costos += (costos_variable.monto_pagado / tasa.tasa);
-                            total_por_pagar += ((costos_variable.monto - costos_variable.monto_pagado) / tasa.tasa);
-                        }
-                    })
-                }
             })
         }
         proyeccion = total_por_cobrar - total_por_pagar;

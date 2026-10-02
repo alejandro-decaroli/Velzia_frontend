@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import Success from "./success.svelte";
     import ErrorBox from "./errorbox.svelte";
     import { goto } from '$app/navigation';
@@ -10,21 +10,23 @@
 	let apellido = "";
 	let nombre = "";
 	let error = "";
-	let validationErrors = [];
-    let data = null;
+	let validationErrors: string[] = [];
+    let data: any = null;
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-    async function redirect(data) {
+    async function redirect(userData: any) {
         setTimeout(async () => {
-            user.set({ email: data.user_json.email, nombre: data.user_json.nombre, apellido: data.user_json.apellido});
+            user.set({ 
+                email: userData.user_json.email, 
+                nombre: userData.user_json.nombre, 
+                apellido: userData.user_json.apellido
+            });
             await goto("/dashboard");
         }, 2000);
     }
 
-	async function handleLogin(event) {
-
+	async function handleSignUp(event: Event) {
 		event.preventDefault();
-
 		try {
 			const response = await fetch(`${API_URL}/usuarios/sign-up`, {
 				method: "POST",
@@ -36,12 +38,11 @@
 			});
 
 			data = await response.json();
-
 			if (!response.ok) {
 				if (data.errors && Array.isArray(data.errors)) {
-					validationErrors = data.errors.map((e) => e.msg);
+					validationErrors = data.errors.map((e: any) => e.msg);
 				} else {
-					error = data.message || "Error al iniciar sesión";
+					error = data.message || "Error al registrarse";
 				}
 				return;
 			} else {
@@ -56,96 +57,195 @@
 	}
 </script>
 
-<div class="signup_container">
+<div class="signup-wrapper">
+    <div class="signup-card">
+        <div class="card-header">
+            <h2>Crear Cuenta</h2>
+            <p>Únete a Velzia para empezar a registrar tus movimientos</p>
+        </div>
 
-    <form on:submit={handleLogin}>
-        <label for="nombre">Nombre:</label>
-        <input
-            required
-            placeholder="Nombre"
-            type="text"
-            id="nombre"
-            bind:value={nombre}
-            on:input={() => (validationErrors = [], error = "", success = "")}
-        />
-        <label for="apellido">Apellido:</label>
-        <input
-            required
-            placeholder="Apellido"
-            type="text"
-            id="apellido"
-            bind:value={apellido}
-            on:input={() => (validationErrors = [], error = "", success = "")}
-        />
-        <label for="email">Email:</label>
-        <input
-            required
-            placeholder="gonzalo@example.com"
-            type="email"
-            id="email"
-            bind:value={email}
-            on:input={() => (validationErrors = [], error = "", success = "")}
-        />
-        <label for="contrasenia">Contraseña:</label>
-        <input
-            required
-            placeholder="********"
-            type="password"
-            id="contrasenia"
-            bind:value={contrasenia}
-            on:input={() => (validationErrors = [], error = "", success = "")}
-        />
+        <form on:submit={handleSignUp} class="signup-form">
+            <div class="name-row">
+                <div class="input-group">
+                    <label for="nombre">Nombre</label>
+                    <input
+                        required
+                        placeholder="Nombre"
+                        type="text"
+                        id="nombre"
+                        bind:value={nombre}
+                        on:input={() => (validationErrors = [], error = "", success = "")}
+                    />
+                </div>
+                <div class="input-group">
+                    <label for="apellido">Apellido</label>
+                    <input
+                        required
+                        placeholder="Apellido"
+                        type="text"
+                        id="apellido"
+                        bind:value={apellido}
+                        on:input={() => (validationErrors = [], error = "", success = "")}
+                    />
+                </div>
+            </div>
 
-        <button type="submit">Registrarse</button>
-    </form>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input
+                    required
+                    placeholder="correo@ejemplo.com"
+                    type="email"
+                    id="email"
+                    bind:value={email}
+                    on:input={() => (validationErrors = [], error = "", success = "")}
+                />
+            </div>
 
-    <ErrorBox validationErrors={validationErrors} error={error} />
+            <div class="input-group">
+                <label for="contrasenia">Contraseña</label>
+                <input
+                    required
+                    placeholder="••••••••"
+                    type="password"
+                    id="contrasenia"
+                    bind:value={contrasenia}
+                    on:input={() => (validationErrors = [], error = "", success = "")}
+                />
+            </div>
 
-    <Success success={success} />
+            <button type="submit" class="submit-btn">Registrarse</button>
+        </form>
 
+        {#if validationErrors.length > 0 || error}
+            <div class="error-wrapper">
+                <ErrorBox {validationErrors} {error} />
+            </div>
+        {/if}
+
+        {#if success}
+            <div class="success-wrapper">
+                <Success {success} />
+            </div>
+        {/if}
+
+        <div class="card-footer">
+            <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+        </div>
+    </div>
 </div>
 
 <style>
-    .signup_container {
+    .signup-wrapper {
+        width: 100%;
         display: flex;
         justify-content: center;
-        flex-direction: column;
         align-items: center;
-        gap: 1rem;
+        padding: 2rem 0;
+        animation: fadeIn 0.4s ease-out;
     }
-    
-    form {
+
+    .signup-card {
+        background-color: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 460px;
+        padding: 2.5rem;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        text-align: center;
+    }
+
+    .card-header {
+        margin-bottom: 2rem;
+    }
+
+    .card-header h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #ffffff 0%, var(--text-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .card-header p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .signup-form {
         display: flex;
         flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .name-row {
+        display: flex;
         gap: 1rem;
-        background-color: #405B81;
+        width: 100%;
+    }
+
+    .name-row .input-group {
+        flex: 1;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: left;
+    }
+
+    .input-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .submit-btn {
+        background-color: var(--color-brand);
         color: white;
-        padding: 1rem;
-        border-radius: 1rem;
-        width: 300px;
-        height: 420px;
-        margin: 0 auto;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        font-weight: 700;
+        width: 100%;
+        margin-top: 0.75rem;
+        box-shadow: 0 4px 12px var(--color-brand-glow);
     }
 
-    label {
-        font-weight: bold;
+    .submit-btn:hover {
+        background-color: var(--color-brand-hover);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
     }
 
-    input {
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        border: none;
+    .error-wrapper, .success-wrapper {
+        margin-top: 1.25rem;
     }
 
-    button {
-        margin-top: 1rem;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        background-color: #ffffff;
-        color: #1D3557;
-        font-weight: bold;
+    .card-footer {
+        margin-top: 1.5rem;
+        border-top: 1px solid var(--glass-border);
+        padding-top: 1.25rem;
     }
 
+    .card-footer p {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .card-footer a {
+        color: var(--color-brand);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color var(--transition-fast);
+    }
+
+    .card-footer a:hover {
+        color: var(--color-brand-hover);
+        text-decoration: underline;
+    }
 </style>

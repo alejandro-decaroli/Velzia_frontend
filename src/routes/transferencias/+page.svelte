@@ -1,106 +1,59 @@
-<script>
-    import { onMount } from 'svelte';
-    import { fetchEntity } from "$lib/utils/api.js";
-    import EntitiesTable from "$lib/components/entitiesTable.svelte";
+<script lang="ts">
+    import { onMount } from "svelte";
+    import CrudPage from "$lib/components/CrudPage.svelte";
     import ButtonCreate from "$lib/components/buttonCreate.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
-    import GoBack from "$lib/components/goback.svelte"
-    import { checkUser, user } from "$lib/stores/auth.js";
+    import { ENTITY_CONFIGS } from "$lib/utils/entityConfig";
+    import { fetchEntity } from "$lib/utils/api";
 
-    const entity = "transferencias";
-    let entities = [];
-    let loading = true;
-    let error = "";
-    let cajas = [];
+    const config = ENTITY_CONFIGS.transferencias;
+    let cajas: any[] = [];
 
-    const loadData = async (fecha) => {
-        const result = await fetchEntity(entity, entities, loading, error, "", fecha);
-        loading = result.loading;
-        error = result.error;
-        entities = result.entities;
-    };
-
-    const load_cajas= async () => {
-        const result = await fetchEntity("cajas", cajas, loading, error);
-        loading = result.loading;
-        error = result.error;
-        cajas = result.entities;
+    const fields = {
+        monto: "number",
+        caja_origen: "select",
+        caja_destino: "select",
+        motivo: "text"
     };
 
     onMount(async () => {
-        const userData = await checkUser(error);
-        if (userData) {
-            user.set(userData);
+        const result = await fetchEntity("cajas", [], true, null, "", "");
+        if (result.entities) {
+            cajas = result.entities;
         }
-        loadData("");
-        load_cajas();
     });
-
-    const handleUpdate = async () => {
-        await loadData(document.getElementById("fecha").value);
-    };
-
 </script>
-<GoBack/>
-<div class="transferencia_container">
-    <h1>Transferencias</h1>
-    <div>
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha">
-        <button type="button" onclick={() => loadData(
-            document.getElementById("fecha").value
-        )}>Actualizar</button>
-    </div>
-    <EntitiesTable 
-        {entity} 
-        {entities} 
-        {loading} 
-        {error}
-    >
-        <svelte:fragment slot="actions" let:item>
-            <ButtonEdit 
-            name_entity={entity.slice(0, -1)} 
-            route={entity} 
-            id={item.id} 
-            cajas={ cajas }
-            fields= {{
-                monto: "number", 
-                caja_origen: "select",
-                caja_destino: "select",
-                motivo: "text"
-            }}
-                on:updated={handleUpdate}
-                />
-            <ButtonDelete 
-                name_entity={entity.slice(0, -1)}
-                route={entity} 
-                id={item.id} 
-                on:deleted={handleUpdate}
-                />
-        </svelte:fragment>
-    </EntitiesTable>
-    <ButtonCreate 
-        route={entity}
-        name_entity="transferencia"
-        cajas={ cajas }
-        fields= {{
-            monto: "number", 
-            caja_origen: "select",
-            caja_destino: "select",
-            motivo: "text"
-        }}
-    />
-</div>
 
-<style>
-    .transferencia_container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-</style>
+<CrudPage 
+    entityKey={config.route} 
+    title={config.title} 
+    hasDateFilter={config.hasDateFilter}
+>
+    <svelte:fragment slot="actions" let:item let:handleUpdate>
+        <ButtonEdit 
+            name_entity={config.name} 
+            route={config.route} 
+            id={item.id} 
+            fields={fields}
+            {cajas}
+            on:updated={handleUpdate}
+        />
+        <ButtonDelete 
+            name_entity={config.name}
+            route={config.route} 
+            id={item.id} 
+            on:deleted={handleUpdate}
+        />
+    </svelte:fragment>
+    
+    <svelte:fragment slot="controls" let:handleUpdate>
+        <ButtonCreate 
+            route={config.route}
+            name_entity={config.name}
+            fields={fields}
+            {cajas}
+            on:created={handleUpdate}
+        />
+    </svelte:fragment>
+</CrudPage>

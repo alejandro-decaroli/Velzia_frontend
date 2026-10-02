@@ -1,104 +1,65 @@
-<script>
-    import { onMount } from 'svelte';
-    import { fetchEntity } from "$lib/utils/api.js";
-    import EntitiesTable from "$lib/components/entitiesTable.svelte";
+<script lang="ts">
+    import { onMount } from "svelte";
+    import { page } from "$app/stores";
+    import CrudPage from "$lib/components/CrudPage.svelte";
     import ButtonCreate from "$lib/components/buttonCreate.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
-    import GoBack from "$lib/components/goback.svelte"
-    import { checkUser, user } from "$lib/stores/auth.js";
-    import { getDetalles } from "$lib/utils/api.js";
-    import { page } from "$app/stores";
+    import { fetchEntity, getDetalles } from "$lib/utils/api";
 
-
-    const entity = "detalles";
-    let entities = [];
-    let loading = true;
-    let error = null;
-    let productos = [];
     const id_venta = $page.params.slug;
-    
-    const loadData = async () => {
-        const result = await getDetalles(entities, id_venta, loading, error);
-        loading = result.loading;
-        error = result.error;
-        entities = result.entities;
-    };
+    let productos: any[] = [];
 
-   const loadProductos = async () => {
-        const result = await fetchEntity("productos", productos, loading, error);
-        loading = result.loading;
-        error = result.error;
-        productos = result.entities;
+    const fields = {
+        descuento: "number",
+        precio_unitario: "number",
+        cantidad: "number",
+        producto: "select"
     };
 
     onMount(async () => {
-        const userData = await checkUser(error);
-        if (userData) {
-            user.set(userData);
+        const result = await fetchEntity("productos", [], true, null, "", "");
+        if (result.entities) {
+            productos = result.entities;
         }
-        loadData();
-        loadProductos();
     });
 
-    const handleUpdate = async () => {
-        await loadData();
-    };
-
+    async function loadDataCustom() {
+        const result = await getDetalles([], id_venta, true, null);
+        return result.entities || [];
+    }
 </script>
-<GoBack route="/ventas"/>
-<div class="detalle_container">
-    <h1>Detalles de venta</h1>
-    <EntitiesTable 
-        {entity} 
-        {entities} 
-        {loading} 
-        {error}
-    >
-        <svelte:fragment slot="actions" let:item>
-            <ButtonEdit 
+
+<CrudPage 
+    entityKey="detalles" 
+    title={`Detalles de Venta (Código #${id_venta})`} 
+    customLoader={loadDataCustom}
+>
+    <svelte:fragment slot="actions" let:item let:handleUpdate>
+        <ButtonEdit 
             name_entity="detalle"
             route="ventas/detalles" 
-            productos={ productos }
+            {productos}
             id={item.id} 
-            fields= {{
-                descuento: "number",
-                precio_unitario: "number",
-                cantidad: "number",
-                producto: "select",
-            }}
+            {fields}
             on:updated={handleUpdate}
-            />
-            <ButtonDelete 
-                name_entity="detalle"
-                route="ventas/detalles"
-                id={item.id} 
-                on:deleted={handleUpdate}
-            />
-        </svelte:fragment>
-    </EntitiesTable>
-    <ButtonCreate 
-        route={entity}
-        name_entity="detalle"
-        productos={ productos }
-        id_venta_2={id_venta}
-        fields= {{ 
-            descuento: "number",
-            precio_unitario: "number",
-            cantidad: "number",
-            producto: "select",
-        }}
-    />
-</div>
-
-<style>
-    .detalle_container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-</style>
+        />
+        <ButtonDelete 
+            name_entity="detalle"
+            route="ventas/detalles"
+            id={item.id} 
+            on:deleted={handleUpdate}
+        />
+    </svelte:fragment>
+    
+    <svelte:fragment slot="controls" let:handleUpdate>
+        <ButtonCreate 
+            route="detalles"
+            name_entity="detalle"
+            {productos}
+            id_venta_2={id_venta}
+            {fields}
+            on:created={handleUpdate}
+        />
+    </svelte:fragment>
+</CrudPage>

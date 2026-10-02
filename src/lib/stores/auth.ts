@@ -1,7 +1,13 @@
 import { writable } from "svelte/store";
 import { goto } from '$app/navigation';
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-export const user = writable(null);
+export interface User {
+    email: string;
+    nombre: string;
+    apellido: string;
+}
+
+export const user = writable<User | null>(null);
 
 export async function checkUser(error: string){
     try {

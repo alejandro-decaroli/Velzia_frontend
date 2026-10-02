@@ -3,56 +3,91 @@
     import "../app.css";
 </script>
 
-<header>
-    <NavBar />
-</header>
+<div class="app-layout">
+    <header class="app-header">
+        <NavBar />
+    </header>
 
-<main>
-    <slot />
-</main>
+    <main class="app-main">
+        <slot />
+    </main>
 
-<footer>
-    <p>2025 Alejandro Decaroli, Gonzalo Zinni. Todos los derechos reservados</p>
-    <p>Desarrollado por Alejandro Decaroli y Gonzalo Zinni</p>
-    <p>Version 1.0.0</p>
-</footer>
-
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p class="copyright">&copy; 2026 Velzia. Todos los derechos reservados.</p>
+            <p class="authors">Desarrollado por Alejandro Decaroli y Gonzalo Zinni</p>
+            <span class="version">v1.1.0</span>
+        </div>
+    </footer>
+</div>
 
 <style>
-    header {
-        height: 7vh;
-        width: 100%;
-        background-color: #1D3557;
-        color: #FFFFFF;
-        text-align: center;
-    }
-    
-    main {
-        height: 78vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #F1FAFB;
-
-    }
-    footer {
+    .app-layout {
         display: flex;
         flex-direction: column;
-        height: 15vh;
+        min-height: 100vh;
+        background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
+    }
+
+    .app-header {
+        position: sticky;
+        top: 0;
+        height: 70px;
         width: 100%;
-        background-color: #1D3557;
-        color: #FFFFFF;
-        text-align: center;
-        justify-content: center;
+        background-color: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--glass-border);
+        z-index: 100;
+    }
+    
+    .app-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        padding: 1rem;
-        white-space: wrap;
-        overflow: visible;
+        justify-content: flex-start;
+        padding: 2rem 1.5rem;
+        max-width: 1400px;
+        width: 100%;
+        margin: 0 auto;
     }
 
-    footer p {
-        overflow: visible;
-        white-space: wrap;
+    .app-footer {
+        width: 100%;
+        background-color: rgba(15, 23, 42, 0.9);
+        border-top: 1px solid var(--glass-border);
+        padding: 2rem 1.5rem;
+        text-align: center;
+        margin-top: auto;
     }
 
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .copyright {
+        color: var(--text-primary);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .authors {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+    }
+
+    .version {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        background: var(--bg-tertiary);
+        padding: 0.15rem 0.5rem;
+        border-radius: var(--radius-full);
+        border: 1px solid var(--glass-border);
+    }
 </style>

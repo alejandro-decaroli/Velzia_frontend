@@ -1,95 +1,52 @@
-<script>
-    import { onMount } from 'svelte';
-    import { getDetallesByUser, fetchEntity } from "$lib/utils/api.js";
-    import EntitiesTable from "$lib/components/entitiesTable.svelte";
+<script lang="ts">
+    import { onMount } from "svelte";
+    import CrudPage from "$lib/components/CrudPage.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
-    import GoBack from "$lib/components/goback.svelte"
-    import { checkUser, user } from "$lib/stores/auth.js";
+    import { fetchEntity, getDetallesByUser } from "$lib/utils/api";
 
+    let productos: any[] = [];
 
-    const entity = "detalles";
-    let entities = [];
-    let loading = true;
-    let error = null;
-    let productos = [];
-    
-    const loadData = async (fecha) => {
-        const result = await getDetallesByUser(entities, loading, error, "", fecha);
-        loading = result.loading;
-        error = result.error;
-        entities = result.entities;
-    };
-
-   const loadProductos = async () => {
-        const result = await fetchEntity("productos", productos, loading, error);
-        loading = result.loading;
-        error = result.error;
-        productos = result.entities;
+    const fields = {
+        descuento: "number",
+        precio_unitario: "number",
+        cantidad: "number",
+        producto: "select"
     };
 
     onMount(async () => {
-        const userData = await checkUser(error);
-        if (userData) {
-            user.set(userData);
+        const result = await fetchEntity("productos", [], true, null, "", "");
+        if (result.entities) {
+            productos = result.entities;
         }
-        loadData("");
-        loadProductos();
     });
 
-    const handleUpdate = async () => {
-        await loadData(document.getElementById("fecha").value);
-    };
-
+    async function loadDataCustom(filtro: string, fecha: string) {
+        const result = await getDetallesByUser([], true, null);
+        return result.entities || [];
+    }
 </script>
-<GoBack/>
-<div class="detalle_container">
-    <h1>Detalles de ventas</h1>
-    <div>
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha">
-        <button type="button" onclick={() => loadData(
-            document.getElementById("fecha").value
-        )}>Actualizar</button>
-    </div>
-    <EntitiesTable 
-        {entity}  
-        {entities} 
-        {loading} 
-        {error}
-    >
-        <svelte:fragment slot="actions" let:item>
-            <ButtonEdit 
+
+<CrudPage 
+    entityKey="detalles" 
+    title="Todos los Detalles de Ventas" 
+    hasDateFilter={true}
+    customLoader={loadDataCustom}
+>
+    <svelte:fragment slot="actions" let:item let:handleUpdate>
+        <ButtonEdit 
             name_entity="detalle"
             route="ventas/detalles" 
-            productos={ productos }
+            {productos}
             id={item.id} 
-            fields= {{
-                descuento: "number",
-                precio_unitario: "number",
-                cantidad: "number",
-                producto: "select",
-            }}
+            {fields}
             on:updated={handleUpdate}
-            />
-            <ButtonDelete 
-                name_entity="detalle"
-                route="ventas/detalles"
-                id={item.id} 
-                on:deleted={handleUpdate}
-            />
-        </svelte:fragment>
-    </EntitiesTable>
-</div>
-
-<style>
-    .detalle_container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-</style>
+        />
+        <ButtonDelete 
+            name_entity="detalle"
+            route="ventas/detalles"
+            id={item.id} 
+            on:deleted={handleUpdate}
+        />
+    </svelte:fragment>
+</CrudPage>

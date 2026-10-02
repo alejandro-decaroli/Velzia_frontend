@@ -1,6 +1,6 @@
-<script>
-    export let validationErrors = [];
-    export let error = "";
+<script lang="ts">
+    export let validationErrors: string[] = [];
+    export let error: string = "";
 </script>
 
 {#if validationErrors.length > 0}

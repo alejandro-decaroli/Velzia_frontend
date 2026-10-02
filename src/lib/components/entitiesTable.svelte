@@ -1,291 +1,292 @@
-<script>
+<script lang="ts">
     import { fetchEntity } from "$lib/utils/api.js";
-    import { onMount } from "svelte";
+    import { shouldExclude } from "$lib/utils/entityConfig";
 
     export let acciones = true;
-    export let fecha = "";
-    export let filtro = "";
     export let entity = "";
     export let loading = true;
-    export let error = null;
-    export let entities = [];
-    let standardFields = [];
-
-    onMount(() => {
-        if (entity === "usuarios") {
-            standardFields = [
-                "Tasa", "tasa",
-                "Clientes", "clientes",
-                "Pago", "pago",
-                "Dividendo", "dividendo",
-                "Aporte", "aporte",
-                "Ajuste", "ajuste",
-                "Transferencia", "transferencia",
-                "Clientes", "clientes",
-                "Venta", "venta",
-                "Costo_variable", "costo_variable",
-                "Costo_fijo", "costo_fijo",
-                "cliente", "Cliente",
-                "Moneda", "moneda",
-                "caja", "Caja",
-                "Visible", "visible",
-                "Detalles", "detalles",
-                "usuario", "Usuario",
-                "caja_origen", "Caja Origen",
-                "caja_destino", "Caja Destino",
-                "ActualizadoEn", "actualizadoEn",
-                "moneda_origen", "Moneda Origen",
-                "moneda_destino", "Moneda Destino",
-                "eliminadoEn", "EliminadoEn"
-            ];
-        } else {
-            standardFields = [
-                "Clientes", "clientes",
-                "Pago", "pago",
-                "Dividendo", "dividendo",
-                "Aporte", "aporte",
-                "Ajuste", "ajuste",
-                "Transferencia", "transferencia",
-                "Clientes", "clientes",
-                "Venta", "venta",
-                "Costo_variable", "costo_variable",
-                "Costo_fijo", "costo_fijo",
-                "cliente", "Cliente",
-                "Moneda", "moneda",
-                "caja", "Caja",
-                "Visible", "visible",
-                "Detalles", "detalles",
-                "usuario", "Usuario",
-                "caja_origen", "Caja Origen",
-                "caja_destino", "Caja Destino",
-                "ActualizadoEn", "actualizadoEn",
-                "moneda_origen", "Moneda Origen",
-                "moneda_destino", "Moneda Destino",
-                "eliminadoEn", "EliminadoEn",
-                "id", "Id", "ID",
-            ];
-        }
-    });
-    
-    
-    function normalizeKey(key) {
-        if (!key) return '';
-        return key.toLowerCase().replace(/_/g, '');
-    }
-
+    export let error: string | null = null;
+    export let entities: any[] = [];
     
     function handleUpdate() {
-        loading, error, entities = fetchEntity(entity, entities, loading, error, filtro, fecha);
+        window.location.reload();
     }
 
-    function handleDate(date) {
+    function handleDate(date: string) {
+        if (!date) return '-';
         return new Date(date).toLocaleDateString();
     }
 
+    function formatHeader(key: string) {
+        // CamelCase split to spaces
+        const display = key.split(/(?=[A-Z])/).join(' ');
+        return display.charAt(0).toUpperCase() + display.slice(1);
+    }
 </script>
 
 <div class="table-container">
     {#if loading}
-        <div class="loading">Cargando datos...</div>
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Cargando datos...</p>
+        </div>
     {:else if error}
-        <div class="error-message">{error}</div>
-        <button on:click={handleUpdate} class="retry-btn">Reintentar</button>
+        <div class="error-state">
+            <div class="error-icon">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <p class="error-message">{error}</p>
+            <button on:click={handleUpdate} class="retry-btn">Reintentar</button>
+        </div>
     {:else}
-        <table class="table">
-            <thead>
-                <tr>
-                    {#if entities.length > 0}
-                        {#each Object.keys(entities[0])
-                            .filter(key => !standardFields.some(field => 
-                                normalizeKey(field) === normalizeKey(key)
-                            ))
-                            .map(key => ({
-                                original: key,
-                                display: key.split(/(?=[A-Z])/).join(' ')
-                            }))
-                            as {original, display}}
-                            <th>{display.charAt(0).toUpperCase() + display.slice(1)}</th>
-                        {/each}
-                        {#if entity === "costos_fijos" || entity === "costos_variables" || entity === "cajas" || entity === "ventas" || entity === "pagos"}
-                            <th>Moneda</th>
-                        {/if}
-                        {#if entity === "ventas"}
-                            <th>Cliente</th>
-                        {/if}
-                        {#if entity === "pagos"}
-                            <th>Caja</th>
-                            <th>Codigo tipo de pago</th>
-                        {/if}
-                        {#if entity === "tasas"}
-                            <th>Moneda origen</th>
-                            <th>Moneda destino</th>
-                        {/if}
-                        {#if entity === "transferencias"}
-                            <th>Caja origen</th>
-                            <th>Caja destino</th>
-                        {/if}
-                        {#if entity === "ajustes" || entity === "aportes_socio" || entity === "dividendos_socio"}
-                            <th>Caja</th>
-                        {/if}
-                        {#if entity === "detalles"}
-                            <th>Cod de venta</th>
-                        {/if}
-                        {#if acciones}
-                            <th>Acciones</th>
-                        {/if}
-                    {:else}
-                        <th>No hay datos disponibles</th>
-                    {/if}
-                </tr>
-            </thead>
-            <tbody>
-                {#each entities as item}
+        <div class="responsive-table">
+            <table class="table">
+                <thead>
                     <tr>
-                        {#each Object.entries(item)
-                            .filter(([key]) => !standardFields.some(field => 
-                                normalizeKey(field) === normalizeKey(key)
-                            ))
-                            as [key, value]}
-                            {#if key === "creadoEn" || key === "actualizadoEn" || key === "eliminadoEn"}
-                                <td>{handleDate(value)}</td>
-                            {:else if key === "producto"}
-                                <td>{value.nombre}</td>
-                            {:else}
-                                <td>{value}</td>
+                        {#if entities.length > 0}
+                            {#each Object.keys(entities[0]).filter(key => !shouldExclude(key)) as key}
+                                <th>{formatHeader(key)}</th>
+                            {/each}
+                            {#if entity === "costos_fijos" || entity === "cajas" || entity === "ventas" || entity === "pagos"}
+                                <th>Moneda</th>
                             {/if}
-                        {/each}
-                        {#if entity === "costos_fijos" || entity === "costos_variables" || entity === "cajas" || entity === "ventas"}
-                            <td>{item.moneda.codigo_iso}</td>
-                        {/if}
-                        {#if entity === "ventas"}
-                            <td>{item.cliente.nombre + " " + item.cliente.apellido}</td>
-                        {/if}
-                        {#if entity === "pagos"}
-                            <td>{item.caja.moneda.codigo_iso}</td>
-                            <td>{item.caja.nombre}</td>
-                            {#if item.venta}
-                                <td>{item.venta.cod}</td>
+                            {#if entity === "ventas"}
+                                <th>Cliente</th>
                             {/if}
-                            {#if item.costo_fijo}
-                                <td>{item.costo_fijo.cod}</td>
+                            {#if entity === "pagos"}
+                                <th>Caja</th>
+                                <th>Código Venta/Costo</th>
                             {/if}
-                            {#if item.costo_variable}
-                                <td>{item.costo_variable.cod}</td>
+                            {#if entity === "tasas"}
+                                <th>Moneda Origen</th>
+                                <th>Moneda Destino</th>
                             {/if}
-                        {/if}
-                        {#if entity === "tasas"}
-                            <td>{item.moneda_origen.codigo_iso}</td>
-                            <td>{item.moneda_destino.codigo_iso}</td>
-                        {/if}
-                        {#if entity === "transferencias"}
-                            <td>{item.caja_origen.nombre}</td>
-                            <td>{item.caja_destino.nombre}</td>
-                        {/if}
-                        {#if entity === "ajustes" || entity === "aportes_socio" || entity === "dividendos_socio"}
-                            <td>{item.caja.nombre}</td>
-                        {/if}
-                        {#if entity === "detalles"}
-                            <td>{item.venta.cod}</td>
-                        {/if}
-                        {#if acciones}
-                            <td class="actions">
-                                <slot name="actions" {item}/>
-                            </td>
+                            {#if entity === "transferencias"}
+                                <th>Caja Origen</th>
+                                <th>Caja Destino</th>
+                            {/if}
+                            {#if entity === "ajustes"}
+                                <th>Caja</th>
+                            {/if}
+                            {#if entity === "detalles"}
+                                <th>Cod de Venta</th>
+                            {/if}
+                            {#if acciones}
+                                <th class="actions-header">Acciones</th>
+                            {/if}
+                        {:else}
+                            <th>No hay datos disponibles</th>
                         {/if}
                     </tr>
-                {/each}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {#each entities as element}
+                        {@const item = element?.item ?? element ?? {}}
+                        <tr>
+                            {#each Object.entries(item).filter(([key]) => !shouldExclude(key)) as [key, value]}
+                                <td>
+                                    {#if key === "creadoEn" || key === "actualizadoEn" || key === "eliminadoEn"}
+                                        {handleDate(value as string)}
+                                    {:else if key === "producto"}
+                                        {(value as any).nombre}
+                                    {:else if key === "estado" || key === "movimiento"}
+                                        <span class="badge" class:badge-success={value === "Paga" || value === "Pagada" || value === "ingreso"} class:badge-warning={value === "Pendiente" || value === "egreso"}>
+                                            {value}
+                                        </span>
+                                    {:else}
+                                        {value}
+                                    {/if}
+                                </td>
+                            {/each}
+                            {#if entity === "costos_fijos" || entity === "cajas" || entity === "ventas"}
+                                <td>{item.moneda?.codigo_iso || '-'}</td>
+                            {/if}
+                            {#if entity === "pagos"}
+                                <td>{item.caja?.moneda?.codigo_iso || '-'}</td>
+                            {/if}
+                            {#if entity === "ventas"}
+                                <td>{item.cliente ? `${item.cliente.nombre} ${item.cliente.apellido}` : '-'}</td>
+                            {/if}
+                            {#if entity === "pagos"}
+                                <td>{item.caja?.nombre || '-'}</td>
+                                <td>
+                                    {#if item.venta}
+                                        {item.venta.cod} (Venta)
+                                    {:else if item.costo_fijo}
+                                        {item.costo_fijo.cod} (Costo Fijo)
+                                    {:else}
+                                        -
+                                    {/if}
+                                </td>
+                            {/if}
+                            {#if entity === "tasas"}
+                                <td>{item.moneda_origen?.codigo_iso || '-'}</td>
+                                <td>{item.moneda_destino?.codigo_iso || '-'}</td>
+                            {/if}
+                            {#if entity === "transferencias"}
+                                <td>{item.caja_origen?.nombre || '-'}</td>
+                                <td>{item.caja_destino?.nombre || '-'}</td>
+                            {/if}
+                            {#if entity === "ajustes"}
+                                <td>{item.caja?.nombre || '-'}</td>
+                            {/if}
+                            {#if entity === "detalles"}
+                                <td>{item.venta?.cod || '-'}</td>
+                            {/if}
+                            {#if acciones}
+                                <td class="actions-cell">
+                                    <div class="actions-wrapper">
+                                        <slot name="actions" {item} />
+                                    </div>
+                                </td>
+                            {/if}
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
     {/if}
 </div>
 
 <style>
     .table-container {
-        max-height: 50vh;
         width: 100%;
-        overflow: auto;
-        padding: 2rem;
+        background-color: rgba(30, 41, 66, 0.4);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+    }
+
+    .responsive-table {
+        width: 100%;
+        overflow-x: auto;
     }
 
     .table {
         width: 100%;
-        background-color: #F1FAFB;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        border-radius: 1rem;
-        color: #1D3557;
-        border-collapse: separate;
-        border-spacing: 0;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 0.925rem;
     }
 
     .table th {
-        padding: 1rem;
-        background-color: #405B81;
-        color: white;
-        text-align: center;
-        font-weight: 600;
+        background-color: rgba(19, 27, 46, 0.8);
+        padding: 1rem 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--glass-border);
     }
 
     .table td {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #E9ECEF;
+        padding: 1rem 1.25rem;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--glass-border);
+        vertical-align: middle;
+        font-weight: 500;
     }
 
-    .table tr:last-child td {
-        
-        border-bottom: none;
+    .table tbody tr {
+        transition: background-color var(--transition-fast);
     }
 
-    .table tr:hover td {
-        background-color: rgba(69, 123, 157, 0.1);
+    .table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03);
     }
 
-    .actions {
-        display: flex;
+    .actions-header {
+        text-align: center;
+    }
+
+    .actions-cell {
+        text-align: center;
+    }
+
+    .actions-wrapper {
+        display: inline-flex;
         gap: 0.5rem;
         justify-content: center;
+        align-items: center;
     }
 
-    .loading {
+    /* Badges for status */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.15rem 0.65rem;
+        border-radius: var(--radius-full);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .badge-success {
+        background-color: var(--color-success-glow);
+        color: var(--color-success);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-warning {
+        background-color: var(--color-error-glow);
+        color: var(--color-error);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* States */
+    .loading-state, .error-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
         text-align: center;
-        padding: 2rem;
-        color: #405B81;
+        gap: 1rem;
+    }
+
+    .loading-state p {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(99, 102, 241, 0.15);
+        border-top-color: var(--color-brand);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .error-icon {
+        color: var(--color-error);
+        background-color: var(--color-error-glow);
+        padding: 0.75rem;
+        border-radius: 50%;
     }
 
     .error-message {
-        color: #E63946;
-        background-color: #FFE3E3;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-        text-align: center;
-        white-space: normal;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
     }
 
     .retry-btn {
-        background-color: #405B81;
-        color: white;
-        border: none;
-        border-radius: 0.375rem;
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
         padding: 0.5rem 1rem;
-        cursor: pointer;
-        display: block;
-        margin: 0 auto;
+        border-radius: var(--radius-md);
+        font-size: 0.85rem;
+        font-weight: 600;
     }
 
     .retry-btn:hover {
-        background-color: #1D3557;
+        background-color: var(--text-muted);
+        border-color: var(--glass-border-hover);
     }
-
-    tbody {
-        color: black;
-        background-color: #CDE2FF;
-    }
-
-    tbody tr td {
-        color: black;
-        text-align: center;
-        border-bottom: 1px solid black;
-        border-top: 1px solid black;
-    }
-
 </style>

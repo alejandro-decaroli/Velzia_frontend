@@ -1,148 +1,73 @@
-<script>
-    import { onMount } from 'svelte';
-    import { fetchEntity } from "$lib/utils/api.js";
-    import EntitiesTable from "$lib/components/entitiesTable.svelte";
+<script lang="ts">
+    import { onMount } from "svelte";
+    import CrudPage from "$lib/components/CrudPage.svelte";
     import ButtonCreate from "$lib/components/buttonCreate.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
     import ButtonPagar from "$lib/components/buttonPagar.svelte";
-    import GoBack from "$lib/components/goback.svelte"
-    import ButtonDetalles from "$lib/components/buttonDetalles.svelte"
-    import { checkUser, user } from "$lib/stores/auth.js";
+    import ButtonDetalles from "$lib/components/buttonDetalles.svelte";
+    import { ENTITY_CONFIGS } from "$lib/utils/entityConfig";
+    import { fetchEntity } from "$lib/utils/api";
 
-    const entity = "ventas";
-    let entities = [];
-    let loading = true;
-    let monedas = [];
-    let clientes = [];
-    let cajas = [];
-    let error = null;
-
-    const loadData = async (filtro, fecha) => {
-        const result = await fetchEntity(entity, entities, loading, error, filtro, fecha);
-        loading = result.loading;
-        error = result.error;
-        entities = result.entities;
-    };
-
-    const load_monedas= async () => {
-        const result = await fetchEntity("monedas", monedas, loading, error);
-        loading = result.loading;
-        error = result.error;
-        monedas = result.entities;
-    };
-
-    const load_clientes= async () => {
-        const result = await fetchEntity("clientes", clientes, loading, error);
-        loading = result.loading;
-        error = result.error;
-        clientes = result.entities;
-    };
-
-    const load_cajas= async () => {
-        const result = await fetchEntity("cajas", cajas, loading, error);
-        loading = result.loading;
-        error = result.error;
-        cajas = result.entities;
-    };
+    const config = ENTITY_CONFIGS.ventas;
+    let monedas: any[] = [];
+    let clientes: any[] = [];
+    let cajas: any[] = [];
 
     onMount(async () => {
-        const userData = await checkUser(error);
-        if (userData) {
-            user.set(userData);
-        }
-        loadData("", "");
-        load_monedas();
-        load_clientes();
-        load_cajas();
+        const [resMonedas, resClientes, resCajas] = await Promise.all([
+            fetchEntity("monedas", [], true, null, "", ""),
+            fetchEntity("clientes", [], true, null, "", ""),
+            fetchEntity("cajas", [], true, null, "", "")
+        ]);
+        monedas = resMonedas.entities || [];
+        clientes = resClientes.entities || [];
+        cajas = resCajas.entities || [];
     });
-
-    const handleUpdate = async () => {
-        await loadData(
-            document.getElementById("filtro").value,
-            document.getElementById("fecha").value
-        );
-    };
-
 </script>
-<GoBack/>
-<div class="ventas_container">
-    <h1>Ventas</h1>
-    <div>
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha">
-        <label for="filtro">Estado:</label>
-        <select name="filtro" id="filtro">
-            <option value="">Todos</option>
-            <option value="Pendiente">Pendiente</option>
-            <option value="Paga">Paga</option>
-        </select>
-        <button type="button" onclick={() => loadData(
-            document.getElementById("filtro").value,
-            document.getElementById("fecha").value
-        )}>Actualizar</button>
-    </div>
-    <EntitiesTable 
-        {entity} 
-        {entities} 
-        {loading} 
-        {error}
-    >
-        <svelte:fragment slot="actions" let:item>
-            <ButtonPagar 
-                name_entity="venta"
-                route={entity} 
-                id={item.id} 
-                cajas={cajas}
-                on:updated={handleUpdate}
-            />
-            <ButtonDetalles 
-                name_entity="venta"
-                route={entity} 
-                id={item.id} 
-                id_venta={item.id}
-                on:updated={handleUpdate}
-            />
-            <ButtonEdit 
-            name_entity={entity.slice(0, -1)}
-            route={entity} 
-            clientes={clientes}
-            monedas={monedas}
-            id={item.id} 
-            fields= {{
-                moneda: "select",
-                cliente: "select",
-            }}
-                on:updated={handleUpdate}
-                />
-            <ButtonDelete 
-                name_entity={entity.slice(0, -1)}
-                route={entity} 
-                id={item.id}
-                on:deleted={handleUpdate}
-                />
-        </svelte:fragment>
-    </EntitiesTable>
-    <ButtonCreate 
-        route={entity}
-        name_entity={entity.slice(0, -1)}
-        monedas={monedas}
-        clientes={clientes}
-        fields= {{ 
-            moneda: "select",
-            cliente: "select",
-        }}
-    />
-</div>
 
-<style>
-    .ventas_container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-</style>
+<CrudPage 
+    entityKey={config.route} 
+    title={config.title} 
+    hasDateFilter={config.hasDateFilter}
+    hasStatusFilter={config.hasStatusFilter}
+>
+    <svelte:fragment slot="actions" let:item let:handleUpdate>
+        <ButtonPagar 
+            name_entity="venta"
+            route={config.route} 
+            id={item.id} 
+            {cajas}
+            on:updated={handleUpdate}
+        />
+        <ButtonDetalles 
+            id_venta={item.id}
+        />
+        <ButtonEdit 
+            name_entity={config.name}
+            route={config.route} 
+            {clientes}
+            {monedas}
+            id={item.id} 
+            fields={config.fields}
+            on:updated={handleUpdate}
+        />
+        <ButtonDelete 
+            name_entity={config.name}
+            route={config.route} 
+            id={item.id}
+            on:deleted={handleUpdate}
+        />
+    </svelte:fragment>
+    
+    <svelte:fragment slot="controls" let:handleUpdate>
+        <ButtonCreate 
+            route={config.route}
+            name_entity={config.name}
+            {monedas}
+            {clientes}
+            fields={config.fields}
+            on:created={handleUpdate}
+        />
+    </svelte:fragment>
+</CrudPage>

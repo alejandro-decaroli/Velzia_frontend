@@ -8,7 +8,6 @@
     let error = null;
     let tasas = [];
     let costos_fijos_pendientes = [];
-    let costos_variables_pendientes = [];
     let total_por_pagar = 0;
     let monedas = [];
     let moneda_principal_codigo_iso = "";
@@ -46,21 +45,6 @@
                 }
             })
         }
-        costos_variables_pendientes = await fetchEntity("costos_variables", [], false, null, "Pendiente", "");
-        costos_variables_pendientes = costos_variables_pendientes.entities;
-        if (costos_variables_pendientes.length > 0) {
-            costos_variables_pendientes.forEach(costos_variable => {
-                if (costos_variable.moneda.id === moneda_principal.id) {
-                    total_por_pagar += costos_variable.monto - costos_variable.monto_pagado;
-                } else {
-                    tasas.forEach(tasa => {
-                        if (tasa.moneda_destino.id === costos_variable.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                            total_por_pagar += (costos_variable.monto - costos_variable.monto_pagado) / tasa.tasa;
-                        }
-                    })
-                }
-            })
-        }
         loading = false;
         moneda_principal = monedas.find(monedas => monedas.id === moneda_principal.id);
     });
@@ -71,7 +55,6 @@
     <h1>Cuentas por pagar</h1>
     <p>Total por pagar: ${total_por_pagar} {moneda_principal_codigo_iso}</p>
     <EntitiesTable acciones={acciones} entity="costos_fijos" entities={costos_fijos_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
-    <EntitiesTable acciones={acciones} entity="costos_variables" entities={costos_variables_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
 </div>
 
 <style>

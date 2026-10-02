@@ -27,16 +27,16 @@
         if (userData) {
             user.set(userData);
         }
-        tasas = await fetchEntity("tasas", error);
+        tasas = await fetchEntity("tasas", [], false, null, "", "");
         tasas = tasas.entities;
-        monedas = await fetchEntity("monedas", error);
+        monedas = await fetchEntity("monedas", [], false, null, "", "");
         monedas = monedas.entities;
         moneda_principal = monedas.find(monedas => monedas.principal === true);
         if (!moneda_principal) {
             throw new Error("No se encontro moneda principal");
         }
         moneda_principal_codigo_iso = moneda_principal.codigo_iso;
-        ventas = await fetchEntity("ventas", error);
+        ventas = await fetchEntity("ventas", [], false, null, "", "");
         ventas = ventas.entities;
         if (ventas.length > 0) {
             ventas.forEach(venta => {

@@ -1,350 +1,289 @@
-<script>
+<script lang="ts">
     import { loadEntity, updateEntity, cargarDetalle } from "$lib/utils/api.js";
-    import { onMount } from "svelte";
+    import EntityForm from "./EntityForm.svelte";
     
     export let name_entity = "";
     export let route = "";
-    export let id = null;
-    export let fields = {};
-    export let options = {};
-    export let monedas = {};
-    export let cajas = {};
-    export let clientes = {};
-    export let rol = [];
-    export let movimiento = [];
-    export let principal = [];
-    export let productos = [];
+    export let id: string | number | null = null;
+    export let fields: Record<string, any> = {};
+    
+    // Select options props
+    export let monedas: any[] = [];
+    export let cajas: any[] = [];
+    export let clientes: any[] = [];
+    export let productos: any[] = [];
+    export let rol: string[] = [];
+    export let movimiento: string[] = [];
+    export let principal: string[] = [];
 
-    let entity = null;
+    let entity: Record<string, any> | null = null;
     let loading = false;
-    let error = null;
+    let error: string | null = null;
     let showForm = false;
-    let entities = [];
-    let standardFields = [];
-
-    onMount(() => {
-        if (name_entity === "dividendo_socio" || name_entity === "aporte_socio" || name_entity === "ajuste") {
-            standardFields = [
-                "Nombre_cliente", "nombre_cliente",
-                "Apellido_cliente", "apellido_cliente",
-                "Venta", "venta",
-                "CostoVariable", "costoVariable",
-                "CostoFijo", "costoFijo",
-                "Clientes", "clientes",
-                "Pago", "pago",
-                "Dividendo", "dividendo",
-                "Aporte", "aporte",
-                "Detalles", "detalles",
-                "Ajuste", "ajuste",
-                "Moneda_asociada", "moneda_asociada",
-                "Transferencia", "transferencia",
-                "Clientes", "clientes",
-                "estado", "Estado",
-                "id", "Id", "ID",
-                "usuario", "Usuario",
-                "visible", "Visible",
-                "nombre_caja_origen", "Nombre_Caja_Origen",
-                "nombre_caja_destino", "Nombre_Caja_Destino",
-                "tipo_moneda", "Tipo Moneda",
-                "nombre_moneda_origen", "Nombre Moneda Origen",
-                "nombre_moneda_destino", "Nombre Moneda Destino",
-                "Nombre_moneda", "nombre_Moneda", "nombre_moneda",
-                "actualizadoEn", "ActualizadoEn",
-                "eliminadoEn", "EliminadoEn",
-                "creadoEn", "CreadoEn",
-                "Subtotal", "subtotal",
-                "Monto_pagado", "monto_pagado",
-                "Nombre_caja", "nombre_caja",
-                "Codigo", "codigo",
-            ]
-        } else {
-            standardFields = [
-                "Nombre_cliente", "nombre_cliente",
-                "Apellido_cliente", "apellido_cliente",
-                "Venta", "venta",
-                "CostoVariable", "costoVariable",
-                "CostoFijo", "costoFijo",
-                "Clientes", "clientes",
-                "Pago", "pago",
-                "Dividendo", "dividendo",
-                "Aporte", "aporte",
-                "Detalles", "detalles",
-                "Ajuste", "ajuste",
-                "Moneda_asociada", "moneda_asociada",
-                "Transferencia", "transferencia",
-                "Clientes", "clientes",
-                "estado", "Estado",
-                "id", "Id", "ID",
-                "usuario", "Usuario",
-                "visible", "Visible",
-                "nombre_caja_origen", "Nombre_Caja_Origen",
-                "nombre_caja_destino", "Nombre_Caja_Destino",
-                "tipo_moneda", "Tipo Moneda",
-                "nombre_moneda_origen", "Nombre Moneda Origen",
-                "nombre_moneda_destino", "Nombre Moneda Destino",
-                "Nombre_moneda", "nombre_Moneda", "nombre_moneda",
-                "actualizadoEn", "ActualizadoEn",
-                "eliminadoEn", "EliminadoEn",
-                "creadoEn", "CreadoEn",
-                "Subtotal", "subtotal",
-                "Monto_pagado", "monto_pagado",
-                "Cod", "cod",
-
-            ];
-        }
-    });
-
-    async function handleUpdate() {
-        let result = await updateEntity(route, id, name_entity, showForm, entity, loading, error);
-        loading = result.loading;
-        error = result.error;
-        showForm = result.showForm;
-    }
 
     async function handleEditClick() {
-        
-        if (name_entity === "detalle") {
-            let result = await cargarDetalle(id, showForm, entity, loading, error);
-            loading = result.loading;
-            error = result.error;
-            entity = result.entity;
-            showForm = result.showForm;
-        } else {
-            let result = await loadEntity(route, id, name_entity, showForm, entity, loading, error);
-            loading = result.loading;
-            error = result.error;
-            entity = result.entity;
-            showForm = result.showForm;
+        loading = true;
+        error = null;
+        try {
+            let result;
+            if (name_entity === "detalle") {
+                result = await cargarDetalle(String(id), showForm, null, loading, "");
+            } else {
+                result = await loadEntity(route, String(id), name_entity, showForm, null, loading, "");
+            }
+            
+            if (result && result.error) {
+                error = String(result.error);
+            } else if (result && result.entity) {
+                // If it's loaded, map nested properties to their ID equivalents for selects
+                const data = result.entity;
+                
+                // Nest mapping normalization (e.g. if api returns item.moneda as an object, map it to item.moneda ID for binding)
+                for (const key of Object.keys(fields)) {
+                    if (fields[key] === "select" && data[key] && typeof data[key] === "object") {
+                        data[key] = data[key].id || data[key];
+                    }
+                }
+                
+                entity = data;
+                showForm = true;
+            }
+        } catch (err: any) {
+            error = err.message || "Error al cargar la entidad";
+        } finally {
+            loading = false;
+        }
+    }
+
+    async function handleUpdate() {
+        if (!entity) return;
+        loading = true;
+        error = null;
+        try {
+            const result = await updateEntity(route, String(id), name_entity, showForm, entity, loading, "");
+            if (result && result.error) {
+                error = String(result.error);
+            } else {
+                showForm = false;
+            }
+        } catch (err: any) {
+            error = err.message || "Error al actualizar la entidad";
+        } finally {
+            loading = false;
         }
     }
 
     function handleClose() {
         showForm = false;
     }
-
 </script>
 
 <button 
-    class="edit-btn" 
+    class="edit-btn-trigger" 
     on:click={handleEditClick}
     disabled={loading}
     aria-label="Editar {name_entity}"
 >
     {#if loading}
-        Cargando...
+        <span class="mini-spinner"></span>
     {:else}
-        Editar {name_entity}
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+        <span>Editar</span>
     {/if}
 </button>
 
 {#if showForm && entity}
-<div class="edit-form-overlay">
-    <div class="edit-form">
-        <h3>Editar {name_entity}</h3>
-        
-        {#if error}
-            <div class="error-message">{error}</div>
-        {/if}
-        
-        {#if entity}
-            {#each Object.keys(entity).filter(key => !standardFields.includes(key)) as key}
-                {@const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1)}
-                <div class="form-group">
-                    <label for={capitalizedKey}>{capitalizedKey}:</label>
-                    {#if fields[key] === "select"}
-                        <select id={capitalizedKey} bind:value={entity[key]}>
-                            {#if key === "moneda" || key === "moneda_origen" || key === "moneda_destino" && monedas.length > 0}
-                                {#each monedas as option}
-                                    <option value={option.id}>{option.nombre}</option>
-                                {/each}
-                            {:else if key === "caja" || key === "caja_origen" || key === "caja_destino" && cajas.length > 0}
-                                {#each cajas as option}
-                                    <option value={option.id}>{option.nombre}</option>
-                                {/each}
-                            {:else if key === "cliente" && clientes.length > 0}
-                                {#each clientes as option}
-                                    <option value={option.id}>{option.nombre + " " + option.apellido}</option>
-                                {/each}
-                            {:else if key === "rol" && rol.length > 0}
-                                {#each rol as option}
-                                    <option value={option}>{option}</option>
-                                {/each}
-                            {:else if key === "movimiento" && movimiento.length > 0}
-                                {#each movimiento as option}
-                                    <option value={option}>{option}</option>
-                                {/each}
-                            {:else if key === "producto" && productos.length > 0}
-                                {#each productos as option}
-                                    <option value={option.id}>{option.nombre}</option>
-                                {/each}
-                            {:else if key === "principal" && principal.length > 0}
-                                {#each principal as option}
-                                    <option value={option}>{option}</option>
-                                {/each}
-                            {/if}
-                        </select>
-                    {:else}
-                        <input type={fields[key]} id={capitalizedKey} placeholder={capitalizedKey} bind:value={entity[key]} />
-                    {/if}
-                </div>
-            {/each}  
-            <div class="form-actions">
-                <button 
-                    class="save-btn"
-                    type="button" 
-                    on:click={handleUpdate}
-                    disabled={loading}
-                >
-                    {loading ? 'Guardando...' : 'Guardar Cambios'}
-                </button>
-                <button 
-                    class="cancel-btn"
-                    type="button" 
-                    on:click={handleClose}
-                    disabled={loading}
-                >
-                    Cancelar
+    <div 
+        class="modal-overlay" 
+        role="button" 
+        tabindex="0" 
+        on:click={handleClose}
+        on:keydown={(e) => e.key === 'Escape' && handleClose()}
+    >
+        <div class="modal-content" on:click|stopPropagation>
+            <div class="modal-header">
+                <h3>Editar {name_entity.replace('_', ' ')}</h3>
+                <button class="close-icon-btn" on:click={handleClose} aria-label="Cerrar modal">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-        {/if}
+            
+            <form on:submit|preventDefault={handleUpdate}>
+                {#if error}
+                    <div class="error-message">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <span>{error}</span>
+                    </div>
+                {/if}
+                
+                <div class="form-body">
+                    <EntityForm 
+                        {fields} 
+                        bind:formData={entity} 
+                        {monedas} 
+                        {cajas} 
+                        {clientes} 
+                        {productos} 
+                        {rol} 
+                        {movimiento} 
+                        {principal} 
+                    />
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn-cancel" type="button" on:click={handleClose}>Cancelar</button>
+                    <button class="btn-submit" type="submit" disabled={loading}>
+                        {loading ? 'Guardando...' : 'Guardar'}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 {/if}
 
 <style>
-    .edit-btn {
-        background-color: #405B81;
-        color: white;
-        border: none;
-        border-radius: 0.375rem;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        font-size: 0.875rem;
-        transition: background-color 0.2s;
+    .edit-btn-trigger {
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--glass-border);
+        color: var(--text-secondary);
+        border-radius: var(--radius-sm);
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: all var(--transition-fast);
     }
-    
-    .edit-btn:hover:not(:disabled) {
-        background-color: #1D3557;
+
+    .edit-btn-trigger:hover {
+        background-color: var(--color-brand);
+        color: #ffffff;
+        border-color: var(--color-brand);
     }
-    
-    .edit-btn:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
+
+    .mini-spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
     }
-    
-    .edit-form-overlay {
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
+        width: 100%;
+        height: 100%;
+        background-color: rgba(11, 15, 25, 0.8);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1000;
-    }
-    
-    .edit-form {
-        background: white;
-        padding: 2rem;
-        border-radius: 0.5rem;
-        width: 90%;
-        max-width: 500px;
-    }
-    
-    .edit-form label {
-        display: block;
-        text-align: left;
-        margin-bottom: 0.5rem;
-        margin-top: 1rem;
-        color: #1D3557;
-        font-weight: bold;
-    }
-    
-    .edit-form input {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 0.25rem;
-    }
-    
-    .form-group {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn var(--transition-fast) ease-out;
     }
 
-    .form-group select {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 0.25rem;
+    .modal-content {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--glass-border);
+        padding: 2rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        width: 90%;
+        max-width: 480px;
+        animation: scaleIn var(--transition-normal) cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-header h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+
+    .close-icon-btn {
+        background: none;
+        color: var(--text-secondary);
+        padding: 0.25rem;
+        border-radius: 50%;
+        transition: all var(--transition-fast);
+    }
+
+    .close-icon-btn:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+    }
+
+    .form-body {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: 0.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .error-message {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-error);
+        background-color: var(--color-error-glow);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1.25rem;
+        font-size: 0.875rem;
     }
 
     .form-actions {
         display: flex;
-        justify-content: center;
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
-    
-    .error-message {
-        color: #e53e3e;
-        margin-bottom: 1rem;
-        padding: 0.5rem;
-        background-color: #fff5f5;
-        border: 1px solid #fed7d7;
-        border-radius: 0.25rem;
-        white-space: normal;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-top: 1px solid var(--glass-border);
+        padding-top: 1.25rem;
     }
 
-    .cancel-btn {
-        background-color: #E63946;
+    .btn-cancel {
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
+        padding: 0.65rem 1.25rem;
+        border-radius: var(--radius-md);
+        font-size: 0.9rem;
+    }
+
+    .btn-cancel:hover {
+        background-color: var(--text-muted);
+        border-color: var(--glass-border-hover);
+    }
+
+    .btn-submit {
+        background-color: var(--color-brand);
         color: white;
-        border: none;
-        border-radius: 0.375rem;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        font-size: 0.875rem;
-        transition: background-color 0.2s;
+        padding: 0.65rem 1.5rem;
+        border-radius: var(--radius-md);
+        font-size: 0.9rem;
+        font-weight: 700;
+        box-shadow: 0 4px 12px var(--color-brand-glow);
     }
 
-    .cancel-btn:hover:not(:disabled) {
-        background-color: #c1121f;
+    .btn-submit:hover:not(:disabled) {
+        background-color: var(--color-brand-hover);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
     }
-
-    .cancel-btn:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-
-    .save-btn {
-        background-color: #405B81;
-        color: white;
-        border: none;
-        border-radius: 0.375rem;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        font-size: 0.875rem;
-        transition: background-color 0.2s;
-    }
-
-    .save-btn:hover:not(:disabled) {
-        background-color: #1D3557;
-    }
-
-    .save-btn:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-
-    h3 {
-        margin-bottom: 1rem;
-        color: #1D3557;
-        font-size: 1.1rem;
-    }
-
 </style>

@@ -1,70 +1,22 @@
-<script>
-    import { onMount } from 'svelte';
-    import { fetchEntity } from "$lib/utils/api.js";
-    import EntitiesTable from "$lib/components/entitiesTable.svelte";
+<script lang="ts">
+    import CrudPage from "$lib/components/CrudPage.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
-    import GoBack from "$lib/components/goback.svelte"
-    import { checkUser, user } from "$lib/stores/auth.js";
+    import { ENTITY_CONFIGS } from "$lib/utils/entityConfig";
 
-    const entity = "pagos";
-    let entities = [];
-    let loading = true;
-    let error = null;
-
-    const loadData = async (fecha) => {
-        const result = await fetchEntity(entity, entities, loading, error, "", fecha);
-        loading = result.loading;
-        error = result.error;
-        entities = result.entities;
-    };
-
-    onMount(async () => {
-        const userData = await checkUser(error);
-        if (userData) {
-            user.set(userData);
-        }
-        loadData("");
-    });
-
-    const handleUpdate = async () => {
-        await loadData(document.getElementById("fecha").value);
-    };
-
+    const config = ENTITY_CONFIGS.pagos;
 </script>
-<GoBack/>
-<div class="caja_container">
-    <h1>Pagos</h1>
-    <div>
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha">
-        <button type="button" onclick={() => loadData(
-            document.getElementById("fecha").value
-        )}>Actualizar</button>
-    </div>
-    <EntitiesTable 
-        {entity} 
-        {entities} 
-        {loading} 
-        {error}
-    >
-        <svelte:fragment slot="actions" let:item>
-            <ButtonDelete 
-                name_entity={entity.slice(0, -1)}
-                route={entity} 
-                id={item.id} 
-                on:deleted={handleUpdate}
-            />
-        </svelte:fragment>
-    </EntitiesTable>
-</div>
-<style>
-    .caja_container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-</style>
+
+<CrudPage 
+    entityKey={config.route} 
+    title={config.title} 
+    hasDateFilter={config.hasDateFilter}
+>
+    <svelte:fragment slot="actions" let:item let:handleUpdate>
+        <ButtonDelete 
+            name_entity={config.name}
+            route={config.route} 
+            id={item.id} 
+            on:deleted={handleUpdate}
+        />
+    </svelte:fragment>
+</CrudPage>
