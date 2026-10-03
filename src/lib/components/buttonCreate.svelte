@@ -7,13 +7,11 @@
     export let fields = {};
     
     // Select options props
-    export let monedas: any[] = [];
     export let cajas: any[] = [];
     export let clientes: any[] = [];
     export let productos: any[] = [];
     export let rol: string[] = [];
     export let movimiento: string[] = [];
-    export let principal: string[] = [];
     
     export let id_venta_2 = "";
 
@@ -90,13 +88,11 @@
                     <EntityForm 
                         {fields} 
                         bind:formData 
-                        {monedas} 
                         {cajas} 
                         {clientes} 
                         {productos} 
                         {rol} 
                         {movimiento} 
-                        {principal} 
                     />
                 </div>
                 

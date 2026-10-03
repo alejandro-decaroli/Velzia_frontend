@@ -37,23 +37,12 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         },
         hasDateFilter: true
     },
-    monedas: {
-        name: "moneda",
-        title: "Monedas",
-        route: "monedas",
-        fields: {
-            nombre: "text",
-            codigo_iso: "text",
-            simbolo: "text"
-        }
-    },
     cajas: {
         name: "caja",
         title: "Cajas",
         route: "cajas",
         fields: {
-            nombre: "text",
-            moneda: "select"
+            nombre: "text"
         }
     },
     ventas: {
@@ -61,7 +50,6 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         title: "Ventas",
         route: "ventas",
         fields: {
-            moneda: "select",
             cliente: "select"
         },
         hasDateFilter: true,
@@ -84,7 +72,6 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         fields: {
             adjudicacion: "text",
             monto: "number",
-            moneda: "select",
             categoria: "text"
         },
         hasDateFilter: true,
@@ -99,16 +86,6 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
             caja: "select"
         },
         hasDateFilter: true
-    },
-    tasas: {
-        name: "tasa",
-        title: "Tasas",
-        route: "tasas",
-        fields: {
-            tasa: "number",
-            moneda_origen: "select",
-            moneda_destino: "select"
-        }
     },
     transferencias: {
         name: "transferencia",

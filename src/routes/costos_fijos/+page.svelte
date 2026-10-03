@@ -9,15 +9,10 @@
     import { fetchEntity } from "$lib/utils/api";
 
     const config = ENTITY_CONFIGS.costos_fijos;
-    let monedas: any[] = [];
     let cajas: any[] = [];
 
     onMount(async () => {
-        const [resMonedas, resCajas] = await Promise.all([
-            fetchEntity("monedas", [], true, null, "", ""),
-            fetchEntity("cajas", [], true, null, "", "")
-        ]);
-        monedas = resMonedas.entities || [];
+        const resCajas = await fetchEntity("cajas", [], true, null, "", "");
         cajas = resCajas.entities || [];
     });
 </script>
@@ -39,7 +34,6 @@
         <ButtonEdit 
             name_entity={config.name}
             route={config.route} 
-            {monedas}
             id={item.id} 
             fields={config.fields}
             on:updated={handleUpdate}
@@ -56,7 +50,6 @@
         <ButtonCreate 
             route={config.route}
             name_entity={config.name}
-            {monedas}
             fields={config.fields}
             on:created={handleUpdate}
         />

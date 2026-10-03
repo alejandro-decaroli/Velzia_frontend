@@ -8,10 +8,6 @@
     let costos_fijos = [];
     let ventas = [];
     let ingresos = 0;
-    let monedas = [];
-    let moneda_principal = null;
-    let moneda_principal_codigo_iso = "";
-    let tasas = [];
     let costos = 0;
     let cajas = [];
     let monto_caja = 0;
@@ -26,64 +22,28 @@
             user.set(userData);
         }
         loading = true;
-        monedas = await fetchEntity("monedas", [], false, null, "", "");
-        monedas = monedas.entities;
-        moneda_principal = monedas.find(monedas => monedas.principal === true);
-        if (!moneda_principal) {
-            throw new Error("No se encontro moneda principal");
-        }
-        moneda_principal_codigo_iso = moneda_principal.codigo_iso;
-        tasas = await fetchEntity("tasas", [], false, null, "", "");
-        tasas = tasas.entities;
         ventas = await fetchEntity("ventas", [], false, null, "", "");
-        ventas = ventas.entities;
+        ventas = ventas.entities || [];
         if (ventas.length > 0) {
             ventas.forEach(venta => {
-                if (venta.moneda.id === moneda_principal.id) {
-                    ingresos += venta.total_pagado;
-                    total_por_cobrar += (venta.total - venta.total_pagado);
-                } else {
-                    tasas.forEach(tasa => {
-                        if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                            ingresos += venta.total_pagado / tasa.tasa;
-                            total_por_cobrar += (venta.total - venta.total_pagado) / tasa.tasa;
-                        }
-                    })
-                }
-            })
+                ingresos += Number(venta.total_pagado);
+                total_por_cobrar += Number(venta.total) - Number(venta.total_pagado);
+            });
         }
         cajas = await fetchEntity("cajas", [], false, null, "", "");
-        cajas = cajas.entities;
+        cajas = cajas.entities || [];
         if (cajas.length > 0) {
             cajas.forEach(caja => {
-                if (caja.moneda.id === moneda_principal.id) {
-                    monto_caja += caja.monto;
-                } else {
-                    tasas.forEach(tasa => {
-                        if (tasa.moneda_destino.id === caja.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                            monto_caja += (caja.monto / tasa.tasa);
-                        }
-                    })
-                }
-            })
+                monto_caja += Number(caja.monto);
+            });
         }
         costos_fijos = await fetchEntity("costos_fijos", [], false, null, "", "");
-        costos_fijos = costos_fijos.entities;
+        costos_fijos = costos_fijos.entities || [];
         if (costos_fijos.length > 0) {
             costos_fijos.forEach(costos_fijo => {
-                if (costos_fijo.moneda.id === moneda_principal.id) {
-                    costos += costos_fijo.monto_pagado;
-                    total_por_pagar += costos_fijo.monto - costos_fijo.monto_pagado;
-                } else {
-                    tasas.forEach(tasa => {
-                        if (tasa.moneda_destino.id === costos_fijo.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                            costos += (costos_fijo.monto_pagado / tasa.tasa);
-                            total_por_pagar += ((costos_fijo.monto - costos_fijo.monto_pagado) / tasa.tasa);
-                        }
-                    })
-                }
-                
-            })
+                costos += Number(costos_fijo.monto_pagado);
+                total_por_pagar += Number(costos_fijo.monto) - Number(costos_fijo.monto_pagado);
+            });
         }
         proyeccion = total_por_cobrar - total_por_pagar;
         loading = false;
@@ -94,12 +54,12 @@
 <div class="reportes_container">
     <div>
         <h1>Proyección</h1>
-        <p>Total de cajas: ${monto_caja} {moneda_principal_codigo_iso}</p>
-        <p>Total por pagar: ${total_por_pagar} {moneda_principal_codigo_iso}</p>
-        <p>Total por cobrar: ${total_por_cobrar} {moneda_principal_codigo_iso}</p>
-        <p>Total de ingresos: ${ingresos} {moneda_principal_codigo_iso}</p>
-        <p>Total de costos: ${costos} {moneda_principal_codigo_iso}</p>
-        <p>Proyección: ${proyeccion} {moneda_principal_codigo_iso}</p>
+        <p>Total de cajas: ${monto_caja}</p>
+        <p>Total por pagar: ${total_por_pagar}</p>
+        <p>Total por cobrar: ${total_por_cobrar}</p>
+        <p>Total de ingresos: ${ingresos}</p>
+        <p>Total de costos: ${costos}</p>
+        <p>Proyección: ${proyeccion}</p>
     </div>
 </div>
 

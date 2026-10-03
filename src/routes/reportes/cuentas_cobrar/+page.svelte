@@ -7,13 +7,9 @@
     
     let error = null;
     let ventas_pendientes = [];
-    let monedas = [];
-    let moneda_principal = null;
     let total_por_cobrar = 0;
     let acciones = false;
     let loading = false;
-    let tasas = [];
-    let moneda_principal_codigo_iso = "";
 
     onMount(async () => {
         const userData = await checkUser(error);
@@ -21,29 +17,12 @@
             user.set(userData);
         }
         loading = true;
-        monedas = await fetchEntity("monedas", [], false, null, "", "");
-        monedas = monedas.entities;
-        moneda_principal = monedas.find(monedas => monedas.principal === true);
-        if (!moneda_principal) {
-            throw new Error("No se encontro moneda principal");
-        }
-        moneda_principal_codigo_iso = moneda_principal.codigo_iso;
-        tasas = await fetchEntity("tasas", [], false, null, "", "");
-        tasas = tasas.entities;
         ventas_pendientes = await fetchEntity("ventas", [], false, null, "Pendiente", "");
-        ventas_pendientes = ventas_pendientes.entities;
+        ventas_pendientes = ventas_pendientes.entities || [];
         if (ventas_pendientes.length > 0) {
             ventas_pendientes.forEach(venta => {
-                if (venta.moneda.id === moneda_principal.id) {
-                    total_por_cobrar += venta.total - venta.total_pagado;
-                } else {
-                    tasas.forEach(tasa => {
-                        if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                            total_por_cobrar += (venta.total - venta.total_pagado) / tasa.tasa;
-                        }
-                    })
-                }
-            })
+                total_por_cobrar += Number(venta.total) - Number(venta.total_pagado);
+            });
         }
         loading = false;
     });
@@ -52,7 +31,7 @@
 <GoBack route={"/reportes"}/>
 <div class="reportes_container">
     <h1>Cuentas por cobrar</h1>
-    <p>Total por cobrar: ${total_por_cobrar} {moneda_principal_codigo_iso}</p>
+    <p>Total por cobrar: ${total_por_cobrar}</p>
     <EntitiesTable acciones={acciones} entity="ventas" entities={ventas_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
 </div>
 

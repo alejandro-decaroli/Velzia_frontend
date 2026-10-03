@@ -6,10 +6,6 @@
 
     let error = null;
     let ventas = [];
-    let tasas = [];
-    let monedas = [];
-    let moneda_principal = null;
-    let moneda_principal_codigo_iso = "";
     let ventasPagadas = [];
     let ventasPendientes = [];
     let ingreso_ventas = 0;
@@ -27,75 +23,29 @@
         if (userData) {
             user.set(userData);
         }
-        tasas = await fetchEntity("tasas", [], false, null, "", "");
-        tasas = tasas.entities;
-        monedas = await fetchEntity("monedas", [], false, null, "", "");
-        monedas = monedas.entities;
-        moneda_principal = monedas.find(monedas => monedas.principal === true);
-        if (!moneda_principal) {
-            throw new Error("No se encontro moneda principal");
-        }
-        moneda_principal_codigo_iso = moneda_principal.codigo_iso;
         ventas = await fetchEntity("ventas", [], false, null, "", "");
-        ventas = ventas.entities;
+        ventas = ventas.entities || [];
         if (ventas.length > 0) {
             ventas.forEach(venta => {
-                if (venta.moneda.id === moneda_principal.id) {
-                    ingreso_ventas += venta.total;
-                } else {
-                    tasas.forEach(tasa => {
-                        if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                            ingreso_ventas += venta.total / tasa.tasa;
-                        }
-                    })
-                }
-                if (venta.detalles.length > 0) {
+                ingreso_ventas += Number(venta.total);
+                if (venta.detalles && venta.detalles.length > 0) {
                     venta.detalles.forEach(detalle => {
-                        if (venta.moneda.id === moneda_principal.id) {
-                            productos.push({
-                                nombre: detalle.producto.nombre,
-                                cantidad: detalle.cantidad,
-                                subtotal: detalle.subtotal
-                            });
-                        } else {
-                            tasas.forEach(tasa => {
-                                if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                                    productos.push({
-                                        nombre: detalle.producto.nombre,
-                                        cantidad: detalle.cantidad,
-                                        subtotal: detalle.subtotal / tasa.tasa
-                                    });
-                                }
-                            })
-                        }
-                    })
+                        productos.push({
+                            nombre: detalle.producto?.nombre || 'Producto',
+                            cantidad: Number(detalle.cantidad),
+                            subtotal: Number(detalle.subtotal)
+                        });
+                    });
                 }
                 if (venta.estado === "Paga") {
                     ventasPagadas.push(venta);
-                    if (venta.moneda.id === moneda_principal.id) {
-                        ingreso_ventas_pagas += venta.total_pagado;
-                    } else {
-                        tasas.forEach(tasa => {
-                            if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                                ingreso_ventas_pagas += venta.total_pagado / tasa.tasa;
-                            }
-                        })
-                    }
+                    ingreso_ventas_pagas += Number(venta.total_pagado);
                 } else {
                     ventasPendientes.push(venta);
-                    if (venta.moneda.id === moneda_principal.id) {
-                        ingreso_ventas_pendientes += venta.total_pagado;
-                        ingreso_ventas_por_cobrar += venta.total - venta.total_pagado;
-                    } else {
-                        tasas.forEach(tasa => {
-                            if (tasa.moneda_destino.id === venta.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                                ingreso_ventas_pendientes += venta.total_pagado / tasa.tasa;
-                                ingreso_ventas_por_cobrar += (venta.total - venta.total_pagado) / tasa.tasa;
-                            }
-                        })
-                    }
+                    ingreso_ventas_pendientes += Number(venta.total_pagado);
+                    ingreso_ventas_por_cobrar += Number(venta.total) - Number(venta.total_pagado);
                 }
-            })
+            });
         }
 
         const productosAgrupados = productos.reduce((acumulador, producto) => {
@@ -121,7 +71,7 @@
                 producto_mas_rentable = producto;
                 producto_menos_rentable = producto;
             }
-        })
+        });
         productos.forEach(producto => {
             if (producto.cantidad < producto_menos_vendido.cantidad) {
                 producto_menos_vendido = producto;
@@ -129,7 +79,7 @@
             if (producto.subtotal < producto_menos_rentable.subtotal) {
                 producto_menos_rentable = producto;
             }
-        })
+        });
     });
 
 </script>
@@ -142,15 +92,15 @@
             <p>Total de ventas: {ventas.length}</p>
             <p>Total de ventas pagas: {ventasPagadas.length}</p>
             <p>Total de ventas pendientes: {ventasPendientes.length}</p>
-            <p>Porcentaje de ventas pagas: {ventasPagadas.length / ventas.length * 100}%</p>
-            <p>Porcentaje de ventas pendientes: {ventasPendientes.length / ventas.length * 100}%</p>
-            <p>Ingreso total: ${ingreso_ventas} {moneda_principal_codigo_iso}</p>    
-            <p>Ingreso de ventas pagas: ${ingreso_ventas_pagas} {moneda_principal_codigo_iso}</p>
-            <p>Ingreso de ventas pendientes: ${ingreso_ventas_pendientes} {moneda_principal_codigo_iso}</p>
-            <p>Ingreso por cobrar: ${ingreso_ventas_por_cobrar} {moneda_principal_codigo_iso}</p>
-            <p>Porcentaje de ingreso de ventas pagas: {ingreso_ventas_pagas / ingreso_ventas * 100}%</p>
-            <p>Porcentaje de ingreso de ventas pendientes: {ingreso_ventas_pendientes / ingreso_ventas * 100}%</p>
-            <p>Porcentaje de ingreso por cobrar: {ingreso_ventas_por_cobrar / ingreso_ventas * 100}%</p>
+            <p>Porcentaje de ventas pagas: {ventas.length ? (ventasPagadas.length / ventas.length * 100).toFixed(2) : 0}%</p>
+            <p>Porcentaje de ventas pendientes: {ventas.length ? (ventasPendientes.length / ventas.length * 100).toFixed(2) : 0}%</p>
+            <p>Ingreso total: ${ingreso_ventas}</p>    
+            <p>Ingreso de ventas pagas: ${ingreso_ventas_pagas}</p>
+            <p>Ingreso de ventas pendientes: ${ingreso_ventas_pendientes}</p>
+            <p>Ingreso por cobrar: ${ingreso_ventas_por_cobrar}</p>
+            <p>Porcentaje de ingreso de ventas pagas: {ingreso_ventas ? (ingreso_ventas_pagas / ingreso_ventas * 100).toFixed(2) : 0}%</p>
+            <p>Porcentaje de ingreso de ventas pendientes: {ingreso_ventas ? (ingreso_ventas_pendientes / ingreso_ventas * 100).toFixed(2) : 0}%</p>
+            <p>Porcentaje de ingreso por cobrar: {ingreso_ventas ? (ingreso_ventas_por_cobrar / ingreso_ventas * 100).toFixed(2) : 0}%</p>
         </div>
     </div>
     <div class="reporte">
@@ -161,9 +111,9 @@
             <p>Producto menos vendido: {producto_menos_vendido.nombre}</p>
             <p>Cantidad vendida: {producto_menos_vendido.cantidad}</p>
             <p>Producto más rentable: {producto_mas_rentable.nombre}</p>
-            <p>Ingreso: ${producto_mas_rentable.subtotal} {moneda_principal_codigo_iso}</p>
+            <p>Ingreso: ${producto_mas_rentable.subtotal}</p>
             <p>Producto menos rentable: {producto_menos_rentable.nombre}</p>
-            <p>Ingreso: ${producto_menos_rentable.subtotal} {moneda_principal_codigo_iso}</p>
+            <p>Ingreso: ${producto_menos_rentable.subtotal}</p>
         </div>
     </div>
 </div>

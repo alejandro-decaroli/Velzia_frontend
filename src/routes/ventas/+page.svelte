@@ -10,17 +10,14 @@
     import { fetchEntity } from "$lib/utils/api";
 
     const config = ENTITY_CONFIGS.ventas;
-    let monedas: any[] = [];
     let clientes: any[] = [];
     let cajas: any[] = [];
 
     onMount(async () => {
-        const [resMonedas, resClientes, resCajas] = await Promise.all([
-            fetchEntity("monedas", [], true, null, "", ""),
+        const [resClientes, resCajas] = await Promise.all([
             fetchEntity("clientes", [], true, null, "", ""),
             fetchEntity("cajas", [], true, null, "", "")
         ]);
-        monedas = resMonedas.entities || [];
         clientes = resClientes.entities || [];
         cajas = resCajas.entities || [];
     });
@@ -47,7 +44,6 @@
             name_entity={config.name}
             route={config.route} 
             {clientes}
-            {monedas}
             id={item.id} 
             fields={config.fields}
             on:updated={handleUpdate}
@@ -64,7 +60,6 @@
         <ButtonCreate 
             route={config.route}
             name_entity={config.name}
-            {monedas}
             {clientes}
             fields={config.fields}
             on:created={handleUpdate}

@@ -8,13 +8,11 @@
     export let fields: Record<string, any> = {};
     
     // Select options props
-    export let monedas: any[] = [];
     export let cajas: any[] = [];
     export let clientes: any[] = [];
     export let productos: any[] = [];
     export let rol: string[] = [];
     export let movimiento: string[] = [];
-    export let principal: string[] = [];
 
     let entity: Record<string, any> | null = null;
     let loading = false;
@@ -38,7 +36,7 @@
                 // If it's loaded, map nested properties to their ID equivalents for selects
                 const data = result.entity;
                 
-                // Nest mapping normalization (e.g. if api returns item.moneda as an object, map it to item.moneda ID for binding)
+                // Nest mapping normalization (e.g. if api returns item.caja as an object, map it to item.caja ID for binding)
                 for (const key of Object.keys(fields)) {
                     if (fields[key] === "select" && data[key] && typeof data[key] === "object") {
                         data[key] = data[key].id || data[key];
@@ -97,7 +95,7 @@
         class="modal-overlay" 
         role="button" 
         tabindex="0" 
-        on:click={handleClose}
+        on:click={handleClose} 
         on:keydown={(e) => e.key === 'Escape' && handleClose()}
     >
         <div class="modal-content" on:click|stopPropagation>
@@ -120,13 +118,11 @@
                     <EntityForm 
                         {fields} 
                         bind:formData={entity} 
-                        {monedas} 
                         {cajas} 
                         {clientes} 
                         {productos} 
                         {rol} 
                         {movimiento} 
-                        {principal} 
                     />
                 </div>
                 

@@ -6,12 +6,8 @@
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
     
     let error = null;
-    let tasas = [];
     let costos_fijos_pendientes = [];
     let total_por_pagar = 0;
-    let monedas = [];
-    let moneda_principal_codigo_iso = "";
-    let moneda_principal = null;
     let loading = false;
     let acciones = false;
 
@@ -21,39 +17,21 @@
             user.set(userData);
         }
         loading = true;
-        monedas = await fetchEntity("monedas", [], false, null, "", "");
-        monedas = monedas.entities;
-        moneda_principal = monedas.find(monedas => monedas.principal === true);
-        if (!moneda_principal) {
-            throw new Error("No se encontro moneda principal");
-        }
-        moneda_principal_codigo_iso = moneda_principal.codigo_iso;
-        tasas = await fetchEntity("tasas", [], false, null, "", "");
-        tasas = tasas.entities;
         costos_fijos_pendientes = await fetchEntity("costos_fijos", [], false, null, "Pendiente", "");
-        costos_fijos_pendientes = costos_fijos_pendientes.entities;
+        costos_fijos_pendientes = costos_fijos_pendientes.entities || [];
         if (costos_fijos_pendientes.length > 0) {
             costos_fijos_pendientes.forEach(costos_fijo => {
-                if (costos_fijo.moneda.id === moneda_principal.id) {
-                    total_por_pagar += costos_fijo.monto - costos_fijo.monto_pagado;
-                } else {
-                    tasas.forEach(tasa => {
-                        if (tasa.moneda_destino.id === costos_fijo.moneda.id && tasa.moneda_origen.id === moneda_principal.id) {
-                            total_por_pagar += (costos_fijo.monto - costos_fijo.monto_pagado) / tasa.tasa;
-                        }
-                    })
-                }
-            })
+                total_por_pagar += Number(costos_fijo.monto) - Number(costos_fijo.monto_pagado);
+            });
         }
         loading = false;
-        moneda_principal = monedas.find(monedas => monedas.id === moneda_principal.id);
     });
 
 </script>
 <GoBack route={"/reportes"}/>
 <div class="reportes_container">
     <h1>Cuentas por pagar</h1>
-    <p>Total por pagar: ${total_por_pagar} {moneda_principal_codigo_iso}</p>
+    <p>Total por pagar: ${total_por_pagar}</p>
     <EntitiesTable acciones={acciones} entity="costos_fijos" entities={costos_fijos_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
 </div>
 

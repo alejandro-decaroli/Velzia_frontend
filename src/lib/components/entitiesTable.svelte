@@ -47,19 +47,12 @@
                             {#each Object.keys(entities[0]).filter(key => !shouldExclude(key)) as key}
                                 <th>{formatHeader(key)}</th>
                             {/each}
-                            {#if entity === "costos_fijos" || entity === "cajas" || entity === "ventas" || entity === "pagos"}
-                                <th>Moneda</th>
-                            {/if}
                             {#if entity === "ventas"}
                                 <th>Cliente</th>
                             {/if}
                             {#if entity === "pagos"}
                                 <th>Caja</th>
                                 <th>Código Venta/Costo</th>
-                            {/if}
-                            {#if entity === "tasas"}
-                                <th>Moneda Origen</th>
-                                <th>Moneda Destino</th>
                             {/if}
                             {#if entity === "transferencias"}
                                 <th>Caja Origen</th>
@@ -98,12 +91,6 @@
                                     {/if}
                                 </td>
                             {/each}
-                            {#if entity === "costos_fijos" || entity === "cajas" || entity === "ventas"}
-                                <td>{item.moneda?.codigo_iso || '-'}</td>
-                            {/if}
-                            {#if entity === "pagos"}
-                                <td>{item.caja?.moneda?.codigo_iso || '-'}</td>
-                            {/if}
                             {#if entity === "ventas"}
                                 <td>{item.cliente ? `${item.cliente.nombre} ${item.cliente.apellido}` : '-'}</td>
                             {/if}
@@ -118,10 +105,6 @@
                                         -
                                     {/if}
                                 </td>
-                            {/if}
-                            {#if entity === "tasas"}
-                                <td>{item.moneda_origen?.codigo_iso || '-'}</td>
-                                <td>{item.moneda_destino?.codigo_iso || '-'}</td>
                             {/if}
                             {#if entity === "transferencias"}
                                 <td>{item.caja_origen?.nombre || '-'}</td>

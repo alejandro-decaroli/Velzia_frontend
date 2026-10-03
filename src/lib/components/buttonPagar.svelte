@@ -113,7 +113,7 @@
                         <label for="pay-caja">Caja de destino / origen</label>
                         <select id="pay-caja" bind:value={cajaId} required>
                             {#each cajas as option}
-                                <option value={option.id}>{option.nombre} ({option.moneda?.codigo_iso || ''})</option>
+                                <option value={option.id}>{option.nombre}</option>
                             {/each}
                         </select>
                     </div>

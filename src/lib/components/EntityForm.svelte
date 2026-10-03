@@ -5,13 +5,11 @@
     export let formData: Record<string, any> = {};
     
     // Select options datasets
-    export let monedas: any[] = [];
     export let cajas: any[] = [];
     export let clientes: any[] = [];
     export let productos: any[] = [];
     export let rol: string[] = ["Admin", "Empleado"]; // Default placeholder if roles exist
     export let movimiento: string[] = ["ingreso", "egreso"];
-    export let principal: string[] = ["si", "no"];
 
     function getLabel(key: string) {
         return key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
@@ -27,11 +25,7 @@
                 <select id={fieldName} name={fieldName} bind:value={formData[fieldName]}>
                     <option value="" disabled selected>Seleccione una opción</option>
                     
-                    {#if fieldName === "moneda" || fieldName === "moneda_origen" || fieldName === "moneda_destino"}
-                        {#each monedas as option}
-                            <option value={option.id}>{option.nombre} ({option.codigo_iso})</option>
-                        {/each}
-                    {:else if fieldName === "caja" || fieldName === "caja_origen" || fieldName === "caja_destino"}
+                    {#if fieldName === "caja" || fieldName === "caja_origen" || fieldName === "caja_destino"}
                         {#each cajas as option}
                             <option value={option.id}>{option.nombre}</option>
                         {/each}
@@ -50,10 +44,6 @@
                     {:else if fieldName === "producto"}
                         {#each productos as option}
                             <option value={option.id}>{option.nombre}</option>
-                        {/each}
-                    {:else if fieldName === "principal"}
-                        {#each principal as option}
-                            <option value={option}>{option}</option>
                         {/each}
                     {/if}
                 </select>
