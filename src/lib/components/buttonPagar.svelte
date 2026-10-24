@@ -24,7 +24,8 @@
             } else if (result && result.entity) {
                 entity = result.entity;
                 showForm = true;
-                montoPagar = "";
+                const totalAmount = entity.total !== undefined ? entity.total : (entity.monto !== undefined ? entity.monto : 0);
+                montoPagar = String(totalAmount);
                 cajaId = cajas.length > 0 ? cajas[0].id : "";
             }
         } catch (err: any) {
@@ -99,14 +100,16 @@
                 
                 <div class="form-body">
                     <div class="form-field">
-                        <label for="pay-monto">Monto a pagar</label>
+                        <label for="pay-monto">Monto a pagar (Pago total único)</label>
                         <input 
                             type="number" 
                             id="pay-monto" 
                             bind:value={montoPagar} 
-                            placeholder="Ingrese monto a pagar" 
+                            readonly 
+                            class="readonly-input"
                             required 
                         />
+                        <span class="info-note">No se aceptan pagos en cuotas. El pago debe cubrir el monto total.</span>
                     </div>
                     
                     <div class="form-field">
@@ -246,6 +249,18 @@
         border-radius: var(--radius-md);
         color: var(--text-primary);
         font-size: 0.95rem;
+    }
+
+    .readonly-input {
+        background-color: rgba(255, 255, 255, 0.05);
+        cursor: not-allowed;
+        color: var(--text-secondary);
+    }
+
+    .info-note {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
     }
 
     select {

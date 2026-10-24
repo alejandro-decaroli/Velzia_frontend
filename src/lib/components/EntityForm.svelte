@@ -8,6 +8,8 @@
     export let cajas: any[] = [];
     export let clientes: any[] = [];
     export let productos: any[] = [];
+    export let proveedores: any[] = [];
+    export let pedidos: any[] = [];
     export let rol: string[] = ["Admin", "Empleado"]; // Default placeholder if roles exist
     export let movimiento: string[] = ["ingreso", "egreso"];
 
@@ -33,6 +35,14 @@
                         {#each clientes as option}
                             <option value={option.id}>{option.nombre} {option.apellido}</option>
                         {/each}
+                    {:else if fieldName === "proveedor"}
+                        {#each proveedores as option}
+                            <option value={option.id}>{option.razon_social}</option>
+                        {/each}
+                    {:else if fieldName === "pedido"}
+                        {#each pedidos as option}
+                            <option value={option.id}>{option.cod || `Pedido #${option.id}`}</option>
+                        {/each}
                     {:else if fieldName === "rol"}
                         {#each rol as option}
                             <option value={option}>{option}</option>
@@ -45,6 +55,13 @@
                         {#each productos as option}
                             <option value={option.id}>{option.nombre}</option>
                         {/each}
+                    {:else if fieldName === "estado"}
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Enviado">Enviado</option>
+                        <option value="Recibido">Recibido</option>
+                        <option value="Pagada">Pagada</option>
+                        <option value="Pagado">Pagado</option>
+                        <option value="Cancelado">Cancelado</option>
                     {/if}
                 </select>
             {:else}

@@ -30,13 +30,15 @@
     hasStatusFilter={config.hasStatusFilter}
 >
     <svelte:fragment slot="actions" let:item let:handleUpdate>
-        <ButtonPagar 
-            name_entity="venta"
-            route={config.route} 
-            id={item.id} 
-            {cajas}
-            on:updated={handleUpdate}
-        />
+        {#if item.estado !== 'Paga' && !item.pago}
+            <ButtonPagar 
+                name_entity="venta"
+                route={config.route} 
+                id={item.id} 
+                {cajas}
+                on:updated={handleUpdate}
+            />
+        {/if}
         <ButtonDetalles 
             id_venta={item.id}
         />

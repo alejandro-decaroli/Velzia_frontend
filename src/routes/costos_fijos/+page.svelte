@@ -8,7 +8,7 @@
     import { ENTITY_CONFIGS } from "$lib/utils/entityConfig";
     import { fetchEntity } from "$lib/utils/api";
 
-    const config = ENTITY_CONFIGS.costos_fijos;
+    const config = ENTITY_CONFIGS.costos;
     let cajas: any[] = [];
 
     onMount(async () => {

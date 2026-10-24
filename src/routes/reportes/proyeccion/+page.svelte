@@ -5,7 +5,7 @@
     import { checkUser, user } from "$lib/stores/auth.js";
     
     let error = null;
-    let costos_fijos = [];
+    let costos_list = [];
     let ventas = [];
     let ingresos = 0;
     let costos = 0;
@@ -37,12 +37,19 @@
                 monto_caja += Number(caja.monto);
             });
         }
-        costos_fijos = await fetchEntity("costos_fijos", [], false, null, "", "");
-        costos_fijos = costos_fijos.entities || [];
-        if (costos_fijos.length > 0) {
-            costos_fijos.forEach(costos_fijo => {
-                costos += Number(costos_fijo.monto_pagado);
-                total_por_pagar += Number(costos_fijo.monto) - Number(costos_fijo.monto_pagado);
+        let resCostos = await fetchEntity("costos", [], false, null, "", "");
+        costos_list = resCostos.entities || [];
+        if (costos_list.length === 0) {
+            resCostos = await fetchEntity("costos_fijos", [], false, null, "", "");
+            costos_list = resCostos.entities || [];
+        }
+        if (costos_list.length > 0) {
+            costos_list.forEach(item => {
+                if (item.estado === 'Pagada' || item.estado === 'Paga') {
+                    costos += Number(item.monto);
+                } else {
+                    total_por_pagar += Number(item.monto);
+                }
             });
         }
         proyeccion = total_por_cobrar - total_por_pagar;

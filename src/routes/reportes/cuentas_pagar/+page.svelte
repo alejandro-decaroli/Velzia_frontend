@@ -6,7 +6,7 @@
     import EntitiesTable from "$lib/components/entitiesTable.svelte";
     
     let error = null;
-    let costos_fijos_pendientes = [];
+    let costos_pendientes = [];
     let total_por_pagar = 0;
     let loading = false;
     let acciones = false;
@@ -17,11 +17,16 @@
             user.set(userData);
         }
         loading = true;
-        costos_fijos_pendientes = await fetchEntity("costos_fijos", [], false, null, "Pendiente", "");
-        costos_fijos_pendientes = costos_fijos_pendientes.entities || [];
-        if (costos_fijos_pendientes.length > 0) {
-            costos_fijos_pendientes.forEach(costos_fijo => {
-                total_por_pagar += Number(costos_fijo.monto) - Number(costos_fijo.monto_pagado);
+        let res = await fetchEntity("costos", [], false, null, "Pendiente", "");
+        costos_pendientes = res.entities || [];
+        if (costos_pendientes.length === 0) {
+            // Fallback in case backend returns under legacy name
+            res = await fetchEntity("costos_fijos", [], false, null, "Pendiente", "");
+            costos_pendientes = res.entities || [];
+        }
+        if (costos_pendientes.length > 0) {
+            costos_pendientes.forEach(costo => {
+                total_por_pagar += Number(costo.monto);
             });
         }
         loading = false;
@@ -32,7 +37,7 @@
 <div class="reportes_container">
     <h1>Cuentas por pagar</h1>
     <p>Total por pagar: ${total_por_pagar}</p>
-    <EntitiesTable acciones={acciones} entity="costos_fijos" entities={costos_fijos_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
+    <EntitiesTable acciones={acciones} entity="costos" entities={costos_pendientes} loading={loading} error={error} filtro="Pendiente" fecha=""/>
 </div>
 
 <style>

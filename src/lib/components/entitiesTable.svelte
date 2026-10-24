@@ -64,6 +64,13 @@
                             {#if entity === "detalles"}
                                 <th>Cod de Venta</th>
                             {/if}
+                            {#if entity === "pedidos"}
+                                <th>Proveedor</th>
+                            {/if}
+                            {#if entity === "lineas_pedidos" || entity === "lineas_pedido"}
+                                <th>Pedido</th>
+                                <th>Producto</th>
+                            {/if}
                             {#if acciones}
                                 <th class="actions-header">Acciones</th>
                             {/if}
@@ -78,12 +85,12 @@
                         <tr>
                             {#each Object.entries(item).filter(([key]) => !shouldExclude(key)) as [key, value]}
                                 <td>
-                                    {#if key === "creadoEn" || key === "actualizadoEn" || key === "eliminadoEn"}
+                                    {#if key === "creadoEn" || key === "actualizadoEn" || key === "eliminadoEn" || key === "fecha_emision" || key === "fecha_recepcion"}
                                         {handleDate(value as string)}
                                     {:else if key === "producto"}
                                         {(value as any).nombre}
                                     {:else if key === "estado" || key === "movimiento"}
-                                        <span class="badge" class:badge-success={value === "Paga" || value === "Pagada" || value === "ingreso"} class:badge-warning={value === "Pendiente" || value === "egreso"}>
+                                        <span class="badge" class:badge-success={value === "Paga" || value === "Pagada" || value === "Pagado" || value === "ingreso" || value === "Recibido"} class:badge-warning={value === "Pendiente" || value === "egreso" || value === "Enviado"}>
                                             {value}
                                         </span>
                                     {:else}
@@ -98,9 +105,13 @@
                                 <td>{item.caja?.nombre || '-'}</td>
                                 <td>
                                     {#if item.venta}
-                                        {item.venta.cod} (Venta)
+                                        {item.venta.cod || `Venta #${item.venta.id}`} (Venta)
+                                    {:else if item.costo}
+                                        {item.costo.cod || `Costo #${item.costo.id}`} (Costo)
                                     {:else if item.costo_fijo}
-                                        {item.costo_fijo.cod} (Costo Fijo)
+                                        {item.costo_fijo.cod || `Costo #${item.costo_fijo.id}`} (Costo)
+                                    {:else if item.pedido}
+                                        {item.pedido.cod || `Pedido #${item.pedido.id}`} (Pedido)
                                     {:else}
                                         -
                                     {/if}
@@ -115,6 +126,13 @@
                             {/if}
                             {#if entity === "detalles"}
                                 <td>{item.venta?.cod || '-'}</td>
+                            {/if}
+                            {#if entity === "pedidos"}
+                                <td>{item.proveedor ? (item.proveedor.razon_social || item.proveedor.nombre || item.proveedor.id) : '-'}</td>
+                            {/if}
+                            {#if entity === "lineas_pedidos" || entity === "lineas_pedido"}
+                                <td>{item.pedido ? (item.pedido.cod || `Pedido #${item.pedido.id}`) : '-'}</td>
+                                <td>{item.producto ? item.producto.nombre : '-'}</td>
                             {/if}
                             {#if acciones}
                                 <td class="actions-cell">

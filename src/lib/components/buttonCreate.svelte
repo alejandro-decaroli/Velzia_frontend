@@ -10,6 +10,8 @@
     export let cajas: any[] = [];
     export let clientes: any[] = [];
     export let productos: any[] = [];
+    export let proveedores: any[] = [];
+    export let pedidos: any[] = [];
     export let rol: string[] = [];
     export let movimiento: string[] = [];
     
@@ -91,6 +93,8 @@
                         {cajas} 
                         {clientes} 
                         {productos} 
+                        {proveedores} 
+                        {pedidos} 
                         {rol} 
                         {movimiento} 
                     />

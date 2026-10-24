@@ -57,7 +57,7 @@ export async function loadEntity(route: string, id: string, name_entity: string,
         }
         
         if (response.ok) {
-            entity = data[name_entity];
+            entity = data[name_entity] || data.linea || data.linea_pedido || data.pedido || data.proveedor;
             showForm = true;
             return { loading: false, error, entity, showForm };
         }
@@ -126,7 +126,9 @@ export async function fetchEntity(
         }
 
         const responseData = await response.json();
-        entities = Array.isArray(responseData) ? responseData : (responseData[entity] || []);
+        entities = Array.isArray(responseData) 
+            ? responseData 
+            : (responseData[entity] || responseData.lineas || responseData.lineas_pedidos || responseData.pedidos || responseData.proveedores || []);
         
         return { loading: false, error: null, entities };
     } catch (err) {

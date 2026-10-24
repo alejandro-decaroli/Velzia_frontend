@@ -82,12 +82,18 @@
                                 {#each statusOptions as opt}
                                     <option value={opt.value}>{opt.label}</option>
                                 {/each}
-                            {:else if entityKey === "ventas" || entityKey === "costos_fijos"}
+                            {:else if entityKey === "ventas" || entityKey === "costos" || entityKey === "costos_fijos"}
                                 <option value="Pendiente">Pendiente</option>
+                                <option value="Pagada">Pagada</option>
                                 <option value="Paga">Paga</option>
                             {:else if entityKey === "ajustes"}
                                 <option value="ingreso">Ingreso</option>
                                 <option value="egreso">Egreso</option>
+                            {:else if entityKey === "pedidos"}
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Enviado">Enviado</option>
+                                <option value="Recibido">Recibido</option>
+                                <option value="Pagado">Pagado</option>
                             {/if}
                         </select>
                     </div>

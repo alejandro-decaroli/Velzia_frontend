@@ -14,13 +14,14 @@ export interface EntityConfig {
 export const EXCLUDED_TABLE_FIELDS = [
     "clientes", "pago", "pagos", 
     "ajuste", "ajustes", "transferencia", "transferencias", "transferencias_origen", "transferencias_destino",
-    "venta", "ventas", "costo_fijo", "costos_fijos", 
+    "venta", "ventas", "costo", "costos", "costo_fijo", "costos_fijos", 
     "cliente", "moneda", "caja", "visible", "detalles", "usuario", "caja_origen", "caja_destino", 
     "actualizadoen", "moneda_origen", "moneda_destino", "eliminadoen", "id", 
     "nombre_cliente", "apellido_cliente", "costofijo",
     "moneda_asociada", "nombre_caja_origen", "nombre_caja_destino", "tipo_moneda",
     "nombre_moneda_origen", "nombre_moneda_destino", "nombre_moneda", "creadoen",
-    "subtotal", "monto_pagado", "nombre_caja", "codigo"
+    "subtotal", "monto_pagado", "nombre_caja", "codigo",
+    "pedidos", "lineas", "lineas_pedidos", "lineas_pedido", "lineaspedidos", "lineaspedido", "proveedor", "pedido", "proveedores"
 ];
 
 export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
@@ -65,14 +66,28 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
             stock: "number"
         }
     },
-    costos_fijos: {
-        name: "costo_fijo",
-        title: "Costos Fijos",
-        route: "costos_fijos",
+    costos: {
+        name: "costo",
+        title: "Costos",
+        route: "costos",
         fields: {
-            adjudicacion: "text",
+            descripcion: "text",
             monto: "number",
-            categoria: "text"
+            categoria: "text",
+            estado: "select"
+        },
+        hasDateFilter: true,
+        hasStatusFilter: true
+    },
+    costos_fijos: {
+        name: "costo",
+        title: "Costos",
+        route: "costos",
+        fields: {
+            descripcion: "text",
+            monto: "number",
+            categoria: "text",
+            estado: "select"
         },
         hasDateFilter: true,
         hasStatusFilter: true
@@ -109,6 +124,43 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         },
         hasDateFilter: true,
         hasStatusFilter: true // "ingreso" / "egreso"
+    },
+    proveedores: {
+        name: "proveedor",
+        title: "Proveedores",
+        route: "proveedores",
+        fields: {
+            razon_social: "text",
+            cuit: "text",
+            telefono: "text",
+            email: "email",
+            direccion: "text"
+        },
+        hasDateFilter: true
+    },
+    pedidos: {
+        name: "pedido",
+        title: "Pedidos",
+        route: "pedidos",
+        fields: {
+            proveedor: "select",
+            fecha_emision: "date",
+            fecha_recepcion: "date",
+            estado: "select"
+        },
+        hasDateFilter: true,
+        hasStatusFilter: true
+    },
+    lineas_pedidos: {
+        name: "linea_pedido",
+        title: "Líneas de Pedido",
+        route: "lineas_pedidos",
+        fields: {
+            pedido: "select",
+            producto: "select",
+            cantidad: "number",
+            precio: "number"
+        }
     }
 };
 
