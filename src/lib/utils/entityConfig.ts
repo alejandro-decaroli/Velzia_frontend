@@ -21,7 +21,8 @@ export const EXCLUDED_TABLE_FIELDS = [
     "moneda_asociada", "nombre_caja_origen", "nombre_caja_destino", "tipo_moneda",
     "nombre_moneda_origen", "nombre_moneda_destino", "nombre_moneda", "creadoen",
     "subtotal", "monto_pagado", "nombre_caja", "codigo",
-    "pedidos", "lineas", "lineas_pedidos", "lineas_pedido", "lineaspedidos", "lineaspedido", "proveedor", "pedido", "proveedores"
+    "pedidos", "lineas", "lineas_pedidos", "lineas_pedido", "lineaspedidos", "lineaspedido", "proveedor", "pedido", "proveedores",
+    "movf", "mov_f", "movimiento", "movimientos", "movimientofinanciero", "movimiento_financiero", "mov"
 ];
 
 export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
@@ -73,8 +74,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         fields: {
             descripcion: "text",
             monto: "number",
-            categoria: "text",
-            estado: "select"
+            categoria: "text"
         },
         hasDateFilter: true,
         hasStatusFilter: true
@@ -86,8 +86,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         fields: {
             descripcion: "text",
             monto: "number",
-            categoria: "text",
-            estado: "select"
+            categoria: "text"
         },
         hasDateFilter: true,
         hasStatusFilter: true
@@ -125,6 +124,22 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         hasDateFilter: true,
         hasStatusFilter: true // "ingreso" / "egreso"
     },
+    historial_financiero: {
+        name: "movimiento",
+        title: "Historial Financiero",
+        route: "historial_financiero",
+        fields: {},
+        hasDateFilter: true,
+        hasStatusFilter: true
+    },
+    movimientos: {
+        name: "movimiento",
+        title: "Historial Financiero",
+        route: "movimientos",
+        fields: {},
+        hasDateFilter: true,
+        hasStatusFilter: true
+    },
     proveedores: {
         name: "proveedor",
         title: "Proveedores",
@@ -145,8 +160,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         fields: {
             proveedor: "select",
             fecha_emision: "date",
-            fecha_recepcion: "date",
-            estado: "select"
+            fecha_recepcion: "date"
         },
         hasDateFilter: true,
         hasStatusFilter: true
@@ -171,5 +185,6 @@ export function normalizeKey(key: string): string {
 
 export function shouldExclude(key: string): boolean {
     const normalized = normalizeKey(key);
-    return EXCLUDED_TABLE_FIELDS.includes(normalized);
+    const lower = (key || '').toLowerCase();
+    return EXCLUDED_TABLE_FIELDS.includes(normalized) || EXCLUDED_TABLE_FIELDS.includes(lower);
 }

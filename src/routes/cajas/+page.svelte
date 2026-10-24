@@ -3,11 +3,12 @@
     import ButtonCreate from "$lib/components/buttonCreate.svelte";
     import ButtonDelete from "$lib/components/buttonDelete.svelte";
     import ButtonEdit from "$lib/components/buttonEdit.svelte";
+    import ButtonTransferencia from "$lib/components/ButtonTransferencia.svelte";
+    import ButtonConciliacion from "$lib/components/ButtonConciliacion.svelte";
     import { ENTITY_CONFIGS } from "$lib/utils/entityConfig";
 
     const config = ENTITY_CONFIGS.cajas;
 
-    // Fields for cajas include "monto" for edit/create
     const fields = {
         nombre: "text",
         monto: "number"
@@ -35,11 +36,24 @@
     </svelte:fragment>
     
     <svelte:fragment slot="controls" let:handleUpdate>
-        <ButtonCreate 
-            route={config.route}
-            name_entity={config.name}
-            {fields}
-            on:created={handleUpdate}
-        />
+        <div class="cajas-controls">
+            <ButtonTransferencia on:transferred={handleUpdate} />
+            <ButtonConciliacion on:reconciled={handleUpdate} />
+            <ButtonCreate 
+                route={config.route}
+                name_entity={config.name}
+                {fields}
+                on:created={handleUpdate}
+            />
+        </div>
     </svelte:fragment>
 </CrudPage>
+
+<style>
+    .cajas-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+</style>

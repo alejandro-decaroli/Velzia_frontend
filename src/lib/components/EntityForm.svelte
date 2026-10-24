@@ -57,11 +57,7 @@
                         {/each}
                     {:else if fieldName === "estado"}
                         <option value="Pendiente">Pendiente</option>
-                        <option value="Enviado">Enviado</option>
-                        <option value="Recibido">Recibido</option>
-                        <option value="Pagada">Pagada</option>
                         <option value="Pagado">Pagado</option>
-                        <option value="Cancelado">Cancelado</option>
                     {/if}
                 </select>
             {:else}

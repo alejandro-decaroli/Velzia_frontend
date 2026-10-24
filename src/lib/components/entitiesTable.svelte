@@ -18,8 +18,9 @@
     }
 
     function formatHeader(key: string) {
-        // CamelCase split to spaces
-        const display = key.split(/(?=[A-Z])/).join(' ');
+        if (key === "linea_venta" || key === "lineas_venta") return "Líneas de Venta";
+        // CamelCase and snake_case split to spaces
+        const display = key.replace(/_/g, ' ').split(/(?=[A-Z])/).join(' ');
         return display.charAt(0).toUpperCase() + display.slice(1);
     }
 </script>
@@ -50,9 +51,9 @@
                             {#if entity === "ventas"}
                                 <th>Cliente</th>
                             {/if}
-                            {#if entity === "pagos"}
+                            {#if entity === "pagos" || entity === "historial_financiero" || entity === "movimientos"}
                                 <th>Caja</th>
-                                <th>Código Venta/Costo</th>
+                                <th>Referencia</th>
                             {/if}
                             {#if entity === "transferencias"}
                                 <th>Caja Origen</th>
@@ -89,10 +90,27 @@
                                         {handleDate(value as string)}
                                     {:else if key === "producto"}
                                         {(value as any).nombre}
-                                    {:else if key === "estado" || key === "movimiento"}
-                                        <span class="badge" class:badge-success={value === "Paga" || value === "Pagada" || value === "Pagado" || value === "ingreso" || value === "Recibido"} class:badge-warning={value === "Pendiente" || value === "egreso" || value === "Enviado"}>
-                                            {value}
+                                    {:else if key === "estado" || key === "movimiento" || key === "tipo"}
+                                        {@const valStr = String(value || '').toLowerCase()}
+                                        {@const isPaid = valStr.startsWith('pag') || valStr === 'ingreso' || valStr === 'recibido'}
+                                        {@const isTransfer = valStr === 'transferencia'}
+                                        <span class="badge" class:badge-success={isPaid} class:badge-warning={!isPaid && !isTransfer} class:badge-info={isTransfer}>
+                                            {typeof value === 'string' && value.toLowerCase().startsWith('pag') ? (value.toLowerCase() === 'pagos' ? 'Pagado' : value) : value}
                                         </span>
+                                    {:else if key === "linea_venta" || key === "lineas_venta" || key === "lineas" || key === "lineas_pedidos" || Array.isArray(value)}
+                                        {#if Array.isArray(value) && value.length > 0}
+                                            <div class="line-codes-container">
+                                                {#each value as line}
+                                                    <span class="code-badge">{line.cod || (line.id ? `#${line.id}` : (typeof line === 'object' ? line.nombre || '-' : line))}</span>
+                                                {/each}
+                                            </div>
+                                        {:else if Array.isArray(value)}
+                                            <span class="text-muted">-</span>
+                                        {:else if typeof value === 'object' && value !== null}
+                                            <span class="code-badge">{value.cod || value.nombre || `#${value.id}`}</span>
+                                        {:else}
+                                            {value}
+                                        {/if}
                                     {:else}
                                         {value}
                                     {/if}
@@ -235,6 +253,12 @@
         border: 1px solid rgba(239, 68, 68, 0.3);
     }
 
+    .badge-info {
+        background-color: rgba(99, 102, 241, 0.15);
+        color: #818cf8;
+        border: 1px solid rgba(99, 102, 241, 0.35);
+    }
+
     /* States */
     .loading-state, .error-state {
         display: flex;
@@ -289,5 +313,29 @@
     .retry-btn:hover {
         background-color: var(--text-muted);
         border-color: var(--glass-border-hover);
+    }
+
+    .line-codes-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        align-items: center;
+    }
+
+    .code-badge {
+        display: inline-block;
+        padding: 0.15rem 0.45rem;
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-weight: 700;
+        font-family: monospace;
+        color: var(--color-brand);
+    }
+
+    .text-muted {
+        color: var(--text-secondary);
+        font-style: italic;
     }
 </style>

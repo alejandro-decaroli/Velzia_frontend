@@ -128,7 +128,7 @@ export async function fetchEntity(
         const responseData = await response.json();
         entities = Array.isArray(responseData) 
             ? responseData 
-            : (responseData[entity] || responseData.lineas || responseData.lineas_pedidos || responseData.pedidos || responseData.proveedores || []);
+            : (responseData[entity] || responseData.movimientos || responseData.historial_financiero || responseData.lineas || responseData.lineas_pedidos || responseData.pedidos || responseData.proveedores || []);
         
         return { loading: false, error: null, entities };
     } catch (err) {

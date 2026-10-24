@@ -24,7 +24,7 @@
     hasStatusFilter={config.hasStatusFilter}
 >
     <svelte:fragment slot="actions" let:item let:handleUpdate>
-        {#if item.estado !== 'Pagada' && !item.pago}
+        {#if !String(item.estado || '').toLowerCase().startsWith('pag') && !item.pago}
             <ButtonPagar 
                 name_entity={config.name}
                 route={config.route} 

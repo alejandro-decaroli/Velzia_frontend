@@ -5,6 +5,10 @@
     export let route = "";
     export let id: string | number | null = null;
     export let cajas: any[] = [];
+    export let label = "";
+
+    $: isCobro = label.toLowerCase() === "cobrar" || name_entity === "venta";
+    $: buttonText = label || (isCobro ? "Cobrar" : "Pagar");
 
     let entity: any = null;
     let loading = false;
@@ -64,13 +68,13 @@
     class="pay-btn-trigger" 
     on:click={handleEditClick}
     disabled={loading}
-    aria-label="Pagar {name_entity}"
+    aria-label="{buttonText} {name_entity}"
 >
     {#if loading}
         <span class="mini-spinner"></span>
     {:else}
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <span>Pagar</span>
+        <span>{buttonText}</span>
     {/if}
 </button>
 
@@ -84,7 +88,7 @@
     >
         <div class="modal-content" on:click|stopPropagation>
             <div class="modal-header">
-                <h3>Registrar Pago de {name_entity.replace('_', ' ')}</h3>
+                <h3>{isCobro ? 'Registrar Cobro de Venta' : `Registrar Pago de ${name_entity.replace('_', ' ')}`}</h3>
                 <button class="close-icon-btn" on:click={handleClose} aria-label="Cerrar modal">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -100,7 +104,7 @@
                 
                 <div class="form-body">
                     <div class="form-field">
-                        <label for="pay-monto">Monto a pagar (Pago total único)</label>
+                        <label for="pay-monto">{isCobro ? 'Monto a cobrar (Cobro total único)' : 'Monto a pagar (Pago total único)'}</label>
                         <input 
                             type="number" 
                             id="pay-monto" 
@@ -109,11 +113,11 @@
                             class="readonly-input"
                             required 
                         />
-                        <span class="info-note">No se aceptan pagos en cuotas. El pago debe cubrir el monto total.</span>
+                        <span class="info-note">{isCobro ? 'No se aceptan cobros en cuotas. El cobro debe cubrir el monto total.' : 'No se aceptan pagos en cuotas. El pago debe cubrir el monto total.'}</span>
                     </div>
                     
                     <div class="form-field">
-                        <label for="pay-caja">Caja de destino / origen</label>
+                        <label for="pay-caja">{isCobro ? 'Caja de destino' : 'Caja de destino / origen'}</label>
                         <select id="pay-caja" bind:value={cajaId} required>
                             {#each cajas as option}
                                 <option value={option.id}>{option.nombre}</option>
@@ -125,7 +129,7 @@
                 <div class="form-actions">
                     <button class="btn-cancel" type="button" on:click={handleClose}>Cancelar</button>
                     <button class="btn-submit" type="submit" disabled={loading}>
-                        {loading ? 'Procesando...' : 'Confirmar Pago'}
+                        {loading ? 'Procesando...' : (isCobro ? 'Confirmar Cobro' : 'Confirmar Pago')}
                     </button>
                 </div>
             </form>
