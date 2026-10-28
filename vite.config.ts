@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import dotenv from 'dotenv';
@@ -8,5 +9,9 @@ export default defineConfig({
 	server: {
 		host: '0.0.0.0',
 		port: Number(process.env.PORT) || 5173
-	  }
+	},
+	test: {
+		environment: 'jsdom',
+		globals: true
+	}
 });
