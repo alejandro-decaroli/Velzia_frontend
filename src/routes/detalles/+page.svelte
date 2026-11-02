@@ -9,7 +9,6 @@
 
     const fields = {
         descuento: "number",
-        precio_unitario: "number",
         cantidad: "number",
         producto: "select"
     };

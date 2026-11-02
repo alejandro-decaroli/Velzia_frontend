@@ -24,7 +24,19 @@
             <label for={fieldName}>{getLabel(fieldName)}</label>
             
             {#if fieldType === "select"}
-                <select id={fieldName} name={fieldName} bind:value={formData[fieldName]}>
+                <select 
+                    id={fieldName} 
+                    name={fieldName} 
+                    bind:value={formData[fieldName]}
+                    on:change={() => {
+                        if (fieldName === "producto") {
+                            const prod = productos.find(p => String(p.id) === String(formData[fieldName]));
+                            if (prod && prod.precio_venta !== undefined && 'precio' in fields) {
+                                formData.precio = Number(prod.precio_venta);
+                            }
+                        }
+                    }}
+                >
                     <option value="" disabled selected>Seleccione una opción</option>
                     
                     {#if fieldName === "caja" || fieldName === "caja_origen" || fieldName === "caja_destino"}
@@ -66,8 +78,9 @@
                     id={fieldName} 
                     name={fieldName} 
                     bind:value={formData[fieldName]} 
-                    placeholder={`Ingrese ${getLabel(fieldName).toLowerCase()}`}
-                    required
+                    placeholder={fieldName === 'precio' ? 'Se obtiene del producto' : `Ingrese ${getLabel(fieldName).toLowerCase()}`}
+                    readonly={fieldName === 'precio'}
+                    required={fieldName !== 'precio'}
                 />
             {/if}
         </div>

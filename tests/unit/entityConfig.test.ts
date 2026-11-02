@@ -19,6 +19,8 @@ describe('Frontend Unit Tests - Configuración de Entidades (entityConfig)', () 
     expect(configProductos.route).toBe('productos');
     expect(configProductos.fields.nombre).toBe('text');
     expect(configProductos.fields.stock).toBe('number');
+    expect(configProductos.fields.costo_actual).toBe('number');
+    expect(configProductos.fields.precio_venta).toBe('number');
 
     // Configuración de Clientes
     const configClientes = ENTITY_CONFIGS.clientes;
@@ -38,7 +40,7 @@ describe('Frontend Unit Tests - Configuración de Entidades (entityConfig)', () 
       'creadoen',
       'eliminadoen',
       'stock',
-      'precio_unitario',
+      'precio',
       'cliente'
     ];
 
@@ -50,7 +52,7 @@ describe('Frontend Unit Tests - Configuración de Entidades (entityConfig)', () 
     // Los campos de negocio deben permanecer visibles
     expect(camposVisibles).toContain('nombre');
     expect(camposVisibles).toContain('stock');
-    expect(camposVisibles).toContain('precio_unitario');
+    expect(camposVisibles).toContain('precio');
 
     // Los campos internos o sensibles no deben mostrarse
     expect(camposVisibles).not.toContain('id');

@@ -70,7 +70,6 @@
                             {/if}
                             {#if entity === "lineas_pedidos" || entity === "lineas_pedido"}
                                 <th>Pedido</th>
-                                <th>Producto</th>
                             {/if}
                             {#if acciones}
                                 <th class="actions-header">Acciones</th>
@@ -107,7 +106,7 @@
                                         {:else if Array.isArray(value)}
                                             <span class="text-muted">-</span>
                                         {:else if typeof value === 'object' && value !== null}
-                                            <span class="code-badge">{value.cod || value.nombre || `#${value.id}`}</span>
+                                            <span class="code-badge">{value.nombre ? (value.cod ? `${value.nombre} (${value.cod})` : value.nombre) : (value.cod || `#${value.id}`)}</span>
                                         {:else}
                                             {value}
                                         {/if}
@@ -150,7 +149,6 @@
                             {/if}
                             {#if entity === "lineas_pedidos" || entity === "lineas_pedido"}
                                 <td>{item.pedido ? (item.pedido.cod || `Pedido #${item.pedido.id}`) : '-'}</td>
-                                <td>{item.producto ? item.producto.nombre : '-'}</td>
                             {/if}
                             {#if acciones}
                                 <td class="actions-cell">

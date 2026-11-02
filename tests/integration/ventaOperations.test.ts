@@ -22,7 +22,7 @@ describe('Frontend Test Integrador 2 - Operaciones de Venta y Formulario (regist
     const payloadDetalle = {
       producto: 12,
       cantidad: 3,
-      precio_unitario: 2500,
+      precio: 2500,
       descuento: 5,
     };
 
@@ -64,7 +64,7 @@ describe('Frontend Test Integrador 2 - Operaciones de Venta y Formulario (regist
     const payloadDetalle = {
       producto: 12,
       cantidad: 999, // Stock superior al disponible
-      precio_unitario: 2500,
+      precio: 2500,
       descuento: 0,
     };
 

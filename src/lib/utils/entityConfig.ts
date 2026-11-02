@@ -64,7 +64,9 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         fields: {
             nombre: "text",
             descripcion: "text",
-            stock: "number"
+            stock: "number",
+            costo_actual: "number",
+            precio_venta: "number"
         }
     },
     costos: {
@@ -172,8 +174,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         fields: {
             pedido: "select",
             producto: "select",
-            cantidad: "number",
-            precio: "number"
+            cantidad: "number"
         }
     }
 };
